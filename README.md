@@ -1,6 +1,7 @@
 # SOEN343
 
 ## Team Information
+
 - Lucas Turpin (40029907) - lucas_turpin@hotmail.com / Team leader
 - Mila Roisin (29575774) - mila.roisin@gmail.com
 - Riya Dutta (40028085) - riya.dutta1001@gmail.com
@@ -11,3 +12,13 @@
 - Joo Yeon Lee (25612950) - nitachaska@gmail.com
 - Michelle Choi (26307647) - michy.miche@gmail.com
 - Scott Bouchard (26251625) - scottbouchard09@gmail.com
+
+## Important Commands
+
+### Installing Dependencies
+
+`npm install`
+
+### Running the Server
+
+`node app.js`
