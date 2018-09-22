@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified -- TODO\" && exit 1", 
+    "coverage": "echo \"Error: no coverage specified -- TODO\" && exit 1",
+    "lint": "echo \"Error: no lint specified -- TODO\" && exit 1",
+    "migrate": "node node_modules/db-migrate/bin/db-migrate"
   },
   "repository": {
     "type": "git",
@@ -17,6 +20,8 @@
   },
   "homepage": "https://github.com/Lercerss/SOEN343#readme",
   "dependencies": {
+    "db-migrate": "^0.11.3",
+    "db-migrate-mysql": "^1.1.10",
     "express": "^4.16.3",
     "mariasql": "^0.2.6"
   },

@@ -1,0 +1,17 @@
+{
+    "defaultEnv": "dev",
+    "dev": {
+        "driver": "mysql",
+        "host": "localhost",
+        "user": "dbuser",
+        "password": "very-secret",
+        "database": "anansi_db"
+    },
+    "test": {
+        "driver": "mysql",
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "anansi_db"
+    }
+}
