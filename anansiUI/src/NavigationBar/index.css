@@ -1,0 +1,43 @@
+.navbar {
+    display: flex;
+    width: 100%;
+    background-color: #0161b5;
+}
+
+.navbar_title {
+    min-width: 150px;
+    font-size: 18px;
+    margin: auto auto auto 1%;
+}
+.navbar_title > a {
+    color: white;
+    font-family: "Pridi", serif;
+    text-decoration: none;
+    font-size: 30px;
+}
+.navbar_title > a:hover {
+    color: #9dd1ff;
+}
+.navbar_button {
+    min-width: 100px;
+    border: none;
+    background-color: #0161b5;
+    color: white;
+    cursor: pointer;
+    outline: none;
+    height: 40px;
+    margin: auto;
+    font-size: 17px;
+}
+.navbar_button:hover {
+    background-color: #0074d9;
+}
+
+.navbar_auth {
+    display: flex;
+    justify-content: right;
+}
+
+.navbar_buttons {
+    display: flex;
+}
