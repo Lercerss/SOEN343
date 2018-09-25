@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/Lercerss/SOEN343.svg?style=svg&circle-token=3131703e1b64c29ce735053475a6c3c55a68436c)](https://circleci.com/gh/Lercerss/SOEN343)
+
 # SOEN343
 
 ## Team Information
@@ -28,34 +30,35 @@ node --version
 mysql --version
 ```
 
+If you are a Windows user, configure your `npm` to use Bash as a subshell with the following command:
+```shell
+npm config set script-shell "C:\\Path\\To\\bin\\bash.exe"
+``` 
+
 To install the necessary packages specified in `package.json`, type the following command from root directory of the project: 
 ```
 npm install
 ```
 ### Database Setup
 
-Create a JS config file called `config.js` in the root directory of project with the following contents:
+Create a JS config file called `hidden.js` in the root directory of the project with the following contents:
 ```javascript
-var config = {
-    db: {
-        host: '127.0.0.1',
-        user: 'dbuser',
-        password: '<password>',
-        db: 'anansi_db'
-    }
+module.exports = {
+    password: '<password>'
 };
-
-module.exports = config;
 ```
 
 Run mySQL shell, and enter the following SQL statements:
 
 ```SQL
 CREATE USER 'dbuser'@'localhost' IDENTIFIED BY '<password>';
-CREATE DATABASE anansi_db;
-GRANT ALL PRIVILEGES ON anansi_db.* TO 'dbuser@'localhost';
+GRANT ALL PRIVILEGES ON anansi_db.* TO 'dbuser'@'localhost';
 FLUSH PRIVILEGES;
-USE anansi_db; 
+```
+To create the database and apply migrations, run the following commands:
+```Shell
+npm run migrate db:create anansi_db -- -e creation
+npm run migrate up
 ```
 
 ### Running the Server
