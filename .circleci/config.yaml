@@ -1,0 +1,53 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:10-browsers
+        environment:
+          - MYSQL_PASSWORD: very-secret
+        
+      - image: circleci/mysql:5.7.23
+        environment:
+          - MYSQL_USER: dbuser
+          - MYSQL_PASSWORD: very-secret
+
+    working_directory: ~/SOEN343
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+
+      - run:
+        name: setup database
+        # Create db and run all migrations
+        command: node_modules/db-migrate/bin/db-migrate db:create anansi_db -e creation && node_modules/db-migrate/bin/db-migrate up
+        
+      - run: 
+        name: test
+        command: npm test
+      
+      - run:
+        name: lint
+        command: npm run lint
+      
+      - store_artifacts: # TODO
+          path: test-report.html
+          prefix: coverage

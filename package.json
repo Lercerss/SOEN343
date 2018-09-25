@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint . --ignore-path .gitignore",
+    "migrate": "export MYSQL_PASSWORD=`grep 'password' hidden.js | sed \"s/^\\s*password:\\s*['\\\"]\\(.*\\)['\\\"]/\\1/g\"` && node_modules/db-migrate/bin/db-migrate"
   },
   "repository": {
     "type": "git",
@@ -17,6 +19,8 @@
   },
   "homepage": "https://github.com/Lercerss/SOEN343#readme",
   "dependencies": {
+    "db-migrate": "^0.11.3",
+    "db-migrate-mysql": "^1.1.10",
     "express": "^4.16.3",
     "mariasql": "^0.2.6"
   },
@@ -26,6 +30,8 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^23.6.0",
+    "jest-html-reporter": "^2.4.2"
   }
 }

@@ -2,6 +2,9 @@
     "extends": "standard",
     "rules": {
         "semi": [2, "always"],
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "no-unused-vars": "warn",
+        "comma-dangle": "off",
+        "camelcase": "error"
     }
 }
