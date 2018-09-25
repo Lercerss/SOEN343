@@ -12,5 +12,4 @@ var config = {
     }
 };
 
-// TODO: import hidden.js and extract credentials
 module.exports = config;
