@@ -4,14 +4,7 @@
         "driver": "mysql",
         "host": "localhost",
         "user": "dbuser",
-        "password": "very-secret",
-        "database": "anansi_db"
-    },
-    "test": {
-        "driver": "mysql",
-        "host": "localhost",
-        "user": "root",
-        "password": "",
+        "password": {"ENV": "MYSQL_PASSWORD"},
         "database": "anansi_db"
     }
 }

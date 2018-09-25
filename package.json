@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified -- TODO\" && exit 1", 
-    "coverage": "echo \"Error: no coverage specified -- TODO\" && exit 1",
-    "lint": "echo \"Error: no lint specified -- TODO\" && exit 1",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate"
+    "test": "jest --passWithNoTests --coverage",
+    "lint": "eslint . --ignore-path .gitignore",
+    "migrate": "export MYSQL_PASSWORD=`grep 'password' hidden.js | sed \"s/^\\s*password:\\s*['\\\"]\\(.*\\)['\\\"]/\\1/g\"` && node_modules/db-migrate/bin/db-migrate"
   },
   "repository": {
     "type": "git",
@@ -31,6 +30,8 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^7.0.1",
     "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-standard": "^4.0.0"
+    "eslint-plugin-standard": "^4.0.0",
+    "jest": "^23.6.0",
+    "jest-html-reporter": "^2.4.2"
   }
 }
