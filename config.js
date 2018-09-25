@@ -1,6 +1,6 @@
 var hidden = {};
 try {
-    hidden = require('hidden');
+    hidden = require('./hidden');
 } catch (ex) {}
 
 var config = {
