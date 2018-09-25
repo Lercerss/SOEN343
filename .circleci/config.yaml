@@ -38,7 +38,7 @@ jobs:
       - run:
         name: setup database
         # Create db and run all migrations
-        command: node_modules/db-migrate/bin/db-migrate db:create anansi_db && node_modules/db-migrate/bin/db-migrate up
+        command: node_modules/db-migrate/bin/db-migrate db:create anansi_db -e creation && node_modules/db-migrate/bin/db-migrate up
         
       - run: 
         name: test
