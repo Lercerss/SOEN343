@@ -4,10 +4,10 @@ var hidden = require('../hidden');
 let secretKey = hidden.secretKey;
 
 module.exports = {
-    createToken: function (userJson) {
+    createToken: function (user) {
         let tokenData = {
-            client_id: userJson.client_id,
-            isAdmin: userJson.isAdmin
+            client_id: user.client_id,
+            isAdmin: user.isAdmin
         };
         let token = jwt.sign(
             {

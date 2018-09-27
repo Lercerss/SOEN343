@@ -1,4 +1,4 @@
-var con = require('../db/dbConnection');
+var db = require('../db/dbConnection');
 var bcrypt = require('bcrypt');
 
 class User {
@@ -14,13 +14,20 @@ class User {
         this.isAdmin = userJson.isAdmin;
     }
 
-    authenticate (password) {
+    authenticate (password, callback) {
         let hash = this.password;
         bcrypt.compare(password, hash, (err, res) => {
             if (err) {
                 throw new Error('Could not compare pwd with hash');
             }
-            return res;
+            callback(res);
         });
     }
+
+    login (){
+        var prep = db.prepare('UPDATE user SET timestamp = :timestamp WHERE username = :username SET');
+        db.query(prep({ timestamp: Date.now(), username: this.username }));
+    }
 }
+
+module.exports = User;

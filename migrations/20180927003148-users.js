@@ -29,12 +29,12 @@ exports.up = function(db) {
             timestamp: 'datetime',
         }
     ).then(
-      function(result) {
-        db.dropTable('test');
-      },
-      function(err) {
-        return;
-      }
+        function(result) {
+            db.dropTable('test');
+        },
+        function(err) {
+            if (err) throw err;
+        }
     );
 };
 
@@ -43,5 +43,5 @@ exports.down = function(db) {
 };
 
 exports._meta = {
-    "version": 1
+    'version': 1
 };
