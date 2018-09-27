@@ -8,15 +8,6 @@ var auth = require('../utils/Auth');
 var createToken = auth.createToken;
 var verifyToken = auth.verifyToken;
 
-router.get('/', function(req, res) {
-    db.query('SELECT * FROM test_table', (err, rows) => {
-        if (err) {
-            throw new Error(err);
-        }
-        res.send(rows);
-    });
-});
-
 router.post('/login', (req, res) => {
     let { username, password } = req.body;
 

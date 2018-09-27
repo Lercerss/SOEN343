@@ -1,4 +1,3 @@
-var con = require('../db/dbConnection');
 var bcrypt = require('bcrypt');
 var db = require('../db/dbConnection');
 const User = require('../models/User');
