@@ -3,9 +3,10 @@ var db = require('../db/dbConnection');
 var router = express.Router();
 const User = require('../models/User');
 const UserRegistry = require('../models/UserRegistry');
-
+var cookies = require('cookie-parser');
 var auth = require('../utils/Auth');
 var createToken = auth.createToken;
+var verifyToken = auth.verifyToken;
 
 router.get('/', function(req, res) {
     db.query('SELECT * FROM test_table', (err, rows) => {
@@ -48,6 +49,26 @@ router.post('/login', (req, res) => {
                     message: 'Password is incorrect.'
                 });
             }
+        });
+    });
+});
+
+router.post('/validate', (req, res) => {
+    // Validates jwt and sends user information
+    // back to frontend
+    const token = req.body.token;
+    verifyToken(token, (err, decoded) => {
+        if (err) {
+            res.status(500).send({
+                message: 'There was an error decrypting token'
+            });
+        }
+        if (!decoded) {
+            res.status(400).send({ message: 'Token has expired' });
+        }
+        res.status(200).send({
+            username: decoded.data.username,
+            isAdmin: decoded.data.isAdmin
         });
     });
 });

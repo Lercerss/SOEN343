@@ -6,3 +6,8 @@ export function userLogin(username, password) {
         password: password
     });
 }
+export function getTokenInfo(jwt) {
+    return axios.post('http://localhost:3000/validate/', {
+        token: jwt
+    });
+}

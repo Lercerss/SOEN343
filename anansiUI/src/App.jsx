@@ -1,28 +1,51 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
+import { withCookies, Cookies } from 'react-cookie';
+import { getTokenInfo } from './utils/httputil';
 
-export default class App extends React.Component {
+class App extends React.Component {
     state = {
         loggedIn: false,
         username: '',
         isAdmin: false
     };
 
-    handleLogin = (username, jwt, isAdmin) => {
+    componentDidMount() {
+        // If jwt is stored in cookies
+        // It sends it to server to validate it
+        // and gather user info
+        const jwt = this.props.cookies.get('jwt');
+        if (jwt) {
+            getTokenInfo(jwt)
+                .then(response => {
+                    console.log(response.data.data);
+                    this.setState({
+                        loggedIn: true,
+                        username: response.data.username,
+                        isAdmin: response.data.isAdmin
+                    });
+                })
+                .catch(err => {
+                    console.log('Token has expired.');
+                });
+        }
+    }
+    handleLogin = (username, isAdmin, token) => {
         this.setState({
-            loggedIn: true,
             username: username,
-            isAdmin: isAdmin
+            isAdmin: isAdmin,
+            loggedIn: true
         });
+        this.props.cookies.set('jwt', token);
     };
     handleLogout = () => {
         this.setState({
             loggedIn: false,
             username: '',
-            isAdmin: false,
-            jwt: ''
+            isAdmin: false
         });
+        this.props.cookies.remove('jwt');
     };
     render() {
         return (
@@ -36,3 +59,4 @@ export default class App extends React.Component {
         );
     }
 }
+export default withCookies(App);

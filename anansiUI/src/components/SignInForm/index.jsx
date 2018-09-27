@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Icon, Input, Button, message } from 'antd';
-import cookie from 'react-cookies';
+import { Cookies } from 'react-cookie';
 import { userLogin } from '../../utils/httputil';
 import './index.css';
 
@@ -16,10 +16,9 @@ class SignInForm extends React.Component {
                 const { handleLogin, handleCloseButton } = this.props;
                 userLogin(userName, password)
                     .then(response => {
-                        let username = response.username;
-                        let isAdmin = response.isAdmin;
-                        cookie.save('jwt', response.token, { path: '/' });
-                        handleLogin(username, isAdmin);
+                        const { username, isAdmin, token } = response.data;
+
+                        handleLogin(username, isAdmin, token);
                         handleCloseButton();
                     })
                     .catch(error => {

@@ -4,10 +4,12 @@ var hidden = require('../hidden');
 let secretKey = hidden.secretKey;
 
 module.exports = {
-    createToken: function (user) {
+    createToken: function(user) {
+        // Creates jwt from user object
         let tokenData = {
             client_id: user.client_id,
-            isAdmin: user.isAdmin
+            isAdmin: user.isAdmin,
+            username: user.username
         };
         let token = jwt.sign(
             {
@@ -21,12 +23,8 @@ module.exports = {
         );
         return token;
     },
-    verifyToken: function (token) {
-        jwt.verify(token, secretKey, (err, decodedToken) => {
-            if (err || !decodedToken) {
-                throw new Error('Token was invalid');
-            }
-            console.log(decodedToken);
-        });
+    verifyToken: function(token, callback) {
+        // Validates jwt
+        jwt.verify(token, secretKey, callback);
     }
 };
