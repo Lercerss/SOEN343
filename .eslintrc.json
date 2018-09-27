@@ -5,6 +5,8 @@
         "indent": ["error", 4],
         "no-unused-vars": "warn",
         "comma-dangle": "off",
-        "camelcase": "error"
+        "camelcase": "error",
+        "space-before-blocks": "off",
+        "space-before-function-paren":"off"
     }
 }
