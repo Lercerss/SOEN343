@@ -1,5 +1,6 @@
 var db = require('../db/dbConnection');
 var bcrypt = require('bcrypt');
+var moment = require('moment');
 
 class User {
     constructor(userJson) {
@@ -12,7 +13,7 @@ class User {
         this.address = userJson.address;
         this.phoneNumber = userJson.phoneNumber;
         this.isAdmin = userJson.isAdmin;
-        this.timestamp = userJson.isAdmin;
+        this.timestamp = userJson.timestamp;
     }
 
     authenticate(password, callback) {
@@ -28,7 +29,7 @@ class User {
     login() {
         const SQLQuery = db.format(
             'UPDATE user SET timestamp = ? WHERE username = ?',
-            [this.timestamp, this.username]
+            [moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'), this.username]
         );
 
         db.query(SQLQuery);

@@ -17,11 +17,9 @@ router.get('/', function(req, res) {
 });
 
 router.post('/login', (req, res) => {
-    console.log(req.body);
     let { username, password } = req.body;
 
     UserRegistry.searchUser(username, (err, rows, fields) => {
-        console.log(rows);
         if (err) res.status(400);
 
         let user = new User(rows[0]);
