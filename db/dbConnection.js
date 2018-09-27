@@ -1,9 +1,8 @@
-var Client = require('mariasql');
+var mysql = require('mysql');
 var config = require('../config');
 
-var connection = new Client(config.db);
-
-connection.connect(function (err) {
+var connection = mysql.createConnection(config.db);
+connection.connect(function(err) {
     if (err) throw err;
 });
 

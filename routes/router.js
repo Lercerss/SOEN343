@@ -1,6 +1,5 @@
 var express = require('express');
 var db = require('../db/dbConnection');
-var bodyParser = require('body-parser');
 var router = express.Router();
 const User = require('../models/User');
 const UserRegistry = require('../models/UserRegistry');
@@ -21,10 +20,10 @@ router.post('/login', (req, res) => {
     console.log(req.body);
     let { username, password } = req.body;
 
-    UserRegistry.searchUser(username, (err, rows) => {
+    UserRegistry.searchUser(username, (err, rows, fields) => {
+        console.log(rows);
         if (err) res.status(400);
 
-        console.log(rows);
         let user = new User(rows[0]);
 
         user.authenticate(password, valid => {

@@ -2,7 +2,7 @@ var db = require('../db/dbConnection');
 var bcrypt = require('bcrypt');
 
 class User {
-    constructor (userJson) {
+    constructor(userJson) {
         this.client_id = userJson.client_id;
         this.username = userJson.username;
         this.password = userJson.password;
@@ -12,9 +12,10 @@ class User {
         this.address = userJson.address;
         this.phoneNumber = userJson.phoneNumber;
         this.isAdmin = userJson.isAdmin;
+        this.timestamp = userJson.isAdmin;
     }
 
-    authenticate (password, callback) {
+    authenticate(password, callback) {
         let hash = this.password;
         bcrypt.compare(password, hash, (err, res) => {
             if (err) {
@@ -24,9 +25,13 @@ class User {
         });
     }
 
-    login (){
-        var prep = db.prepare('UPDATE user SET timestamp = :timestamp WHERE username = :username SET');
-        db.query(prep({ timestamp: Date.now(), username: this.username }));
+    login() {
+        const SQLQuery = db.format(
+            'UPDATE user SET timestamp = ? WHERE username = ?',
+            [this.timestamp, this.username]
+        );
+
+        db.query(SQLQuery);
     }
 }
 

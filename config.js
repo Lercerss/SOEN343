@@ -8,7 +8,7 @@ var config = {
         host: '127.0.0.1', // localhost
         user: 'dbuser',
         password: hidden.password || process.env.MYSQL_PASSWORD,
-        db: 'anansi_db'
+        database: 'anansi_db'
     }
 };
 
