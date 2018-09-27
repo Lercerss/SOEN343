@@ -1,8 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
+<<<<<<< HEAD
 import { withCookies, Cookies } from 'react-cookie';
 import { getTokenInfo } from './utils/httputil';
+=======
+import Admin from './ components/Admin';
+>>>>>>> #5 Admin Base
 
 class App extends React.Component {
     state = {
