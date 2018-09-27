@@ -20,7 +20,18 @@ router.post('/login', (req, res) => {
     let { username, password } = req.body;
 
     UserRegistry.searchUser(username, (err, rows, fields) => {
-        if (err) res.status(400);
+        if (err) {
+            res.status(500).send({
+                message: 'There was an error querying the database'
+            });
+            return;
+        }
+        if (rows.length === 0) {
+            res.status(400).send({
+                message: 'Username does not exist'
+            });
+            return;
+        }
 
         let user = new User(rows[0]);
 
@@ -33,7 +44,9 @@ router.post('/login', (req, res) => {
                     token: createToken(user)
                 });
             } else {
-                res.status(400);
+                res.status(400).send({
+                    message: 'Password is incorrect.'
+                });
             }
         });
     });

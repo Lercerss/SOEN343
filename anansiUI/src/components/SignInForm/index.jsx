@@ -14,13 +14,17 @@ class SignInForm extends React.Component {
                 console.log(values);
                 const { userName, password } = values;
                 const { handleLogin, handleCloseButton } = this.props;
-                userLogin(userName, password).then(response => {
-                    let username = response.username;
-                    let isAdmin = response.isAdmin;
-                    cookie.save('jwt', response.token, { path: '/' });
-                    handleLogin(username, isAdmin);
-                    handleCloseButton();
-                });
+                userLogin(userName, password)
+                    .then(response => {
+                        let username = response.username;
+                        let isAdmin = response.isAdmin;
+                        cookie.save('jwt', response.token, { path: '/' });
+                        handleLogin(username, isAdmin);
+                        handleCloseButton();
+                    })
+                    .catch(error => {
+                        alert(error.response.data.message);
+                    });
             }
         });
     };
