@@ -1,5 +1,7 @@
 import React from 'react';
 import { Form, Icon, Input, Button, message } from 'antd';
+import cookie from 'react-cookies';
+import { userLogin } from '../../utils/httputil';
 import './index.css';
 
 const FormItem = Form.Item;
@@ -9,15 +11,18 @@ class SignInForm extends React.Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                this.doUserLoginRequest(values.userName, values.password);
+                console.log(values);
+                const { userName, password } = values;
+                const { handleLogin, handleCloseButton } = this.props;
+                userLogin(userName, password).then(response => {
+                    let username = response.username;
+                    let isAdmin = response.isAdmin;
+                    cookie.save('jwt', response.token, { path: '/' });
+                    handleLogin(username, isAdmin);
+                    handleCloseButton();
+                });
             }
         });
-    };
-
-    doUserLoginRequest = (username, password) => {
-        const { handleLogin, handleCloseButton } = this.props;
-        handleLogin(username, true);
-        handleCloseButton();
     };
 
     render() {

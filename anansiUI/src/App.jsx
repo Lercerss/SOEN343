@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
-import NavigationBar from './NavigationBar';
+import NavigationBar from './components/NavigationBar';
 
 export default class App extends React.Component {
     state = {
@@ -9,7 +9,7 @@ export default class App extends React.Component {
         isAdmin: false
     };
 
-    handleLogin = (username, isAdmin) => {
+    handleLogin = (username, jwt, isAdmin) => {
         this.setState({
             loggedIn: true,
             username: username,
@@ -20,7 +20,8 @@ export default class App extends React.Component {
         this.setState({
             loggedIn: false,
             username: '',
-            isAdmin: false
+            isAdmin: false,
+            jwt: ''
         });
     };
     render() {
