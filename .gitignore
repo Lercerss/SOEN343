@@ -1,5 +1,4 @@
 node_modules/
 hidden.js
 coverage/
-config.js
 bundle.js

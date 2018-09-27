@@ -37,7 +37,7 @@ If you are a Windows user, configure your `npm` to use Bash as a subshell with t
 npm config set script-shell "C:\\Path\\To\\bin\\bash.exe"
 ```
 
-To install the necessary packages specified in `package.json`, type the following command from root directory of the project:
+We also need to install the necessary node packages for front-end and back-end specified in all `package.json`. Type the following command from root directory of the project AND from anansiUI/:
 
 ```
 npm install
@@ -76,9 +76,9 @@ To start the web application, use the following command:
 node app.js
 ```
 
-### Running the webpack dev server
+### Running Webpack Dev Server
 
-Inside anansiUI use the following command:
+Inside anansiUI/, run the following command as a separate process from the node server (on another terminal):
 
 ```
 npm start
