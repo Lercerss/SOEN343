@@ -3,14 +3,10 @@ import UsersList from './UsersList/index';
 import RegisterAdmin from './RegisterAdmin';
 
 export default class Admin extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showUserList: false,
-        };
-        this.showUsers = this.showUsers.bind(this);
-    }
-    showUsers() {
+    state = {
+        showUserList: false
+    };
+    showUsers = () => {
         this.setState({
             showUserList: true,
         });
@@ -18,15 +14,11 @@ export default class Admin extends React.Component {
     render() {
         const { token } = this.props;
         return (
-            <div>
-                <div className='admin'>
-                    <h1>Welcome Admin!</h1>
-                    <RegisterAdmin token={token}/>
-                </div>
-                <div>
-                    <button onClick={this.showUsers}>View Users</button>
-                    { this.state.showUserList ? <UsersList /> : null }
-                </div>
+            <div className='admin'>
+                <h1>Welcome Admin!</h1>
+                <RegisterAdmin token={token}/>
+                <button onClick={this.showUsers}>View Users</button>
+                { this.state.showUserList ? <UsersList /> : null }
             </div>
         );
     }
