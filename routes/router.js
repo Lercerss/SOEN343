@@ -84,15 +84,29 @@ router.post('/create-user', (req, res) => {
                 message: 'Only administrators can register new users'
             });
         } else {
-            UserRegistry.makeNewUser(req.body, (err) => {
+            UserRegistry.searchUser(req.body.username, (err, userArray) => {
                 if (err) {
-                    console.log(err);
-                    res.status(400).send({
-                        message: 'Could not create user',
-                        error: err
+                    res.status(500).send({
+                        message: 'There was an error checking for username existence'
                     });
+                    return;
                 }
-                res.status(200).send();
+                if (userArray.length !== 0) {
+                    res.status(400).send({
+                        message: 'Username already exists'
+                    });
+                    return;
+                }
+                UserRegistry.makeNewUser(req.body, (err) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(400).send({
+                            message: 'Could not create user',
+                            error: err
+                        });
+                    }
+                    res.status(200).send();
+                });
             });
         }
     });
