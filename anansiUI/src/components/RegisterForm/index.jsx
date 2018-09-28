@@ -116,7 +116,7 @@ class RegisterForm extends React.Component {
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Phone Number">
-                    {getFieldDecorator('phone', {
+                    {getFieldDecorator('phoneNumber', {
                         rules: [
                             {
                                 required: true,
