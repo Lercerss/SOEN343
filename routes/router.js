@@ -46,6 +46,15 @@ router.post('/login', (req, res) => {
     });
 });
 
+router.post('/getUsers', (req, res) => {
+    UserRegistry.getAllUsers((err, rows) => {
+        if (err) {
+            console.log(err);
+        }
+        res.send(rows);
+    });
+});
+
 var verifyToken = (token, res, callback) => {
     auth.verifyToken(token, (err, decoded) => {
         if (err) {
