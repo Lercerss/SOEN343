@@ -20,9 +20,6 @@ class SignInForm extends React.Component {
 
                         handleLogin(username, isAdmin, token);
                         handleCloseButton();
-                    })
-                    .catch(error => {
-                        alert(error.response.data.message);
                     });
             }
         });

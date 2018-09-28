@@ -1,10 +1,14 @@
 import React from 'react';
+import RegisterAdmin from './RegisterAdmin';
 
-class Admin extends React.Component {
+export default class Admin extends React.Component {
 
-    render () {
-        return (
-            <h1>Welcome Admin!/</h1>
+    render() {
+        return(
+            <div className='admin'> 
+                <h1>Welcome Admin!</h1>
+                <RegisterAdmin />
+            </div>
         );
     }
 }
