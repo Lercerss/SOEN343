@@ -49,7 +49,8 @@ Create a JS config file called `hidden.js` in the root directory of the project 
 
 ```javascript
 module.exports = {
-    password: "<password>"
+    password: "<password>",
+    secretKey: "<random-key>"
 };
 ```
 
