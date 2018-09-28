@@ -4,7 +4,7 @@ var moment = require('moment');
 
 class User {
     constructor(userJson) {
-        this.client_id = userJson.client_id;
+        this.client_id = Number(userJson.client_id);
         this.username = userJson.username;
         this.password = userJson.password;
         this.firstName = userJson.firstName;
@@ -12,7 +12,7 @@ class User {
         this.email = userJson.email;
         this.address = userJson.address;
         this.phoneNumber = userJson.phoneNumber;
-        this.isAdmin = userJson.isAdmin;
+        this.isAdmin = Boolean(userJson.isAdmin);
         this.timestamp = userJson.timestamp;
     }
 
@@ -33,6 +33,39 @@ class User {
         );
 
         db.query(SQLQuery);
+    }
+
+    validate() {
+        return this.username &&
+            this.password &&
+            this.firstName &&
+            this.lastName &&
+            this.email;
+    }
+
+    hashPassword(callback) {
+        bcrypt.hash(this.password, 11, (err, res) => {
+            if (err) {
+                callback(err);
+            }
+            this.password = res;
+            callback();
+        });
+    }
+
+    toDbRow() {
+        return [
+            this.client_id || undefined,
+            this.username,
+            this.password,
+            this.firstName,
+            this.lastName,
+            this.email,
+            this.address,
+            this.phoneNumber,
+            this.isAdmin,
+            this.timestamp
+        ];
     }
 }
 

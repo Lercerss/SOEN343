@@ -22,6 +22,25 @@ class UserRegistry {
         }
         callback(err, userArray);
     }
+
+    static makeNewUser(userJson, callback) {
+        let user = new User(userJson);
+        if (!user.validate()) {
+            callback(new Error('Invalid user information'));
+        }
+        user.hashPassword((err) => {
+            if (err) {
+                callback(err);
+            }
+            const query = db.format(
+                'INSERT INTO user VALUES (?)',
+                [user.toDbRow()]
+            );
+            db.query(query, (err, rows, fields) => {
+                callback(err);
+            });
+        });
+    }
 }
 
 module.exports = UserRegistry;

@@ -64,4 +64,18 @@ router.post('/validate', (req, res) => {
     });
 });
 
+router.post('/create-user', (req, res) => {
+    console.log(req.body);
+    UserRegistry.makeNewUser(req.body, (err) => {
+        if (err) {
+            console.log(err);
+            res.status(400).send({
+                message: 'Could not create user',
+                error: err
+            });
+        }
+        res.status(200).send();
+    });
+});
+
 module.exports = router;

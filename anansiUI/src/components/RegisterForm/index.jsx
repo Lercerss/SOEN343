@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd';
+import { createNewUser } from '../../utils/httputil';
 
 const FormItem = Form.Item;
 
@@ -13,7 +14,7 @@ class RegisterForm extends React.Component {
 
                 createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin)
                     .then(response => {
-                        // Do something
+                        console.log(response);
                     });
             }
         });
