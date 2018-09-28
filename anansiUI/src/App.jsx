@@ -1,8 +1,8 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
 import { withCookies, Cookies } from 'react-cookie';
 import { getTokenInfo } from './utils/httputil';
+import Admin from './components/Admin';
 
 class App extends React.Component {
     state = {
@@ -55,6 +55,7 @@ class App extends React.Component {
                     handleLogout={this.handleLogout}
                     loggedIn={this.state.loggedIn}
                 />
+                {this.state.isAdmin && (<Admin token={this.props.cookies.get('jwt')}/>)}
             </main>
         );
     }
