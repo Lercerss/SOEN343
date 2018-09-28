@@ -11,3 +11,14 @@ export function getTokenInfo(jwt) {
         token: jwt
     });
 }
+export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin) {
+    return axios.post('http://localhost:3000/login/', {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        username: username,
+        password: password,
+        phoneNumber: phoneNumber,
+        isAdmin: isAdmin
+    });
+}

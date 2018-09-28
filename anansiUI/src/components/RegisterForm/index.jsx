@@ -1,15 +1,20 @@
 import React from 'react';
 import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd';
 
-export default class RegisterForm extends React.Component {
+const FormItem = Form.Item;
 
+class RegisterForm extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
+                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
 
-                // Call to database
+                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin)
+                    .then(response => {
+                        // Do something
+                    });
             }
         });
     };
@@ -42,6 +47,28 @@ export default class RegisterForm extends React.Component {
 
         return (
             <Form onSubmit={this.handleSubmit} className="RegisterForm">
+                <FormItem {...formItemLayout} label="First Name">
+                    {getFieldDecorator('firstName', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input your first name!'
+                            }
+                        ]
+                    })(<Input placeholder="Pat" />)}
+                </FormItem>
+
+                <FormItem {...formItemLayout} label="Last Name">
+                    {getFieldDecorator('lastName', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input your last name'
+                            }
+                        ]
+                    })(<Input placeholder="Ko" />)}
+                </FormItem>
+
                 <FormItem {...formItemLayout} label="E-mail">
                     {getFieldDecorator('email', {
                         rules: [
@@ -50,7 +77,7 @@ export default class RegisterForm extends React.Component {
                                 message: 'Please input your E-mail!'
                             }
                         ]
-                    })(<Input placeholder="Email" />)}
+                    })(<Input placeholder="pat.ko@internet.com" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Password">
@@ -75,7 +102,7 @@ export default class RegisterForm extends React.Component {
                         </span>
                     }
                 >
-                    {getFieldDecorator('nickname', {
+                    {getFieldDecorator('username', {
                         rules: [
                             {
                                 required: true,
@@ -83,7 +110,7 @@ export default class RegisterForm extends React.Component {
                                 whitespace: true
                             }
                         ]
-                    })(<Input placeholder="Password" />)}
+                    })(<Input placeholder="PatTheSwedishCow" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Phone Number">
@@ -98,7 +125,7 @@ export default class RegisterForm extends React.Component {
                 </FormItem>
 
                 <FormItem {...tailFormItemLayout}>
-                    {getFieldDecorator('agreement', {
+                    {getFieldDecorator('isAdmin', {
                         valuePropName: 'checked'
                     })(<Checkbox>Register as administrator</Checkbox>)}
                 </FormItem>
@@ -112,3 +139,6 @@ export default class RegisterForm extends React.Component {
         );
     }
 }
+
+const WrappedRegisterForm = Form.create()(RegisterForm);
+export default WrappedRegisterForm;

@@ -4,29 +4,22 @@ import RegisterForm from './../../RegisterForm'
 
 export default class RegisterAdmin extends React.Component {
     state = {
-        isformShown: false
+        isRegisterButtonShown: true,
+        isFormShown: false
     };
 
-    handleFormView = () => {
-        this.setState({ isFormShown: true });
-    };
-
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-
-                // Call to database
-            }
-        });
+    handleView = () => {
+        this.setState({ isFormShown: true }),
+        this.setState({ isRegisterButtonShown: false });
     };
 
     render() {
         return (
             <div className='registerAdmin'>
-                <Button onClick={() => handleFormView()} type="primary"> Register </Button>
-                {this.state.isFormShown ? <RegisterForm /> : "" }
+                {this.state.isRegisterButtonShown ? 
+                <Button onClick={this.handleView} type="primary"> Register </Button> : "" }
+
+                {this.state.isFormShown ? <RegisterForm /> : ""}
             </div>
         );
     }
