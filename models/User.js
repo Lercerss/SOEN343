@@ -16,6 +16,10 @@ class User {
         this.timestamp = userJson.timestamp;
     }
 
+    setTimestamp(date) {
+        this.timestamp = moment(date).format('YYYY-MM-DD HH:mm:ss');
+    }
+
     authenticate(password, callback) {
         let hash = this.password;
         bcrypt.compare(password, hash, (err, res) => {
@@ -27,9 +31,10 @@ class User {
     }
 
     login() {
+        this.setTimestamp(Date.now());
         const SQLQuery = db.format(
             'UPDATE user SET timestamp = ? WHERE username = ?',
-            [moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'), this.username]
+            [this.timestamp, this.username]
         );
 
         db.query(SQLQuery);
@@ -49,6 +54,7 @@ class User {
                 callback(err);
             }
             this.password = res;
+            this.setTimestamp(Date.now());
             callback();
         });
     }

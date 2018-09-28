@@ -11,8 +11,9 @@ class RegisterForm extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
+                const { token } = this.props;
 
-                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin)
+                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
                     .then(response => {
                         console.log(response);
                     });

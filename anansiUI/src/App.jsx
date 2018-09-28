@@ -55,7 +55,7 @@ class App extends React.Component {
                     handleLogout={this.handleLogout}
                     loggedIn={this.state.loggedIn}
                 />
-                {this.state.isAdmin && (<Admin />)}
+                {this.state.isAdmin && (<Admin token={this.props.cookies.get('jwt')}/>)}
             </main>
         );
     }

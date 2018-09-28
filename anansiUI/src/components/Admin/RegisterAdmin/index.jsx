@@ -14,12 +14,13 @@ export default class RegisterAdmin extends React.Component {
     };
 
     render() {
+        const { token } = this.props;
         return (
             <div className='registerAdmin'>
                 {this.state.isRegisterButtonShown ? 
                 <Button onClick={this.handleView} type="primary"> Register </Button> : "" }
 
-                {this.state.isFormShown ? <RegisterForm /> : ""}
+                {this.state.isFormShown ? <RegisterForm token={token} /> : ""}
             </div>
         );
     }

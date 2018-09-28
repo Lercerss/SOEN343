@@ -11,7 +11,7 @@ export function getTokenInfo(jwt) {
         token: jwt
     });
 }
-export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin) {
+export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token) {
     return axios.post('http://localhost:3000/create-user/', {
         firstName: firstName,
         lastName: lastName,
@@ -19,6 +19,7 @@ export function createNewUser(firstName, lastName, email, username, password, ph
         username: username,
         password: password,
         phoneNumber: phoneNumber,
-        isAdmin: isAdmin
+        isAdmin: isAdmin,
+        token: token
     });
 }
