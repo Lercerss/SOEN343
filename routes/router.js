@@ -44,6 +44,16 @@ router.post('/login', (req, res) => {
     });
 });
 
+// add router.post('/getAllUsers') to get the users
+router.post('/getUsers', (req, res) => {
+    UserRegistry.getAllUsers((err, rows) => {
+        if (err) {
+            console.log(err);
+        }
+        res.send(rows);
+    });
+});
+
 router.post('/validate', (req, res) => {
     // Validates jwt and sends user information
     // back to frontend

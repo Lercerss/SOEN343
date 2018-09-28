@@ -11,3 +11,6 @@ export function getTokenInfo(jwt) {
         token: jwt
     });
 }
+export function getAllUsers() {
+    return axios.post('http://localhost:3000/getUsers');
+}

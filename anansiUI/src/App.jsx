@@ -1,12 +1,9 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import NavigationBar from './components/NavigationBar';
-<<<<<<< HEAD
 import { withCookies, Cookies } from 'react-cookie';
 import { getTokenInfo } from './utils/httputil';
-=======
-import Admin from './ components/Admin';
->>>>>>> #5 Admin Base
+import Admin from './components/Admin/index';
 
 class App extends React.Component {
     state = {
@@ -59,6 +56,7 @@ class App extends React.Component {
                     handleLogout={this.handleLogout}
                     loggedIn={this.state.loggedIn}
                 />
+                {this.state.isAdmin && <Admin/>}
             </main>
         );
     }

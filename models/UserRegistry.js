@@ -11,6 +11,11 @@ class UserRegistry {
             UserRegistry.jsonToUser(err, rows, fields, callback);
         });
     }
+    static getAllUsers(callback) {
+        db.query('SELECT username, firstName, lastName FROM user', (err, rows, fields) => {
+            UserRegistry.jsonToUser(err, rows, fields, callback);
+        });
+    }
     static jsonToUser(err, jsonArray, fields, callback) {
         if (err) {
             callback(err, []);

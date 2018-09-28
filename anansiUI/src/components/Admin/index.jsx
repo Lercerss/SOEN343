@@ -1,10 +1,25 @@
 import React from 'react';
+import UsersList from './UsersList/index';
 
-class Admin extends React.Component {
-
-    render () {
+export default class Admin extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showUserList: false,
+        };
+        this.showUsers = this.showUsers.bind(this);
+    }
+    showUsers() {
+        this.setState({
+            showUserList: true,
+        });
+    }
+    render() {
         return (
-            <h1>Welcome Admin!/</h1>
+            <div>
+                <button onClick={this.showUsers}>View Users</button>
+                { this.state.showUserList ? <UsersList /> : null }
+            </div>
         );
     }
 }
