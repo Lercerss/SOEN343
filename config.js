@@ -3,7 +3,7 @@ try {
     hidden = require('./hidden');
 } catch (ex) {}
 
-var config = {
+export const config = {
     db: {
         host: '127.0.0.1', // localhost
         user: 'dbuser',
@@ -11,5 +11,3 @@ var config = {
         database: 'anansi_db'
     }
 };
-
-module.exports = config;

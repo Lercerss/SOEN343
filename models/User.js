@@ -2,7 +2,7 @@ var db = require('../db/dbConnection');
 var bcrypt = require('bcrypt');
 var moment = require('moment');
 
-class User {
+export class User {
     constructor(userJson) {
         this.client_id = Number(userJson.client_id);
         this.username = userJson.username;
@@ -41,11 +41,13 @@ class User {
     }
 
     validate() {
-        return this.username &&
+        return (
+            this.username &&
             this.password &&
             this.firstName &&
             this.lastName &&
-            this.email;
+            this.email
+        );
     }
 
     hashPassword(callback) {
@@ -74,5 +76,3 @@ class User {
         ];
     }
 }
-
-module.exports = User;
