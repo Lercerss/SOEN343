@@ -1,6 +1,6 @@
-var db = require('../db/dbConnection');
-var bcrypt = require('bcrypt');
-var moment = require('moment');
+import bcrypt from 'bcrypt';
+import moment from 'moment';
+import { connection as db } from '../db/dbConnection';
 
 export class User {
     constructor(userJson) {

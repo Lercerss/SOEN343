@@ -1,5 +1,5 @@
 import { User } from './User';
-var db = require('../db/dbConnection');
+import { connection as db } from '../db/dbConnection';
 
 export class UserRegistry {
     static searchUser(username, callback) {
