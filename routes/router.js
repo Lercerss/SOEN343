@@ -1,17 +1,11 @@
-var express = require('express');
-var db = require('../db/dbConnection');
+import express from 'express';
+import { UserRegistry } from '../models/UserRegistry';
+import { createToken, verifyToken } from '../utils/Auth';
+
 var router = express.Router();
-const User = require('../models/User');
-const UserRegistry = require('../models/UserRegistry');
-var cookies = require('cookie-parser');
-var auth = require('../utils/Auth');
-var createToken = auth.createToken;
 
 router.post('/login', (req, res) => {
-    let {
-        username,
-        password
-    } = req.body;
+    let { username, password } = req.body;
 
     UserRegistry.searchUser(username, (err, userArray) => {
         if (err) {
@@ -55,8 +49,8 @@ router.post('/getUsers', (req, res) => {
     });
 });
 
-var verifyToken = (token, res, callback) => {
-    auth.verifyToken(token, (err, decoded) => {
+const validateToken = (token, res, callback) => {
+    verifyToken(token, (err, decoded) => {
         if (err) {
             console.log(err);
             res.status(500).send({
@@ -76,7 +70,7 @@ router.post('/validate', (req, res) => {
     // Validates jwt and sends user information
     // back to frontend
     const token = req.body.token;
-    verifyToken(token, res, (decoded) => {
+    validateToken(token, res, decoded => {
         res.status(200).send({
             username: decoded.data.username,
             isAdmin: decoded.data.isAdmin
@@ -85,8 +79,7 @@ router.post('/validate', (req, res) => {
 });
 
 router.post('/create-user', (req, res) => {
-    console.log(req.body);
-    verifyToken(req.body.token, res, (decoded) => {
+    validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({
@@ -96,7 +89,8 @@ router.post('/create-user', (req, res) => {
             UserRegistry.searchUser(req.body.username, (err, userArray) => {
                 if (err) {
                     res.status(500).send({
-                        message: 'There was an error checking for username existence'
+                        message:
+                            'There was an error checking for username existence'
                     });
                     return;
                 }
@@ -106,7 +100,7 @@ router.post('/create-user', (req, res) => {
                     });
                     return;
                 }
-                UserRegistry.makeNewUser(req.body, (err) => {
+                UserRegistry.makeNewUser(req.body, err => {
                     if (err) {
                         console.log(err);
                         res.status(400).send({
@@ -121,4 +115,4 @@ router.post('/create-user', (req, res) => {
     });
 });
 
-module.exports = router;
+export { router };

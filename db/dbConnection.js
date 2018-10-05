@@ -1,9 +1,9 @@
-var mysql = require('mysql');
-var config = require('../config');
+import mysql from 'mysql';
+import { config } from '../config';
 
 var connection = mysql.createConnection(config.db);
 connection.connect(function(err) {
     if (err) throw err;
 });
 
-module.exports = connection;
+export { connection };

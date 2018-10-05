@@ -1,8 +1,7 @@
-var bcrypt = require('bcrypt');
-var db = require('../db/dbConnection');
-const User = require('../models/User');
+import { User } from './User';
+import { connection as db } from '../db/dbConnection';
 
-class UserRegistry {
+export class UserRegistry {
     static searchUser(username, callback) {
         const SQLQuery = db.format('SELECT * FROM user WHERE username=?', [
             username
@@ -12,9 +11,12 @@ class UserRegistry {
         });
     }
     static getAllUsers(callback) {
-        db.query('SELECT username, firstName, lastName FROM user', (err, rows, fields) => {
-            UserRegistry.jsonToUser(err, rows, fields, callback);
-        });
+        db.query(
+            'SELECT username, firstName, lastName FROM user',
+            (err, rows, fields) => {
+                UserRegistry.jsonToUser(err, rows, fields, callback);
+            }
+        );
     }
     static jsonToUser(err, jsonArray, fields, callback) {
         if (err) {
@@ -33,19 +35,16 @@ class UserRegistry {
         if (!user.validate()) {
             callback(new Error('Invalid user information'));
         }
-        user.hashPassword((err) => {
+        user.hashPassword(err => {
             if (err) {
                 callback(err);
             }
-            const query = db.format(
-                'INSERT INTO user VALUES (?)',
-                [user.toDbRow()]
-            );
+            const query = db.format('INSERT INTO user VALUES (?)', [
+                user.toDbRow()
+            ]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         });
     }
 }
-
-module.exports = UserRegistry;

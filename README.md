@@ -71,10 +71,10 @@ npm run migrate up
 
 ### Running the Server
 
-To start the web application, use the following command:
+To start the web application, use the following command in the base directory:
 
 ```
-node app.js
+npm start
 ```
 
 ### Running Webpack Dev Server
