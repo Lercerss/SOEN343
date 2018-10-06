@@ -2,3 +2,4 @@ node_modules/
 hidden.js
 coverage/
 bundle.js
+.env

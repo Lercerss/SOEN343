@@ -1,13 +1,14 @@
-var hidden = {};
+import dotenv from 'dotenv';
+
 try {
-    hidden = require('./hidden');
+    dotenv.config();
 } catch (ex) {}
 
 export const config = {
     db: {
         host: '127.0.0.1', // localhost
         user: 'dbuser',
-        password: hidden.password || process.env.MYSQL_PASSWORD,
+        password: process.env.MYSQL_PASSWORD,
         database: 'anansi_db'
     }
 };
