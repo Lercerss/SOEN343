@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, Input, Tooltip, Icon, Checkbox, Button } from 'antd';
-import { createNewUser } from '../../utils/httputil';
+import { createNewUser } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;
 

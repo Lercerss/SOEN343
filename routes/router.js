@@ -40,7 +40,7 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.post('/getUsers', (req, res) => {
+router.post('/get-users', (req, res) => {
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);

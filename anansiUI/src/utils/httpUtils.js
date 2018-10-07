@@ -1,21 +1,26 @@
 import axios from 'axios';
 
+const backendURL = 'http://localhost:3000/';
+
 export function userLogin(username, password) {
-    return axios.post('http://localhost:3000/login/', {
+    return axios.post(`${ backendURL }login/`, {
         username: username,
         password: password
     });
 }
+
 export function getTokenInfo(jwt) {
-    return axios.post('http://localhost:3000/validate/', {
+    return axios.post(`${ backendURL }validate/`, {
         token: jwt
     });
 }
+
 export function getAllUsers() {
-    return axios.post('http://localhost:3000/getUsers');
+    return axios.post(`${ backendURL }get-users/`);
 }
+
 export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token) {
-    return axios.post('http://localhost:3000/create-user/', {
+    return axios.post(`${ backendURL }create-user/`, {
         firstName: firstName,
         lastName: lastName,
         email: email,
