@@ -12,12 +12,14 @@ jobs:
           - MYSQL_PWD: root
           - MYSQL_USER: dbuser
           - MYSQL_PASSWORD: very-secret
+          - SECRETKEY: very-very-secret
         
       - image: circleci/mysql:5.7.23
         environment:
           - MYSQL_ROOT_PASSWORD: root
           - MYSQL_USER: dbuser
           - MYSQL_PASSWORD: very-secret
+          - SECRETKEY: very-very-secret
 
     working_directory: ~/SOEN343
 
