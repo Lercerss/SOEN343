@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
-import hidden from '../hidden';
 
-let secretKey = hidden.secretKey;
+const secretKey = process.env.SECRETKEY;
 export function createToken(user) {
     // Creates jwt from user object
     let tokenData = {
