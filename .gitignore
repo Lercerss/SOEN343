@@ -3,3 +3,4 @@ hidden.js
 coverage/
 bundle.js
 .env
+test-report.html

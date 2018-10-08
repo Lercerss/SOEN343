@@ -4,6 +4,12 @@ import { createToken, verifyToken } from '../utils/Auth';
 
 var router = express.Router();
 
+router.get('/', (req, res) => {
+    res.status(200).send({
+        message: 'Express server up and running',
+    });
+});
+
 router.post('/login', (req, res) => {
     let { username, password } = req.body;
 
