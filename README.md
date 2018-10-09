@@ -44,21 +44,28 @@ Create a config file called `.env` in the root directory of the project with the
 ```dosini
 MYSQL_PASSWORD="<password>"
 SECRETKEY="<secret key>"
+DATABASE_NAME="anansi_db"
+TEST_DATABASE="anansi_db_test"
 ```
 
 Run mySQL shell, and enter the following SQL statements:
 
 ```SQL
 CREATE USER 'dbuser'@'localhost' IDENTIFIED BY '<password>';
-GRANT ALL PRIVILEGES ON anansi_db.* TO 'dbuser'@'localhost';
+GRANT ALL PRIVILEGES ON `anansi_db%`.* TO 'dbuser'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
 To create the database and apply migrations, run the following commands:
 
 ```Shell
-npm run migrate db:create anansi_db -- -e creation
+#dev database
+npm run migrate db:create anansi_db -- -e creation 
 npm run migrate up
+
+#test database
+npm run migrate db:create anansi_db_test 
+npm run test_migrate up
 ```
 
 ### Running the Server
