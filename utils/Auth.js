@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const secretKey = process.env.SECRETKEY;
-export function createToken(user) {
+export function createToken(user, time) {
     // Creates jwt from user object
     let tokenData = {
         client_id: user.client_id,
@@ -14,7 +14,7 @@ export function createToken(user) {
         },
         secretKey,
         {
-            expiresIn: 3600,
+            expiresIn: time || 3600,
             algorithm: 'HS256'
         }
     );
