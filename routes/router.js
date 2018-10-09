@@ -47,6 +47,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/get-users', (req, res) => {
+// TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);

@@ -1,4 +1,3 @@
-import NodeEnvironment from 'jest-environment-node';
 import bcrypt from 'bcrypt';
 import { connection as db } from '../db/dbConnection';
 import moment from 'moment';
@@ -43,7 +42,7 @@ export function globalSetUp() {
                 ];
 
                 const query = db.format('INSERT INTO user VALUES ?', [values]);
-                console.log(query);
+                // console.log(query);
                 db.query(query, (err, rows, fields) => {
                     if (err) {
                         console.log(err);
