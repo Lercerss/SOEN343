@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAllUsers } from '../../../utils/httputil';
+import { getAllUsers } from '../../../utils/httpUtils';
 
 export default class UsersList extends React.Component {
     state = {

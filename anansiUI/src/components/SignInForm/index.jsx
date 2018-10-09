@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Icon, Input, Button, message } from 'antd';
 import { Cookies } from 'react-cookie';
-import { userLogin } from '../../utils/httputil';
+import { userLogin } from '../../utils/httpUtils';
 import './index.css';
 
 const FormItem = Form.Item;

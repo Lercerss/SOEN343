@@ -1,7 +1,7 @@
 import React from 'react';
 import NavigationBar from './components/NavigationBar';
 import { withCookies, Cookies } from 'react-cookie';
-import { getTokenInfo } from './utils/httputil';
+import { getTokenInfo } from './utils/httpUtils';
 import Admin from './components/Admin';
 
 class App extends React.Component {
