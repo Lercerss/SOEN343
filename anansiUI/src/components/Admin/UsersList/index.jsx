@@ -33,7 +33,7 @@ export default class UsersList extends React.Component {
                                 title={`${item.firstName} ${item.lastName}`}
                                 description={(
                                     <div>
-                                        item.username
+                                        {item.username}
                                         {now - new Date(item.timestamp) < maxLoginDelay &&
                                             <Icon type="check-circle" theme="twoTone" twoToneColor="#52c41a" style={{paddingLeft: 10}}/>}
                                     </div>
