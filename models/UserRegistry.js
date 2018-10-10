@@ -12,7 +12,7 @@ export class UserRegistry {
     }
     static getAllUsers(callback) {
         db.query(
-            'SELECT username, firstName, lastName FROM user',
+            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM user',
             (err, rows, fields) => {
                 UserRegistry.jsonToUser(err, rows, fields, callback);
             }

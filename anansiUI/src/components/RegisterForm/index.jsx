@@ -16,6 +16,10 @@ class RegisterForm extends React.Component {
                 createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
                     .then(response => {
                         console.log(response);
+                        const { onUserRegistered } = this.props;
+                        if (onUserRegistered) {
+                            onUserRegistered();
+                        }
                     });
             }
         });
