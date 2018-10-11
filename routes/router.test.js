@@ -266,7 +266,7 @@ describe('routes: editing of a media item in the catalog', () => {
 });
 
 afterAll(done => {
-    db.query('DELETE FROM user', (err, rows, fields) => {
+    db.query('DELETE FROM users', (err, rows, fields) => {
         if (err) {
             process.exit(1);
         }

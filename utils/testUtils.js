@@ -5,7 +5,7 @@ import { createToken } from '../utils/Auth';
 
 export function globalSetUp() {
     return new Promise((resolve, reject) => {
-        db.query('DELETE FROM user', (err, rows, fields) => {
+        db.query('DELETE FROM users', (err, rows, fields) => {
             if (err) {
                 process.exit(1);
             }
@@ -41,7 +41,7 @@ export function globalSetUp() {
                     ]
                 ];
 
-                const query = db.format('INSERT INTO user VALUES ?', [values]);
+                const query = db.format('INSERT INTO users VALUES ?', [values]);
                 // console.log(query);
                 db.query(query, (err, rows, fields) => {
                     if (err) {
