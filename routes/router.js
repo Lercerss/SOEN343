@@ -158,3 +158,4 @@ router.post('/add-item', (req, res) => {
     });
 });
 
+export { router };
