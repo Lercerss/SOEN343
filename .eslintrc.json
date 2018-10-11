@@ -1,5 +1,6 @@
 {
     "extends": "standard",
+    "plugins": ["jest"],
     "rules": {
         "semi": [2, "always"],
         "indent": ["error", 4],
@@ -9,5 +10,8 @@
         "space-before-blocks": "off",
         "space-before-function-paren":"off",
         "template-curly-spacing":"off"
+    },
+    "env": {
+        "jest": true
     }
 }

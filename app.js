@@ -15,6 +15,4 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use('/', router);
 
-app.listen(3000, function() {
-    console.log('Example app listening on port 3000');
-});
+export { app };
