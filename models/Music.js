@@ -1,4 +1,4 @@
-import { DigitalMedia } from './DigitamlMedia';
+import { DigitalMedia } from './DigitalMedia';
 
 export class Music extends DigitalMedia {
     constructor(userJSON) {
@@ -6,6 +6,6 @@ export class Music extends DigitalMedia {
         this.type = userJSON.type;
         this.artist = userJSON.artist;
         this.label = userJSON.label;
-        this.asin = userJSON.asin; 
+        this.asin = userJSON.asin;
     }
 }

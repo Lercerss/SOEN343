@@ -9,7 +9,9 @@
         "camelcase": "error",
         "space-before-blocks": "off",
         "space-before-function-paren":"off",
-        "template-curly-spacing":"off"
+        "template-curly-spacing":"off",
+        "no-useless-constructor": "off",
+        "no-array-constructor":"off"
     },
     "env": {
         "jest": true
