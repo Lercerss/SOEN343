@@ -37,12 +37,33 @@ export class Catalog {
             callback(err);
         }
         else if (type == 'Music'){
-            
+            var musicDict = {
+                title: fields.title,
+                artist: fields.artist,
+                label: fields.label,
+                releaseDate: fields.releaseDate,
+                asin: fields.asin
+            }
+            var music = new Music(musicDict);
+            mediaList.push(music);
+            callback(err);
         }
         else (type == 'Movie'){
-            
-        }
-    
+            var movieDict = {
+                title: fields.title,
+                director: fields.director,
+                producers: fields.producers,
+                actors: fields.actors,
+                language: fields.language,
+                subtitles: fields.subtitles,
+                dubbed: fields.dubbed,
+                releaseDate: fields.releaseDate,
+                runTime: fields.runTime
+            }
+            var movie = new Movie(movieDict);
+            mediaList.push(movie);
+            callback(err);
+        }    
     }
 
     static editem(type, fields) {
