@@ -1,6 +1,7 @@
 import express from 'express';
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken, verifyToken } from '../utils/Auth';
+import { Catalog } from '../models/Catalog';
 
 var router = express.Router();
 
@@ -121,4 +122,39 @@ router.post('/create-user', (req, res) => {
     });
 });
 
-export { router };
+router.post('/add-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (err) {
+                    res.status(500).send({
+                        message: 'There was an error checking for item existence'
+                    });
+                    return;
+                }
+                if (item !== null) {
+                    res.status(400).send({
+                        message: 'Item already exists'
+                    });
+                    return;
+                }
+                Catalog.addItem(req.body.type, req.body.itemInfo, err => {
+                    if (err) {
+                        console.log(err);
+                        res.status(400).send({
+                            message: 'Could not add item',
+                            error: err
+                        });
+                    }
+                    res.status(200).send();
+                });
+            });
+        }
+    });
+});
+
