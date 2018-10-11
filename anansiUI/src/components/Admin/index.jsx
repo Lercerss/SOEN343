@@ -1,14 +1,30 @@
 import React from 'react';
+import { Button } from 'antd';
 import UsersList from './UsersList/index';
 import RegisterAdmin from './RegisterAdmin';
+import { getAllUsers } from '../../utils/httpUtils';
 
 export default class Admin extends React.Component {
     state = {
-        showUserList: false
+        showUserList: false,
+        userList: []
     };
     showUsers = () => {
+        getAllUsers().then(response => {
+            this.setState({
+                showUserList: true,
+                userList: response.data
+            });
+        }).catch(reason => {
+            this.setState({
+                showUserList: false
+            });
+            alert(reason);
+        })
+    }
+    hideUserList = () => {
         this.setState({
-            showUserList: true,
+            showUserList: false
         });
     }
     render() {
@@ -16,9 +32,16 @@ export default class Admin extends React.Component {
         return (
             <div className='admin'>
                 <h1>Welcome Admin!</h1>
-                <RegisterAdmin token={token}/>
-                <button onClick={this.showUsers}>View Users</button>
-                { this.state.showUserList ? <UsersList /> : null }
+                <RegisterAdmin token={token} onUserRegistered={this.hideUserList}/>
+                { this.state.showUserList ?
+                    (
+                        <div>
+                            <UsersList users={this.state.userList}/>
+                            <Button onClick={this.hideUserList} type="primary">Back</Button>
+                        </div>
+                    ) :
+                    (<Button onClick={this.showUsers} type="primary">View Users</Button>)
+                }
             </div>
         );
     }
