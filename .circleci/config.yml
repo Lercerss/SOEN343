@@ -12,6 +12,8 @@ jobs:
           - MYSQL_PWD: root
           - MYSQL_USER: dbuser
           - MYSQL_PASSWORD: very-secret
+          - TEST_DATABASE: anansi_db_test
+          - SECRETKEY: very-very-secret
         
       - image: circleci/mysql:5.7.23
         environment:
@@ -45,11 +47,11 @@ jobs:
           command: dockerize -wait tcp://localhost:3306 -timeout 1m
       
       - run:
-          name: setup database
+          name: setup test database
         # Create db and run all migrations
           command: |
-            mysql -u root -h 127.0.0.1 -e "GRANT ALL PRIVILEGES ON anansi_db.* TO 'dbuser'@'%'; FLUSH PRIVILEGES"
-            node_modules/db-migrate/bin/db-migrate db:create anansi_db -e creation && node_modules/db-migrate/bin/db-migrate up
+            mysql -u root -h 127.0.0.1 -e "GRANT ALL PRIVILEGES ON anansi_db_test.* TO 'dbuser'@'%'; FLUSH PRIVILEGES"
+            node_modules/db-migrate/bin/db-migrate db:create anansi_db_test -e creation && node_modules/db-migrate/bin/db-migrate -e test up
         
       - run: 
           name: test

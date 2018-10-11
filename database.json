@@ -4,14 +4,21 @@
         "driver": "mysql",
         "host": "localhost",
         "user": "dbuser",
-        "password": {"ENV": "MYSQL_PASSWORD"},
+        "password": { "ENV": "MYSQL_PASSWORD" },
         "database": "anansi_db"
     },
     "creation": {
         "driver": "mysql",
         "host": "localhost",
         "user": "dbuser",
-        "password": {"ENV": "MYSQL_PASSWORD"},
+        "password": { "ENV": "MYSQL_PASSWORD" },
         "flags": "-CONNECT_WITH_DB"
+    },
+    "test": {
+        "driver": "mysql",
+        "host": "localhost",
+        "user": "dbuser",
+        "password": { "ENV": "MYSQL_PASSWORD" },
+        "database": { "ENV": "TEST_DATABASE" }
     }
 }

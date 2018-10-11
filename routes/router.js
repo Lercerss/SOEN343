@@ -4,6 +4,12 @@ import { createToken, verifyToken } from '../utils/Auth';
 
 var router = express.Router();
 
+router.get('/', (req, res) => {
+    res.status(200).send({
+        message: 'Express server up and running'
+    });
+});
+
 router.post('/login', (req, res) => {
     let { username, password } = req.body;
 
@@ -41,6 +47,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/get-users', (req, res) => {
+// TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);
@@ -86,11 +93,10 @@ router.post('/create-user', (req, res) => {
                 message: 'Only administrators can register new users'
             });
         } else {
-            UserRegistry.searchUser(req.body.username, (err, userArray) => {
+            UserRegistry.searchUser(req.body.userInfo.username, (err, userArray) => {
                 if (err) {
                     res.status(500).send({
-                        message:
-                            'There was an error checking for username existence'
+                        message: 'There was an error checking for username existence'
                     });
                     return;
                 }
@@ -100,7 +106,7 @@ router.post('/create-user', (req, res) => {
                     });
                     return;
                 }
-                UserRegistry.makeNewUser(req.body, err => {
+                UserRegistry.makeNewUser(req.body.userInfo, err => {
                     if (err) {
                         console.log(err);
                         res.status(400).send({
