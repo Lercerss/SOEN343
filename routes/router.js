@@ -51,17 +51,6 @@ router.post('/get-users', (req, res) => {
     });
 });
 
-router.post('/catalog-items', (req, res) => {
-    /*
-    Catalog.viewItems((err, rows) => {
-        if(err) {
-            console.log(err);
-        }
-        res.send(rows);
-    });
-    */
-});
-
 const validateToken = (token, res, callback) => {
     verifyToken(token, (err, decoded) => {
         if (err) {
@@ -89,6 +78,17 @@ router.post('/validate', (req, res) => {
             isAdmin: decoded.data.isAdmin
         });
     });
+});
+
+router.post('/catalog-items', (req, res) => {
+    var catalog = Catalog.viewItems();
+    if (catalog.length === 0) {
+        res.send({
+            message: 'Catalog is empty'
+        });
+    } else {
+        res.send(catalog);
+    }
 });
 
 router.post('/create-user', (req, res) => {

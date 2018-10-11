@@ -1,3 +1,5 @@
+import { Media } from './Media';
+
 export class Catalog {
     mediaList = new Array();
 
@@ -10,6 +12,6 @@ export class Catalog {
     }
 
     static viewItems() {
-
+        
     }
 }
