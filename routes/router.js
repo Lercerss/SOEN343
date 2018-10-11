@@ -130,7 +130,7 @@ router.post('/add-item', (req, res) => {
                 message: 'Only administrators can add media items'
             });
         } else {
-            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item) => {
+            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item, index) => {
                 if (err) {
                     res.status(500).send({
                         message: 'There was an error checking for item existence'
@@ -148,6 +148,42 @@ router.post('/add-item', (req, res) => {
                         console.log(err);
                         res.status(400).send({
                             message: 'Could not add item',
+                            error: err
+                        });
+                    }
+                    res.status(200).send();
+                });
+            });
+        }
+    });
+});
+
+router.post('/edit-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item, index) => {
+                if (err) {
+                    res.status(500).send({
+                        message: 'There was an error checking for item existence'
+                    });
+                    return;
+                }
+                if (item == null) {
+                    res.status(400).send({
+                        message: 'Item does not exist'
+                    });
+                    return;
+                }
+                Catalog.editItem(req.body.type, req.body.itemInfo, index, err => {
+                    if (err) {
+                        console.log(err);
+                        res.status(400).send({
+                            message: 'Could not edit item',
                             error: err
                         });
                     }
