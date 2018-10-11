@@ -6,6 +6,6 @@ export class Music extends DigitalMedia {
         this.type = userJSON.type;
         this.artist = userJSON.artist;
         this.label = userJSON.label;
-        this.asin = userJSON.asin; 
+        this.asin = userJSON.asin;
     }
 }
