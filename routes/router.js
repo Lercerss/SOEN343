@@ -1,6 +1,7 @@
 import express from 'express';
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken, verifyToken } from '../utils/Auth';
+import { Catalog } from '../models/Catalog';
 
 var router = express.Router();
 
@@ -41,12 +42,24 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/get-users', (req, res) => {
+// TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);
         }
         res.send(rows);
     });
+});
+
+router.post('/catalog-items', (req, res) => {
+    /*
+    Catalog.viewItems((err, rows) => {
+        if(err) {
+            console.log(err);
+        }
+        res.send(rows);
+    });
+    */
 });
 
 const validateToken = (token, res, callback) => {

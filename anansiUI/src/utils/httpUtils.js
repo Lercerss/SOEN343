@@ -19,6 +19,10 @@ export function getAllUsers() {
     return axios.post(`${ backendURL }get-users/`);
 }
 
+export function viewItems() { // retrieves all contents of the catalog without criteria
+    return axios.post(`${ backendURL }catalog-items/`);
+}
+
 export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token) {
     return axios.post(`${ backendURL }create-user/`, {
         firstName: firstName,
