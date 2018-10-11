@@ -6,7 +6,7 @@ import { Music } from './Music';
 var mediaList = new Array();
 
 export class Catalog {
-    static addItem(type, fields, callback) {
+   static addItem(type, fields, callback) {
         console.log(fields);
         if (type === 'Book'){
             var bookDict = {

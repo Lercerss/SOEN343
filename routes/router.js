@@ -130,7 +130,11 @@ router.post('/add-item', (req, res) => {
                 message: 'Only administrators can add media items'
             });
         } else {
+<<<<<<< HEAD
             Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item, index) => {
+=======
+            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item) => {
+>>>>>>> 804978824b7bcbf115d0f79b22ee7b7ba1109576
                 if (err) {
                     res.status(500).send({
                         message: 'There was an error checking for item existence'
@@ -158,6 +162,7 @@ router.post('/add-item', (req, res) => {
     });
 });
 
+<<<<<<< HEAD
 router.post('/edit-item', (req, res) => {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
