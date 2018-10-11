@@ -1,8 +1,8 @@
 import { Media } from './Media';
 
-export class Catalog {
-    mediaList = new Array();
+var mediaList = [];
 
+export class Catalog {
     static addItem(type, fields) {
 
     }
@@ -12,6 +12,6 @@ export class Catalog {
     }
 
     static viewItems() {
-        
+        return mediaList;
     }
 }
