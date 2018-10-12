@@ -12,60 +12,27 @@ export class Catalog {
             if (err) {
                 err = new Error('There was an error checking for item existence');
                 callback(err, item);
+                return;
             }
             if (item !== null) {
                 err = new Error('Item already exists');
                 callback(err, item);
+                return;
             }
             if (type === 'Book') {
-                var bookDict = {
-                    title: fields.title,
-                    author: fields.author,
-                    format: fields.format,
-                    pages: fields.pages,
-                    publisher: fields.publisher,
-                    language: fields.language,
-                    isbn10: fields.isbn10,
-                    isbn13: fields.isbn13
-                };
-                var book = new Book(bookDict);
+                var book = new Book(fields);
                 mediaList.push(book);
                 callback(err, item);
             } else if (type === 'Magazine') {
-                var magazineDict = {
-                    title: fields.title,
-                    publisher: fields.publisher,
-                    language: fields.language,
-                    isbn10: fields.isbn10,
-                    isbn13: fields.isbn13
-                };
-                var magazine = new Magazine(magazineDict);
+                var magazine = new Magazine(fields);
                 mediaList.push(magazine);
                 callback(err, item);
             } else if (type === 'Music') {
-                var musicDict = {
-                    title: fields.title,
-                    artist: fields.artist,
-                    label: fields.label,
-                    releaseDate: fields.releaseDate,
-                    asin: fields.asin
-                };
-                var music = new Music(musicDict);
+                var music = new Music(fields);
                 mediaList.push(music);
                 callback(err, item);
             } else if (type === 'Movie') {
-                var movieDict = {
-                    title: fields.title,
-                    director: fields.director,
-                    producers: fields.producers,
-                    actors: fields.actors,
-                    language: fields.language,
-                    subtitles: fields.subtitles,
-                    dubbed: fields.dubbed,
-                    releaseDate: fields.releaseDate,
-                    runTime: fields.runTime
-                };
-                var movie = new Movie(movieDict);
+                var movie = new Movie(fields);
                 mediaList.push(movie);
                 callback(err, item);
             } else {
@@ -81,60 +48,27 @@ export class Catalog {
             if (err) {
                 err = new Error('There was an error checking for item existence');
                 callback(err, item);
+                return;
             }
             if (item == null) {
                 err = new Error('Item could not be found');
                 callback(err, item);
+                return;
             }
             if (type === 'Book') {
-                var bookDict = {
-                    title: fields.title,
-                    author: fields.author,
-                    format: fields.format,
-                    pages: fields.pages,
-                    publisher: fields.publisher,
-                    language: fields.language,
-                    isbn10: fields.isbn10,
-                    isbn13: fields.isbn13
-                };
-                var book = new Book(bookDict);
+                var book = new Book(fields);
                 mediaList[index] = book;
                 callback(err, item);
             } else if (type === 'Magazine') {
-                var magazineDict = {
-                    title: fields.title,
-                    publisher: fields.publisher,
-                    language: fields.language,
-                    isbn10: fields.isbn10,
-                    isbn13: fields.isbn13
-                };
-                var magazine = new Magazine(magazineDict);
+                var magazine = new Magazine(fields);
                 mediaList[index] = magazine;
                 callback(err, item);
             } else if (type === 'Music') {
-                var musicDict = {
-                    title: fields.title,
-                    artist: fields.artist,
-                    label: fields.label,
-                    releaseDate: fields.releaseDate,
-                    asin: fields.asin
-                };
-                var music = new Music(musicDict);
+                var music = new Music(fields);
                 mediaList[index] = music;
                 callback(err, item);
             } else if (type === 'Movie') {
-                var movieDict = {
-                    title: fields.title,
-                    director: fields.director,
-                    producers: fields.producers,
-                    actors: fields.actors,
-                    language: fields.language,
-                    subtitles: fields.subtitles,
-                    dubbed: fields.dubbed,
-                    releaseDate: fields.releaseDate,
-                    runTime: fields.runTime
-                };
-                var movie = new Movie(movieDict);
+                var movie = new Movie(fields);
                 mediaList[index] = movie;
                 callback(err, item);
             } else {
@@ -156,18 +90,22 @@ export class Catalog {
             if (type === 'Book' && item instanceof Book) {
                 if (fields.isbn10 === item.isbn10) {
                     callback(err, item, index);
+                    return;
                 }
             } else if (type === 'Magazine' && item instanceof Magazine) {
                 if (fields.isbn10 === item.isbn10) {
                     callback(err, item, index);
+                    return;
                 }
             } else if (type === 'Music' && item instanceof Music) {
                 if (fields.asin === item.asin) {
                     callback(err, item, index);
+                    return;
                 }
             } else if (type === 'Movie' && item instanceof Movie) {
                 if (fields.title === item.title && fields.releaseDate === item.releaseDate) {
                     callback(err, item, index);
+                    return;
                 }
             }
             index++;
