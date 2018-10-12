@@ -3,6 +3,7 @@ import { Magazine } from './Magazine';
 import { Movie } from './Movie';
 import { Music } from './Music';
 
+var id = 0;
 var mediaList = new Array();
 
 export class Catalog {
@@ -20,18 +21,22 @@ export class Catalog {
                 return;
             }
             if (type === 'Book') {
+                fields['id'] = id++;
                 var book = new Book(fields);
                 mediaList.push(book);
                 callback(err, item);
             } else if (type === 'Magazine') {
+                fields['id'] = id++;
                 var magazine = new Magazine(fields);
                 mediaList.push(magazine);
                 callback(err, item);
             } else if (type === 'Music') {
+                fields['id'] = id++;
                 var music = new Music(fields);
                 mediaList.push(music);
                 callback(err, item);
             } else if (type === 'Movie') {
+                fields['id'] = id++;
                 var movie = new Movie(fields);
                 mediaList.push(movie);
                 callback(err, item);
@@ -44,9 +49,9 @@ export class Catalog {
 
     static editItem(type, fields, callback) {
         console.log(fields);
-        this.searchItem(type, fields, (err, item, index) => {
+        this.searchByID(fields.id, (err, item, index) => {
             if (err) {
-                err = new Error('There was an error checking for item existence');
+                err = new Error('There was an error checking for particular item existence');
                 callback(err, item);
                 return;
             }
@@ -110,6 +115,32 @@ export class Catalog {
             }
             index++;
         }
+        item = null;
         callback(err, item, index);
+    }
+
+    static searchByID(id, callback){
+        var err = null;
+        var index = 0;
+        for (var item of mediaList){
+            if (item.getId() === id) {
+                callback(err, item, index);
+                return;
+            }
+            index++;
+        }
+        callback(err, null, null);
+    }
+
+    static deleteItem(id, callback){
+        this.searchByID(id, (err, item, index) => {
+            if (item == null){
+                err = new Error('Error while deleting from in-memory collection');
+                callback(err);
+                return;
+            }
+            mediaList.splice(index, 1);
+            callback(err);
+        });
     }
 }

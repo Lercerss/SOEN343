@@ -5,7 +5,7 @@ export class Media {
     }
 
     getID() {
-
+        return this.id;
     }
 
     compare() {
