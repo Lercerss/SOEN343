@@ -1,30 +1,29 @@
 import React from 'react';
 import { Form, Input, Button, Radio, InputNumber, DatePicker } from 'antd';
+import { addNewItem, editItem } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 class BookForm extends React.Component {
-
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13 } = values;
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    // createNewBook(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('book', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 } else if (this.props.action == "update") {
-                    // updateBook(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    editItem('book', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 }
             }
         });

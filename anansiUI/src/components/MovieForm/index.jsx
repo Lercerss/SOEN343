@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker, Tooltip, Icon, InputNumber } from 'antd';
+import { addNewItem, editItem } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;
 
@@ -9,19 +10,18 @@ class MovieForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime } = values;
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    // createNewMovie(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('movie', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 } else if (this.props.action == "update") {
-                    // updateMovie(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('movie', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 }
 
             }

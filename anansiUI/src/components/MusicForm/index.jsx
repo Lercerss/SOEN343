@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker, Radio } from 'antd';
+import { addNewItem, editItem } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -11,19 +12,18 @@ class MusicForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { type, title, artist, label, releaseDate, asin } = values;
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    // createNewMusic(type, title, artist, label, releaseDate, asin, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('music', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 } else if (this.props.action == "update") {
-                    // updateMusic(type, title, artist, label, releaseDate, asin, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('music', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 }
             }
         });
@@ -61,14 +61,14 @@ class MusicForm extends React.Component {
             <Form onSubmit={this.handleSubmit} className="MusicForm">
 
                 <FormItem {...formItemLayout} label="Type">
-                    {getFieldDecorator('format', {
+                    {getFieldDecorator('type', {
                         rules: [
                             {
                                 required: true,
                                 message: 'Please select type'
                             }
                         ],
-                        initialValue: item.format
+                        initialValue: item.type
                     })(<RadioGroup>
                         <RadioButton value="cd">CD</RadioButton>
                         <RadioButton value="vinyl">Vinyl</RadioButton>

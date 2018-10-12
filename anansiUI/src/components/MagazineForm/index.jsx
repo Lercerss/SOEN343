@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker } from 'antd';
+import { addNewItem, editItem } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;
 
@@ -9,19 +10,18 @@ class MagazineForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { title, publisher, publicationDate, language, isbn10, isbn13 } = values;
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    // createNewMagazine(title, publisher, publicationDate, language, isbn10, isbn13, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('magazine', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 } else if (this.props.action == "update") {
-                    // updateMagazine(title, publisher, publicationDate, language, isbn10, isbn13, token)
-                    //     .then(response => {
-                    //         console.log(response);
-                    //     });
+                    addNewItem('magazine', values, token)
+                        .then(response => {
+                            console.log(response);
+                        });
                 }
             }
         });
