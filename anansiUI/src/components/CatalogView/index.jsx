@@ -37,7 +37,7 @@ export default class CatalogView extends React.Component {
                 {this.state.showItemList ? 
                     ( 
                         <div> 
-                            <ItemsList items={this.state.itemList}/>
+                            <ItemsList items={this.state.itemList} token={token}/>
                             <Button onClick={this.hideItemList} type='primary'>Back</Button>
                         </div>
                     ):
