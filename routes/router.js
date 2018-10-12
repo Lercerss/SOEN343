@@ -194,4 +194,26 @@ router.post('/edit-item', (req, res) => {
     });
 });
 
+router.delete('/delete-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can delete media items'
+            });
+        } else {
+            Catalog.deleteItem(req.body.itemInfo.id, err => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        message: 'Could not delete item',
+                        error: err
+                    });
+                }
+                res.status(200).send();
+            });
+        }
+    });
+});
+
 export { router };
