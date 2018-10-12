@@ -8,14 +8,14 @@ var mediaList = new Array();
 
 export class Catalog {
     static addItem(type, fields, callback) {
-        console.log(fields);
+        console.log(mediaList);
         this.searchItem(type, fields, (err, item, index) => {
             if (err) {
                 err = new Error('There was an error checking for item existence');
                 callback(err, item);
                 return;
             }
-            if (item !== null) {
+            if (item != null) {
                 err = new Error('Item already exists');
                 callback(err, item);
                 return;
@@ -115,15 +115,14 @@ export class Catalog {
             }
             index++;
         }
-        item = null;
-        callback(err, item, index);
+        callback(err, null, index);
     }
 
     static searchByID(id, callback){
         var err = null;
         var index = 0;
         for (var item of mediaList){
-            if (item.getId() === id) {
+            if (item.id === id) {
                 callback(err, item, index);
                 return;
             }

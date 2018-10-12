@@ -37,3 +37,30 @@ export function createNewUser(firstName, lastName, email, username, password, ph
         token: token
     });
 }
+
+export function addNewItem(type, itemInfo, token) {
+    return axios.post(`${backendURL}add-item/`, {
+        type: type,
+        itemInfo: itemInfo,
+        token: token
+    });
+}
+
+export function editItem(type, itemInfo, token) {
+    return axios.post(`${backendURL}edit-item/`, {
+        type: type,
+        itemInfo: itemInfo,
+        token: token
+    });
+}
+
+export function deleteItem(id, itemInfo, token) {
+    console.log(token);
+    return axios.delete(`${backendURL}delete-item/`, {
+        data: {
+            id: id,
+            itemInfo: itemInfo,
+            token: token
+        }
+    });
+}

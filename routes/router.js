@@ -93,7 +93,13 @@ router.post('/catalog-items', (req, res) => {
             message: 'Catalog is empty'
         });
     } else {
-        res.send(catalog);
+        var typedCatalog = catalog.map(val => {
+            return {
+                itemInfo: val,
+                type: val.constructor.name
+            };
+        });
+        res.send(typedCatalog);
     }
 });
 
@@ -142,20 +148,23 @@ router.post('/add-item', (req, res) => {
             });
         } else {
             Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (item) {
+                    console.log(item);
+                    res.status(400).send({
+                        message: 'Item already exists',
+                        error: err
+                    });
+                    return;
+                }
                 if (err) {
                     console.log(err);
                     res.status(500).send({
                         message: 'Could not add item',
                         error: err
                     });
+                    return;
                 }
-                if (item !== null) {
-                    console.log(err);
-                    res.status(400).send({
-                        message: 'Item already exists',
-                        error: err
-                    });
-                }
+
                 res.status(200).send();
             });
         }
