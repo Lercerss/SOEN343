@@ -29,7 +29,9 @@ class MovieForm extends React.Component {
     };
 
     render() {
+
         const { getFieldDecorator } = this.props.form;
+        const item = this.props.item ? this.props.item : {};
 
         const formItemLayout = {
             labelCol: {
@@ -64,7 +66,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input title'
                             }
-                        ]
+                        ],
+                        initialValue: item.title
                     })(<Input placeholder="Until the End of the World" />)}
                 </FormItem>
 
@@ -75,7 +78,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input director'
                             }
-                        ]
+                        ],
+                        initialValue: item.director
                     })(<Input placeholder="Wim Wenders" />)}
                 </FormItem>
 
@@ -93,7 +97,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input producers'
                             }
-                        ]
+                        ],
+                        initialValue: item.producers
                     })(<Input placeholder="Anatole Dauman, Ingrid Windisch, Joachim von Mengershausen, Pascale Daum" />)}
                 </FormItem>
 
@@ -111,7 +116,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input actors'
                             }
-                        ]
+                        ],
+                        initialValue: item.actors
                     })(<Input placeholder="Bruno Ganz, Solveig Dommartin, Otto Sander, Curt Bois, Peter Falk" />)}
                 </FormItem>
 
@@ -122,7 +128,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input language'
                             }
-                        ]
+                        ],
+                        initialValue: item.language
                     })(<Input placeholder="German" />)}
                 </FormItem>
 
@@ -140,7 +147,8 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input subtitled languages'
                             }
-                        ]
+                        ],
+                        initialValue: item.subtitles
                     })(<Input placeholder="English, French" />)}
                 </FormItem>
 
@@ -157,7 +165,8 @@ class MovieForm extends React.Component {
                             {
                                 required: false
                             }
-                        ]
+                        ],
+                        initialValue: item.dubbed
                     })(<Input placeholder="English, French" />)}
                 </FormItem>
 
@@ -168,21 +177,19 @@ class MovieForm extends React.Component {
                                 required: true,
                                 message: 'Please input release date'
                             }
-                        ]
+                        ],
+                        initialValue: item.releaseDate
                     })(<DatePicker placeholder="2012-08-14" />)}
                 </FormItem>
 
-                <FormItem
-                    {...formItemLayout}
-                    label={
+                <FormItem {...formItemLayout} label={
                         <span>
                             Runtime&nbsp;
                             <Tooltip title="Please enter minutes">
                                 <Icon type="question-circle-o" />
                             </Tooltip>
-                        </span>
-                    }
-                >
+                        </span>                   
+                }>
                     {getFieldDecorator('runtime', {
                         rules: [
                             {
@@ -193,7 +200,8 @@ class MovieForm extends React.Component {
                                 type: "integer",
                                 message: 'Please input an integer'
                             }
-                        ]
+                        ],
+                        initialValue: item.runtime
                     })(<InputNumber placeholder="127" />)}
                 </FormItem>
 
