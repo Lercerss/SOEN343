@@ -14,23 +14,20 @@ class MusicForm extends React.Component {
                 console.log('Received values of form: ', values);
                 const { token } = this.props;
 
-                if (this.props.action == "insert") {
-                    addNewItem('Music', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
-                } else if (this.props.action == "update") {
-                    addNewItem('Music', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
+                if (this.props.action == 'insert') {
+                    addNewItem('Music', values, token).then(response => {
+                        console.log(response);
+                    });
+                } else if (this.props.action == 'update') {
+                    addNewItem('Music', values, token).then(response => {
+                        console.log(response);
+                    });
                 }
             }
         });
     };
 
     render() {
-
         const { getFieldDecorator } = this.props.form;
         const item = this.props.item ? this.props.item : {};
 
@@ -59,7 +56,6 @@ class MusicForm extends React.Component {
 
         return (
             <Form onSubmit={this.handleSubmit} className="MusicForm">
-
                 <FormItem {...formItemLayout} label="Type">
                     {getFieldDecorator('type', {
                         rules: [
@@ -69,11 +65,13 @@ class MusicForm extends React.Component {
                             }
                         ],
                         initialValue: item.type
-                    })(<RadioGroup>
-                        <RadioButton value="cd">CD</RadioButton>
-                        <RadioButton value="vinyl">Vinyl</RadioButton>
-                        <RadioButton value="casette">Cassette</RadioButton>
-                    </RadioGroup>)}
+                    })(
+                        <RadioGroup>
+                            <RadioButton value="cd">CD</RadioButton>
+                            <RadioButton value="vinyl">Vinyl</RadioButton>
+                            <RadioButton value="casette">Cassette</RadioButton>
+                        </RadioGroup>
+                    )}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Title">
@@ -133,11 +131,11 @@ class MusicForm extends React.Component {
                             },
                             {
                                 len: 10,
-                                message: "Must be 10 characters long"
+                                message: 'Must be 10 characters long'
                             }
                         ],
                         initialValue: item.asin
-                    })(<Input placeholder="B008FOB124" disabled={this.props.action == "update"} />)}
+                    })(<Input placeholder="B008FOB124" disabled={this.props.action == 'update'} />)}
                 </FormItem>
 
                 <FormItem {...tailFormItemLayout}>

@@ -142,20 +142,23 @@ router.post('/add-item', (req, res) => {
             });
         } else {
             Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (item) {
+                    console.log(item);
+                    res.status(400).send({
+                        message: 'Item already exists',
+                        error: err
+                    });
+                    return;
+                }
                 if (err) {
                     console.log(err);
                     res.status(500).send({
                         message: 'Could not add item',
                         error: err
                     });
+                    return;
                 }
-                if (item !== null) {
-                    console.log(err);
-                    res.status(400).send({
-                        message: 'Item already exists',
-                        error: err
-                    });
-                }
+
                 res.status(200).send();
             });
         }
