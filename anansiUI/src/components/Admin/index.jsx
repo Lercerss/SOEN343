@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from 'antd';
 import UsersList from './UsersList/index';
 import RegisterAdmin from './RegisterAdmin';
+import CatalogView from '../CatalogView/index';
 import { getAllUsers } from '../../utils/httpUtils';
 
 export default class Admin extends React.Component {
@@ -42,6 +43,7 @@ export default class Admin extends React.Component {
                     ) :
                     (<Button onClick={this.showUsers} type="primary">View Users</Button>)
                 }
+		<CatalogView token={token}/>
             </div>
         );
     }
