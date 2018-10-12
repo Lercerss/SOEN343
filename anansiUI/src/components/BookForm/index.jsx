@@ -15,12 +15,12 @@ class BookForm extends React.Component {
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    addNewItem('book', values, token)
+                    addNewItem('Book', values, token)
                         .then(response => {
                             console.log(response);
                         });
                 } else if (this.props.action == "update") {
-                    editItem('book', values, token)
+                    editItem('Book', values, token)
                         .then(response => {
                             console.log(response);
                         });

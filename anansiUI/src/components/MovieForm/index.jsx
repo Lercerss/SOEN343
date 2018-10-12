@@ -13,12 +13,12 @@ class MovieForm extends React.Component {
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    addNewItem('movie', values, token)
+                    addNewItem('Movie', values, token)
                         .then(response => {
                             console.log(response);
                         });
                 } else if (this.props.action == "update") {
-                    addNewItem('movie', values, token)
+                    addNewItem('Movie', values, token)
                         .then(response => {
                             console.log(response);
                         });
