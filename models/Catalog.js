@@ -144,7 +144,9 @@ export class Catalog {
         });
     }
 
-    static viewItems() { }
+    static viewItems() {
+        return mediaList;
+    }
 
     static searchItem(type, fields, callback) {
         var err = null;

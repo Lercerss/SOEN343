@@ -86,6 +86,17 @@ router.post('/validate', (req, res) => {
     });
 });
 
+router.post('/catalog-items', (req, res) => {
+    var catalog = Catalog.viewItems();
+    if (catalog.length === 0) {
+        res.send({
+            message: 'Catalog is empty'
+        });
+    } else {
+        res.send(catalog);
+    }
+});
+
 router.post('/create-user', (req, res) => {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
