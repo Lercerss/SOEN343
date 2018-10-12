@@ -1,6 +1,7 @@
 import express from 'express';
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken, verifyToken } from '../utils/Auth';
+import { Catalog } from '../models/Catalog';
 
 var router = express.Router();
 
@@ -83,6 +84,17 @@ router.post('/validate', (req, res) => {
             isAdmin: decoded.data.isAdmin
         });
     });
+});
+
+router.post('/catalog-items', (req, res) => {
+    var catalog = Catalog.viewItems();
+    if (catalog.length === 0) {
+        res.send({
+            message: 'Catalog is empty'
+        });
+    } else {
+        res.send(catalog);
+    }
 });
 
 router.post('/create-user', (req, res) => {
