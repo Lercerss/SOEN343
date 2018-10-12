@@ -1,6 +1,6 @@
 import { Media } from './Media';
 
-export class PrinedMedia extends Media {
+export class PrintedMedia extends Media {
     constructor(userJSON) {
         super(userJSON);
         this.publisher = userJSON.publisher;

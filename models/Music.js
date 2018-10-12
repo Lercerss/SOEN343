@@ -1,4 +1,4 @@
-import { DigitalMedia } from './DigitamlMedia';
+import { DigitalMedia } from './DigitalMedia';
 
 export class Music extends DigitalMedia {
     constructor(userJSON) {

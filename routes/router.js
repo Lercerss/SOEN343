@@ -48,7 +48,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/get-users', (req, res) => {
-// TODO: Validate Token
+    // TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);
@@ -128,6 +128,64 @@ router.post('/create-user', (req, res) => {
                     }
                     res.status(200).send();
                 });
+            });
+        }
+    });
+});
+
+router.post('/add-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        message: 'Could not add item',
+                        error: err
+                    });
+                }
+                if (item !== null) {
+                    console.log(err);
+                    res.status(400).send({
+                        message: 'Item already exists',
+                        error: err
+                    });
+                }
+                res.status(200).send();
+            });
+        }
+    });
+});
+
+router.post('/edit-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        message: 'Could not edit item',
+                        error: err
+                    });
+                }
+                if (item == null) {
+                    console.log(err);
+                    res.status(400).send({
+                        message: 'Item could not be found',
+                        error: err
+                    });
+                }
+                res.status(200).send();
             });
         }
     });
