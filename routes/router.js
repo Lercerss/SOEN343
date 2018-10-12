@@ -93,7 +93,13 @@ router.post('/catalog-items', (req, res) => {
             message: 'Catalog is empty'
         });
     } else {
-        res.send(catalog);
+        var typed_catalog = catalog.map(val => {
+            return {
+                itemInfo: val,
+                type: val.constructor.name
+            };
+        })
+        res.send(typed_catalog);
     }
 });
 
