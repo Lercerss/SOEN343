@@ -48,7 +48,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/get-users', (req, res) => {
-// TODO: Validate Token
+    // TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);
@@ -130,29 +130,22 @@ router.post('/add-item', (req, res) => {
                 message: 'Only administrators can add media items'
             });
         } else {
-            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item, index) => {
+            Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
                 if (err) {
+                    console.log(err);
                     res.status(500).send({
-                        message: 'There was an error checking for item existence'
+                        message: 'Could not add item',
+                        error: err
                     });
-                    return;
                 }
                 if (item !== null) {
+                    console.log(err);
                     res.status(400).send({
-                        message: 'Item already exists'
+                        message: 'Item already exists',
+                        error: err
                     });
-                    return;
                 }
-                Catalog.addItem(req.body.type, req.body.itemInfo, err => {
-                    if (err) {
-                        console.log(err);
-                        res.status(400).send({
-                            message: 'Could not add item',
-                            error: err
-                        });
-                    }
-                    res.status(200).send();
-                });
+                res.status(200).send();
             });
         }
     });
@@ -166,29 +159,22 @@ router.post('/edit-item', (req, res) => {
                 message: 'Only administrators can add media items'
             });
         } else {
-            Catalog.searchItem(req.body.type, req.body.itemInfo, (err, item, index) => {
+            Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
                 if (err) {
+                    console.log(err);
                     res.status(500).send({
-                        message: 'There was an error checking for item existence'
+                        message: 'Could not edit item',
+                        error: err
                     });
-                    return;
                 }
                 if (item == null) {
+                    console.log(err);
                     res.status(400).send({
-                        message: 'Item does not exist'
+                        message: 'Item could not be found',
+                        error: err
                     });
-                    return;
                 }
-                Catalog.editItem(req.body.type, req.body.itemInfo, index, err => {
-                    if (err) {
-                        console.log(err);
-                        res.status(400).send({
-                            message: 'Could not edit item',
-                            error: err
-                        });
-                    }
-                    res.status(200).send();
-                });
+                res.status(200).send();
             });
         }
     });
