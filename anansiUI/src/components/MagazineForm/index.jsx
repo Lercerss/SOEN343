@@ -12,23 +12,20 @@ class MagazineForm extends React.Component {
                 console.log('Received values of form: ', values);
                 const { token } = this.props;
 
-                if (this.props.action == "insert") {
-                    addNewItem('Magazine', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
-                } else if (this.props.action == "update") {
-                    addNewItem('Magazine', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
+                if (this.props.action == 'insert') {
+                    addNewItem('Magazine', values, token).then(response => {
+                        console.log(response);
+                    });
+                } else if (this.props.action == 'update') {
+                    addNewItem('Magazine', values, token).then(response => {
+                        console.log(response);
+                    });
                 }
             }
         });
     };
 
     render() {
-
         const { getFieldDecorator } = this.props.form;
         const item = this.props.item ? this.props.item : {};
 
@@ -114,7 +111,7 @@ class MagazineForm extends React.Component {
                             },
                             {
                                 len: 10,
-                                message: "Must be 10 digits long"
+                                message: 'Must be 10 digits long'
                             }
                         ],
                         initialValue: item.isbn10
@@ -130,7 +127,7 @@ class MagazineForm extends React.Component {
                             },
                             {
                                 len: 13,
-                                message: "Must be 13 digits long"
+                                message: 'Must be 13 digits long'
                             }
                         ],
                         initialValue: item.isbn13

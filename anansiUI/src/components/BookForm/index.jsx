@@ -14,23 +14,20 @@ class BookForm extends React.Component {
                 console.log('Received values of form: ', values);
                 const { token } = this.props;
 
-                if (this.props.action == "insert") {
-                    addNewItem('Book', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
-                } else if (this.props.action == "update") {
-                    editItem('Book', values, token)
-                        .then(response => {
-                            console.log(response);
-                        });
+                if (this.props.action == 'insert') {
+                    addNewItem('Book', values, token).then(response => {
+                        console.log(response);
+                    });
+                } else if (this.props.action == 'update') {
+                    editItem('Book', values, token).then(response => {
+                        console.log(response);
+                    });
                 }
             }
         });
     };
 
     render() {
-
         const { getFieldDecorator } = this.props.form;
         const item = this.props.item ? this.props.item : {};
 
@@ -60,17 +57,15 @@ class BookForm extends React.Component {
         return (
             <Form onSubmit={this.handleSubmit} className="BookForm">
                 <FormItem {...formItemLayout} label="Title">
-                    {getFieldDecorator('title',
-                        {
-                            rules: [
-                                {
-                                    required: true,
-                                    message: 'Please input title'
-                                }
-                            ],
-                            initialValue: item.title
-                        }
-                    )(<Input placeholder="Do Androids Dream of Electric Sheep?" />)}
+                    {getFieldDecorator('title', {
+                        rules: [
+                            {
+                                required: true,
+                                message: 'Please input title'
+                            }
+                        ],
+                        initialValue: item.title
+                    })(<Input placeholder="Do Androids Dream of Electric Sheep?" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Author">
@@ -94,10 +89,12 @@ class BookForm extends React.Component {
                             }
                         ],
                         initialValue: item.format
-                    })(<RadioGroup>
-                        <RadioButton value="paperback">Paperback</RadioButton>
-                        <RadioButton value="hardcover">Hardcover</RadioButton>
-                    </RadioGroup>)}
+                    })(
+                        <RadioGroup>
+                            <RadioButton value="paperback">Paperback</RadioButton>
+                            <RadioButton value="hardcover">Hardcover</RadioButton>
+                        </RadioGroup>
+                    )}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Number of Pages">
@@ -108,7 +105,7 @@ class BookForm extends React.Component {
                                 message: 'Please input number of pages'
                             },
                             {
-                                type: "integer",
+                                type: 'integer',
                                 message: 'Please input an integer'
                             }
                         ],
@@ -161,7 +158,7 @@ class BookForm extends React.Component {
                             },
                             {
                                 len: 10,
-                                message: "Must be 10 digits long"
+                                message: 'Must be 10 digits long'
                             }
                         ],
                         initialValue: item.isbn10
@@ -177,7 +174,7 @@ class BookForm extends React.Component {
                             },
                             {
                                 len: 13,
-                                message: "Must be 13 digits long"
+                                message: 'Must be 13 digits long'
                             }
                         ],
                         initialValue: item.isbn13
