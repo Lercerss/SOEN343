@@ -9,16 +9,16 @@ class MagazineForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { title, publisher, dateOfPublication, language, isbn10, isbn13 } = values;
+                const { title, publisher, publicationDate, language, isbn10, isbn13 } = values;
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    // createNewMagazine(title, publisher, dateOfPublication, language, isbn10, isbn13, token)
+                    // createNewMagazine(title, publisher, publicationDate, language, isbn10, isbn13, token)
                     //     .then(response => {
                     //         console.log(response);
                     //     });
                 } else if (this.props.action == "update") {
-                    // updateMagazine(title, publisher, dateOfPublication, language, isbn10, isbn13, token)
+                    // updateMagazine(title, publisher, publicationDate, language, isbn10, isbn13, token)
                     //     .then(response => {
                     //         console.log(response);
                     //     });
@@ -28,8 +28,9 @@ class MagazineForm extends React.Component {
     };
 
     render() {
-        
+
         const { getFieldDecorator } = this.props.form;
+        const item = this.props.item ? this.props.item : {};
 
         const formItemLayout = {
             labelCol: {
@@ -63,7 +64,8 @@ class MagazineForm extends React.Component {
                                 required: true,
                                 message: 'Please input title'
                             }
-                        ]
+                        ],
+                        initialValue: item.title
                     })(<Input placeholder="TIME" />)}
                 </FormItem>
 
@@ -74,18 +76,20 @@ class MagazineForm extends React.Component {
                                 required: true,
                                 message: 'Please input publisher'
                             }
-                        ]
+                        ],
+                        initialValue: item.publisher
                     })(<Input placeholder="Time" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Date of publication">
-                    {getFieldDecorator('dateOfPublication', {
+                    {getFieldDecorator('publicationDate', {
                         rules: [
                             {
                                 required: true,
                                 message: 'Please input date of publication'
                             }
-                        ]
+                        ],
+                        initialValue: item.publicationDate
                     })(<DatePicker placeholder="2008-05-13" />)}
                 </FormItem>
 
@@ -96,7 +100,8 @@ class MagazineForm extends React.Component {
                                 required: true,
                                 message: 'Please input language'
                             }
-                        ]
+                        ],
+                        initialValue: item.language
                     })(<Input placeholder="English" />)}
                 </FormItem>
 
@@ -111,7 +116,8 @@ class MagazineForm extends React.Component {
                                 len: 10,
                                 message: "Must be 10 digits long"
                             }
-                        ]
+                        ],
+                        initialValue: item.isbn10
                     })(<Input placeholder="1603200185" />)}
                 </FormItem>
 
@@ -126,7 +132,8 @@ class MagazineForm extends React.Component {
                                 len: 13,
                                 message: "Must be 13 digits long"
                             }
-                        ]
+                        ],
+                        initialValue: item.isbn13
                     })(<Input placeholder="9781603200189" />)}
                 </FormItem>
 

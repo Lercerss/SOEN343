@@ -6,6 +6,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 class BookForm extends React.Component {
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -30,8 +31,9 @@ class BookForm extends React.Component {
     };
 
     render() {
-        
+
         const { getFieldDecorator } = this.props.form;
+        const item = this.props.item ? this.props.item : {};
 
         const formItemLayout = {
             labelCol: {
@@ -59,14 +61,17 @@ class BookForm extends React.Component {
         return (
             <Form onSubmit={this.handleSubmit} className="BookForm">
                 <FormItem {...formItemLayout} label="Title">
-                    {getFieldDecorator('title', {
-                        rules: [
-                            {
-                                required: true,
-                                message: 'Please input title'
-                            }
-                        ]
-                    })(<Input placeholder="Do Androids Dream of Electric Sheep?" />)}
+                    {getFieldDecorator('title',
+                        {
+                            rules: [
+                                {
+                                    required: true,
+                                    message: 'Please input title'
+                                }
+                            ],
+                            initialValue: item.title
+                        }
+                    )(<Input placeholder="Do Androids Dream of Electric Sheep?" />)}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Author">
@@ -76,7 +81,8 @@ class BookForm extends React.Component {
                                 required: true,
                                 message: 'Please input author name'
                             }
-                        ]
+                        ],
+                        initialValue: item.author
                     })(<Input placeholder="Philip K. Dick" />)}
                 </FormItem>
 
@@ -87,7 +93,8 @@ class BookForm extends React.Component {
                                 required: true,
                                 message: 'Please select format'
                             }
-                        ]
+                        ],
+                        initialValue: item.format
                     })(<RadioGroup>
                         <RadioButton value="paperback">Paperback</RadioButton>
                         <RadioButton value="hardcover">Hardcover</RadioButton>
@@ -105,7 +112,8 @@ class BookForm extends React.Component {
                                 type: "integer",
                                 message: 'Please input an integer'
                             }
-                        ]
+                        ],
+                        initialValue: item.pages
                     })(<InputNumber placeholder="240" />)}
                 </FormItem>
 
@@ -116,7 +124,8 @@ class BookForm extends React.Component {
                                 required: true,
                                 message: 'Please input publisher'
                             }
-                        ]
+                        ],
+                        initialValue: item.publisher
                     })(<Input placeholder="Del Rey" />)}
                 </FormItem>
 
@@ -127,7 +136,8 @@ class BookForm extends React.Component {
                                 required: true,
                                 message: 'Please input publication date'
                             }
-                        ]
+                        ],
+                        initialValue: item.publicationDate
                     })(<DatePicker placeholder="2017-09-26" />)}
                 </FormItem>
 
@@ -138,7 +148,8 @@ class BookForm extends React.Component {
                                 required: true,
                                 message: 'Please input language'
                             }
-                        ]
+                        ],
+                        initialValue: item.language
                     })(<Input placeholder="English" />)}
                 </FormItem>
 
@@ -153,7 +164,8 @@ class BookForm extends React.Component {
                                 len: 10,
                                 message: "Must be 10 digits long"
                             }
-                        ]
+                        ],
+                        initialValue: item.isbn10
                     })(<Input placeholder="1524796972" />)}
                 </FormItem>
 
@@ -168,7 +180,8 @@ class BookForm extends React.Component {
                                 len: 13,
                                 message: "Must be 13 digits long"
                             }
-                        ]
+                        ],
+                        initialValue: item.isbn13
                     })(<Input placeholder="9781524796976" />)}
                 </FormItem>
 

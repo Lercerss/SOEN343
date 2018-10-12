@@ -30,7 +30,9 @@ class MusicForm extends React.Component {
     };
 
     render() {
+
         const { getFieldDecorator } = this.props.form;
+        const item = this.props.item ? this.props.item : {};
 
         const formItemLayout = {
             labelCol: {
@@ -65,7 +67,8 @@ class MusicForm extends React.Component {
                                 required: true,
                                 message: 'Please select type'
                             }
-                        ]
+                        ],
+                        initialValue: item.format
                     })(<RadioGroup>
                         <RadioButton value="cd">CD</RadioButton>
                         <RadioButton value="vinyl">Vinyl</RadioButton>
@@ -80,7 +83,8 @@ class MusicForm extends React.Component {
                                 required: true,
                                 message: 'Please input title'
                             }
-                        ]
+                        ],
+                        initialValue: item.title
                     })(<Input placeholder="Anastasis" />)}
                 </FormItem>
 
@@ -91,7 +95,8 @@ class MusicForm extends React.Component {
                                 required: true,
                                 message: 'Please input artist'
                             }
-                        ]
+                        ],
+                        initialValue: item.artist
                     })(<Input placeholder="Dead Can Dance" />)}
                 </FormItem>
 
@@ -102,7 +107,8 @@ class MusicForm extends React.Component {
                                 required: true,
                                 message: 'Please input label'
                             }
-                        ]
+                        ],
+                        initialValue: item.label
                     })(<Input placeholder="Sony Music" />)}
                 </FormItem>
 
@@ -113,7 +119,8 @@ class MusicForm extends React.Component {
                                 required: true,
                                 message: 'Please input release date'
                             }
-                        ]
+                        ],
+                        initialValue: item.releaseDate
                     })(<DatePicker placeholder="2012-08-14" />)}
                 </FormItem>
 
@@ -128,7 +135,8 @@ class MusicForm extends React.Component {
                                 len: 10,
                                 message: "Must be 10 characters long"
                             }
-                        ]
+                        ],
+                        initialValue: item.asin
                     })(<Input placeholder="B008FOB124" disabled={this.props.action == "update"} />)}
                 </FormItem>
 
