@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker } from 'antd';
 import { addNewItem, editItem } from '../../utils/httpUtils';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 
@@ -17,7 +18,7 @@ class MagazineForm extends React.Component {
                         console.log(response);
                     });
                 } else if (this.props.action == 'update') {
-                    addNewItem('Magazine', values, token).then(response => {
+                    editItem('Magazine', values, token).then(response => {
                         console.log(response);
                     });
                 }
@@ -53,7 +54,7 @@ class MagazineForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="MagazineForm">
+            <Form onSubmit={this.handleSubmit} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
@@ -86,7 +87,7 @@ class MagazineForm extends React.Component {
                                 message: 'Please input date of publication'
                             }
                         ],
-                        initialValue: item.publicationDate
+                        initialValue: moment(item.publicationDate)
                     })(<DatePicker placeholder="2008-05-13" />)}
                 </FormItem>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker, Radio } from 'antd';
 import { addNewItem, editItem } from '../../utils/httpUtils';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -19,7 +20,7 @@ class MusicForm extends React.Component {
                         console.log(response);
                     });
                 } else if (this.props.action == 'update') {
-                    addNewItem('Music', values, token).then(response => {
+                    editItem('Music', values, token).then(response => {
                         console.log(response);
                     });
                 }
@@ -55,7 +56,7 @@ class MusicForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="MusicForm">
+            <Form onSubmit={this.handleSubmit} className="Form">
                 <FormItem {...formItemLayout} label="Type">
                     {getFieldDecorator('type', {
                         rules: [
@@ -118,7 +119,7 @@ class MusicForm extends React.Component {
                                 message: 'Please input release date'
                             }
                         ],
-                        initialValue: item.releaseDate
+                        initialValue: moment(item.releaseDate)
                     })(<DatePicker placeholder="2012-08-14" />)}
                 </FormItem>
 

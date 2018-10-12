@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker, Tooltip, Icon, InputNumber } from 'antd';
 import { addNewItem, editItem } from '../../utils/httpUtils';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 
@@ -17,7 +18,7 @@ class MovieForm extends React.Component {
                         console.log(response);
                     });
                 } else if (this.props.action == 'update') {
-                    addNewItem('Movie', values, token).then(response => {
+                    editItem('Movie', values, token).then(response => {
                         console.log(response);
                     });
                 }
@@ -53,7 +54,7 @@ class MovieForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="MovieForm">
+            <Form onSubmit={this.handleSubmit} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
@@ -121,7 +122,9 @@ class MovieForm extends React.Component {
                             }
                         ],
                         initialValue: item.actors
-                    })(<Input placeholder="Bruno Ganz, Solveig Dommartin, Otto Sander, Curt Bois, Peter Falk" />)}
+                    })(
+                        <Input placeholder="Bruno Ganz, Solveig Dommartin, Otto Sander, Curt Bois, Peter Falk" />
+                    )}
                 </FormItem>
 
                 <FormItem {...formItemLayout} label="Language">
@@ -187,7 +190,7 @@ class MovieForm extends React.Component {
                                 message: 'Please input release date'
                             }
                         ],
-                        initialValue: item.releaseDate
+                        initialValue: moment(item.releaseDate)
                     })(<DatePicker placeholder="2012-08-14" />)}
                 </FormItem>
 

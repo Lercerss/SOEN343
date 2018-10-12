@@ -6,17 +6,15 @@ import MusicForm from './../MusicForm';
 import BookForm from './../BookForm';
 
 export default class MediaForm extends React.Component {
-
     state = {
         mediaType: undefined
     };
 
-    handleView = (e) => {
+    handleView = e => {
         this.setState({ mediaType: e.target.value });
     };
 
     render() {
-
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -31,15 +29,15 @@ export default class MediaForm extends React.Component {
         const { token } = this.props;
 
         const formComponent = {
-            "book": <BookForm action="insert" token={token} />,
-            "magazine": <MagazineForm action="insert" token={token} />,
-            "movie": <MovieForm action="insert" token={token} />,
-            "music": <MusicForm action="insert" token={token} />,
-            undefined: ""
+            book: <BookForm action="insert" token={token} />,
+            magazine: <MagazineForm action="insert" token={token} />,
+            movie: <MovieForm action="insert" token={token} />,
+            music: <MusicForm action="insert" token={token} />,
+            undefined: ''
         };
 
         return (
-            <div className='AddMediaForm'>
+            <div className="AddMediaForm modal-wrap">
                 <Form>
                     <Form.Item {...formItemLayout} label="Pick a media type:">
                         <Radio.Group buttonStyle="solid" onChange={this.handleView}>

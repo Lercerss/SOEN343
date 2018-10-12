@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, Radio, InputNumber, DatePicker } from 'antd';
 import { addNewItem, editItem } from '../../utils/httpUtils';
+import moment from 'moment';
 
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
@@ -55,7 +56,7 @@ class BookForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="BookForm">
+            <Form onSubmit={this.handleSubmit} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
@@ -133,7 +134,7 @@ class BookForm extends React.Component {
                                 message: 'Please input publication date'
                             }
                         ],
-                        initialValue: item.publicationDate
+                        initialValue: moment(item.publicationDate)
                     })(<DatePicker placeholder="2017-09-26" />)}
                 </FormItem>
 
