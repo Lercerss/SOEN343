@@ -7,6 +7,7 @@ export class UserRegistry {
             username
         ]);
         db.query(SQLQuery, (err, rows, fields) => {
+            console.log(err);
             UserRegistry.jsonToUser(err, rows, fields, callback);
         });
     }

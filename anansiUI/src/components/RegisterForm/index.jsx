@@ -5,20 +5,17 @@ import { Form, Input, Tooltip, Icon, Checkbox, Modal, Button, Card } from 'antd'
 const FormItem = Form.Item;
 
 class RegisterForm extends React.Component {
+    state = {
+        submissionResult: null,
+        message: null
+    };
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const {
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin
-                } = values;
+                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
                 const { token } = this.props;
 
                 createNewUser(
@@ -31,26 +28,35 @@ class RegisterForm extends React.Component {
                     isAdmin,
                     token
                 )
-                    .then(response => {
-                        Modal.success({
-                            title: 'Your registration is complete!'
-                        });
-                        console.log(response);
-                        const { onUserRegistered } = this.props;
-                        if (onUserRegistered) {
-                            onUserRegistered();
-                        }
-                    })
-                    .catch(error => {
-                        if (error && error.response.status !== 401) {
-                            Modal.error({
-                                title: 'Failed to create a new user',
-                                content: error.response
-                                    ? error.response.data.message
-                                    : 'Connection error'
-                            });
-                        }
+                .then(response => {
+                    Modal.success({
+                        title: 'Your registration is complete!'
                     });
+                    this.setState({
+                        submissionResult: response.status,
+                        message: response.data.message 
+                    });
+                    
+                    console.log(response);
+                    const { onUserRegistered } = this.props;
+                    if (onUserRegistered) {
+                        onUserRegistered();
+                    }
+                })
+                .catch(error => {
+                    if (error && error.response.status !== 401) {
+                        Modal.error({
+                            title: 'Failed to create a new user',
+                            content: error.response
+                                ? error.response.data.message
+                                : 'Connection error'
+                        });
+                    }
+                    this.setState({
+                        submissionResult: error.response.status,
+                        message: error.response.data.message
+                    });
+                });
             }
         });
     };
@@ -188,6 +194,28 @@ class RegisterForm extends React.Component {
                             Submit
                         </Button>
                     </FormItem>
+
+                    {(this.state.submissionResult === 200 && (
+                        <div>
+                            <Modal
+                                title="Your registration is complete!"
+                                visible={this.state.submissionResult === 200}
+                                footer={null}
+                            >
+                                <Button onClick={this.handleClose}>OK</Button>
+                            </Modal>
+                        </div>
+                    )) ||
+                        (this.state.submissionResult &&
+                            this.state.submissionResult > 300 && (
+                                <Modal
+                                    title={this.state.message}
+                                    visible={this.state.submissionResult && this.state.submissionResult > 300}
+                                    footer={null}
+                                >
+                                    <Button onClick={this.handleClose}>OK</Button>
+                                </Modal>
+                            ))}
                 </Form>
             </Card>
         );
