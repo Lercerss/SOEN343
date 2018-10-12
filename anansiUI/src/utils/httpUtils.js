@@ -53,3 +53,14 @@ export function editItem(type, itemInfo, token) {
         token: token
     });
 }
+
+export function deleteItem(id, itemInfo, token) {
+    console.log(token);
+    return axios.delete(`${backendURL}delete-item/`, {
+        data: {
+            id: id,
+            itemInfo: itemInfo,
+            token: token
+        }
+    });
+}

@@ -122,7 +122,7 @@ export class Catalog {
         var err = null;
         var index = 0;
         for (var item of mediaList){
-            if (item.getId() === id) {
+            if (item.id === id) {
                 callback(err, item, index);
                 return;
             }
