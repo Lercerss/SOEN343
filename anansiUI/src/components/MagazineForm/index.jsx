@@ -13,12 +13,12 @@ class MagazineForm extends React.Component {
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    addNewItem('magazine', values, token)
+                    addNewItem('Magazine', values, token)
                         .then(response => {
                             console.log(response);
                         });
                 } else if (this.props.action == "update") {
-                    addNewItem('magazine', values, token)
+                    addNewItem('Magazine', values, token)
                         .then(response => {
                             console.log(response);
                         });

@@ -15,12 +15,12 @@ class MusicForm extends React.Component {
                 const { token } = this.props;
 
                 if (this.props.action == "insert") {
-                    addNewItem('music', values, token)
+                    addNewItem('Music', values, token)
                         .then(response => {
                             console.log(response);
                         });
                 } else if (this.props.action == "update") {
-                    addNewItem('music', values, token)
+                    addNewItem('Music', values, token)
                         .then(response => {
                             console.log(response);
                         });
