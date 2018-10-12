@@ -103,7 +103,9 @@ router.post('/catalog-items', (req, res) => {
     }
 });
 
-router.post('/create-user', (req, res) => {
+
+// captures sent post request from front end to localhost:3000/create-user (backend)
+router.post('/create-user', (req, res) => {//req -> dic, res-> result of request
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);

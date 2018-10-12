@@ -1,39 +1,46 @@
 import React from 'react';
-import { Form, Input, Tooltip, Icon, Checkbox, Button, Card } from 'antd';
 import { createNewUser } from '../../utils/httpUtils';
+import { Form, Input, Tooltip, Icon, Checkbox, Modal, Button, Card } from 'antd';
 
 const FormItem = Form.Item;
 
 class RegisterForm extends React.Component {
+    state = {
+        submissionResult: null,
+        message: null
+    };
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const {
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin
-                } = values;
+                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
                 const { token } = this.props;
 
-                createNewUser(
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin,
-                    token
-                ).then(response => {
-                    console.log(response);
-                });
+                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
+                    .then(response => {
+                        this.setState({ submissionResult: response.status, message: response.data.message });
+                        console.log(response);
+                        const { onUserRegistered } = this.props;
+                        if (onUserRegistered) {
+                            onUserRegistered();
+                        }
+                    })
+                    .catch(error => {
+                        this.setState({
+                            submissionResult: error.response.status,
+                            message: error.response.data.message
+                        });
+                    });
             }
+        });
+    };
+
+    handleClose = e => {
+        this.setState({
+            submissionResult: null,
+            message: null
         });
     };
 
@@ -155,6 +162,28 @@ class RegisterForm extends React.Component {
                             Submit
                         </Button>
                     </FormItem>
+
+                    {(this.state.submissionResult === 200 && (
+                        <div>
+                            <Modal
+                                title="Your registration is complete!"
+                                visible={this.state.submissionResult === 200}
+                                footer={null}
+                            >
+                                <Button onClick={this.handleClose}>OK</Button>
+                            </Modal>
+                        </div>
+                    )) ||
+                        (this.state.submissionResult &&
+                            this.state.submissionResult > 300 && (
+                                <Modal
+                                    title={this.state.message}
+                                    visible={this.state.submissionResult && this.state.submissionResult > 300}
+                                    footer={null}
+                                >
+                                    <Button onClick={this.handleClose}>OK</Button>
+                                </Modal>
+                            ))}
                 </Form>
             </Card>
         );
