@@ -38,7 +38,7 @@ export default class Admin extends React.Component {
             <div className="admin">
                 <h1>Welcome Admin!</h1>
                 <RegisterAdmin token={token} onUserRegistered={this.hideUserList} />
-                <AddMedia token={token} />
+                <AddMedia token={token}/>
                 {this.state.showUserList ? (
                     <div>
                         <UsersList users={this.state.userList} />

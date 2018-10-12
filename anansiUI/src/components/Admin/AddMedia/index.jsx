@@ -13,6 +13,12 @@ export default class AddMedia extends React.Component {
         this.setState({ isAddMediaFormShown: true }),
             this.setState({ isAddMediaButtonShown: false });
     };
+    handleClose = () => {
+        this.setState({
+            isAddMediaButtonShown: true,
+            isAddMediaFormShown: false
+        });
+    }
 
     render() {
 
@@ -22,7 +28,7 @@ export default class AddMedia extends React.Component {
             <div className='AddMedia'>
                 {this.state.isAddMediaButtonShown ?
                     <Button onClick={this.handleView} type="primary"> Add Media </Button> : ""}
-                {this.state.isAddMediaFormShown ? <AddMediaForm token={token} /> : ""}
+                {this.state.isAddMediaFormShown ? <AddMediaForm handleClose={this.handleClose} token={token} /> : ""}
             </div>
         );
     }

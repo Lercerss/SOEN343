@@ -11,15 +11,18 @@ class MovieForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { token } = this.props;
+                const { token, handleClose } = this.props;
 
                 if (this.props.action == 'insert') {
                     addNewItem('Movie', values, token).then(response => {
                         console.log(response);
+                        handleClose();
                     });
                 } else if (this.props.action == 'update') {
                     editItem('Movie', values, token).then(response => {
+                        values['id'] = this.props.item.id;
                         console.log(response);
+                        handleClose();
                     });
                 }
             }

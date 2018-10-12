@@ -11,15 +11,18 @@ class MagazineForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { token } = this.props;
+                const { token, handleClose } = this.props;
 
                 if (this.props.action == 'insert') {
                     addNewItem('Magazine', values, token).then(response => {
                         console.log(response);
+                        handleClose();
                     });
                 } else if (this.props.action == 'update') {
                     editItem('Magazine', values, token).then(response => {
+                        values['id'] = this.props.item.id;
                         console.log(response);
+                        handleClose();
                     });
                 }
             }

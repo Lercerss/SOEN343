@@ -13,15 +13,17 @@ class BookForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { token } = this.props;
+                const { token, handleClose } = this.props;
 
                 if (this.props.action == 'insert') {
                     addNewItem('Book', values, token).then(response => {
                         console.log(response);
+                        handleClose();
                     });
                 } else if (this.props.action == 'update') {
                     editItem('Book', values, token).then(response => {
                         console.log(response);
+                        handleClose();
                     });
                 }
             }

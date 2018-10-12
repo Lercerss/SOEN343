@@ -26,19 +26,28 @@ export default class MediaForm extends React.Component {
             }
         };
 
-        const { token } = this.props;
+        const { token, handleClose } = this.props;
 
         const formComponent = {
-            book: <BookForm action="insert" token={token} />,
-            magazine: <MagazineForm action="insert" token={token} />,
-            movie: <MovieForm action="insert" token={token} />,
-            music: <MusicForm action="insert" token={token} />,
+            book: <BookForm action="insert" token={token} handleClose={handleClose} />,
+            magazine: <MagazineForm action="insert" token={token} handleClose={handleClose} />,
+            movie: <MovieForm action="insert" token={token} handleClose={handleClose} />,
+            music: <MusicForm action="insert" token={token} handleClose={handleClose} />,
             undefined: ''
         };
 
         return (
             <div className="AddMediaForm modal-wrap">
-                <Form>
+                <Form className="MetaForm">
+                    <div
+                        className="Form_close"
+                        onClick={handleClose}
+                        onKeyPress={handleClose}
+                        role="button"
+                        tabIndex={0}
+                    >
+                        &#10005;
+                    </div>
                     <Form.Item {...formItemLayout} label="Pick a media type:">
                         <Radio.Group buttonStyle="solid" onChange={this.handleView}>
                             <Radio.Button value="book">Book</Radio.Button>
