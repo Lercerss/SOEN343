@@ -33,7 +33,7 @@ export class User {
     login() {
         this.setTimestamp(Date.now());
         const SQLQuery = db.format(
-            'UPDATE user SET timestamp = ? WHERE username = ?',
+            'UPDATE users SET timestamp = ? WHERE username = ?',
             [this.timestamp, this.username]
         );
 

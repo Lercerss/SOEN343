@@ -3,7 +3,7 @@ import { connection as db } from '../db/dbConnection';
 
 export class UserRegistry {
     static searchUser(username, callback) {
-        const SQLQuery = db.format('SELECT * FROM user WHERE username=?', [
+        const SQLQuery = db.format('SELECT * FROM users WHERE username=?', [
             username
         ]);
         db.query(SQLQuery, (err, rows, fields) => {
@@ -12,7 +12,7 @@ export class UserRegistry {
     }
     static getAllUsers(callback) {
         db.query(
-            'SELECT username, firstName, lastName FROM user',
+            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM users',
             (err, rows, fields) => {
                 UserRegistry.jsonToUser(err, rows, fields, callback);
             }
@@ -39,7 +39,7 @@ export class UserRegistry {
             if (err) {
                 callback(err);
             }
-            const query = db.format('INSERT INTO user VALUES (?)', [
+            const query = db.format('INSERT INTO users VALUES (?)', [
                 user.toDbRow()
             ]);
             db.query(query, (err, rows, fields) => {

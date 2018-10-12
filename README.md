@@ -31,13 +31,7 @@ node --version
 mysql --version
 ```
 
-If you are a Windows user, configure your `npm` to use Bash as a subshell with the following command:
-
-```shell
-npm config set script-shell "C:\\Path\\To\\bin\\bash.exe"
-```
-
-We also need to install the necessary node packages for front-end and back-end specified in all `package.json`. Type the following command from root directory of the project AND from anansiUI/:
+We need to install the necessary node packages for front-end and back-end specified in all `package.json`. Type the following command from root directory of the project AND from anansiUI/:
 
 ```
 npm install
@@ -45,28 +39,33 @@ npm install
 
 ### Database Setup
 
-Create a JS config file called `hidden.js` in the root directory of the project with the following contents:
+Create a config file called `.env` in the root directory of the project with the following contents:
 
-```javascript
-module.exports = {
-    password: "<password>",
-    secretKey: "<random-key>"
-};
+```dosini
+MYSQL_PASSWORD="<password>"
+SECRETKEY="<secret key>"
+DATABASE_NAME="anansi_db"
+TEST_DATABASE="anansi_db_test"
 ```
 
 Run mySQL shell, and enter the following SQL statements:
 
 ```SQL
 CREATE USER 'dbuser'@'localhost' IDENTIFIED BY '<password>';
-GRANT ALL PRIVILEGES ON anansi_db.* TO 'dbuser'@'localhost';
+GRANT ALL PRIVILEGES ON `anansi_db%`.* TO 'dbuser'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
 To create the database and apply migrations, run the following commands:
 
 ```Shell
-npm run migrate db:create anansi_db -- -e creation
+#dev database
+npm run migrate db:create anansi_db -- -e creation 
 npm run migrate up
+
+#test database
+npm run migrate db:create anansi_db_test 
+npm run test_migrate up
 ```
 
 ### Running the Server

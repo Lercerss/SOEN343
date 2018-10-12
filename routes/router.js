@@ -1,8 +1,15 @@
 import express from 'express';
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken, verifyToken } from '../utils/Auth';
+import { Catalog } from '../models/Catalog';
 
 var router = express.Router();
+
+router.get('/', (req, res) => {
+    res.status(200).send({
+        message: 'Express server up and running'
+    });
+});
 
 router.post('/login', (req, res) => {
     let { username, password } = req.body;
@@ -40,7 +47,8 @@ router.post('/login', (req, res) => {
     });
 });
 
-router.post('/getUsers', (req, res) => {
+router.post('/get-users', (req, res) => {
+    // TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
             console.log(err);
@@ -78,6 +86,17 @@ router.post('/validate', (req, res) => {
     });
 });
 
+router.post('/catalog-items', (req, res) => {
+    var catalog = Catalog.viewItems();
+    if (catalog.length === 0) {
+        res.send({
+            message: 'Catalog is empty'
+        });
+    } else {
+        res.send(catalog);
+    }
+});
+
 router.post('/create-user', (req, res) => {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
@@ -86,11 +105,10 @@ router.post('/create-user', (req, res) => {
                 message: 'Only administrators can register new users'
             });
         } else {
-            UserRegistry.searchUser(req.body.username, (err, userArray) => {
+            UserRegistry.searchUser(req.body.userInfo.username, (err, userArray) => {
                 if (err) {
                     res.status(500).send({
-                        message:
-                            'There was an error checking for username existence'
+                        message: 'There was an error checking for username existence'
                     });
                     return;
                 }
@@ -100,7 +118,7 @@ router.post('/create-user', (req, res) => {
                     });
                     return;
                 }
-                UserRegistry.makeNewUser(req.body, err => {
+                UserRegistry.makeNewUser(req.body.userInfo, err => {
                     if (err) {
                         console.log(err);
                         res.status(400).send({
@@ -110,6 +128,64 @@ router.post('/create-user', (req, res) => {
                     }
                     res.status(200).send();
                 });
+            });
+        }
+    });
+});
+
+router.post('/add-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        message: 'Could not add item',
+                        error: err
+                    });
+                }
+                if (item !== null) {
+                    console.log(err);
+                    res.status(400).send({
+                        message: 'Item already exists',
+                        error: err
+                    });
+                }
+                res.status(200).send();
+            });
+        }
+    });
+});
+
+router.post('/edit-item', (req, res) => {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin) {
+            console.log(decoded);
+            res.status(403).send({
+                message: 'Only administrators can add media items'
+            });
+        } else {
+            Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send({
+                        message: 'Could not edit item',
+                        error: err
+                    });
+                }
+                if (item == null) {
+                    console.log(err);
+                    res.status(400).send({
+                        message: 'Item could not be found',
+                        error: err
+                    });
+                }
+                res.status(200).send();
             });
         }
     });

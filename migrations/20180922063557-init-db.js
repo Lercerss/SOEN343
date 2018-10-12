@@ -24,7 +24,7 @@ exports.up = function (db) {
 };
 
 exports.down = function (db) {
-    return db.dropTable('test');
+    return db.dropTable('test', { ifExists: true });
 };
 
 exports._meta = {
