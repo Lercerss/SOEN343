@@ -43,7 +43,8 @@ module.exports = {
         poll: true
     },
     devServer: {
-        contentBase: './dist'
+        contentBase: './dist',
+        historyApiFallback: true
     },
     mode: 'development'
 };

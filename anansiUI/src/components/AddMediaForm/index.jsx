@@ -1,5 +1,5 @@
 import React from 'react';
-import { Radio, Form, Divider } from 'antd';
+import { Radio, Form, Divider, Card } from 'antd';
 import MagazineForm from './../MagazineForm';
 import MovieForm from './../MovieForm';
 import MusicForm from './../MusicForm';
@@ -37,17 +37,8 @@ export default class MediaForm extends React.Component {
         };
 
         return (
-            <div className="AddMediaForm modal-wrap">
-                <Form className="MetaForm">
-                    <div
-                        className="Form_close"
-                        onClick={handleClose}
-                        onKeyPress={handleClose}
-                        role="button"
-                        tabIndex={0}
-                    >
-                        &#10005;
-                    </div>
+            <Card>
+                <Form>
                     <Form.Item {...formItemLayout} label="Pick a media type:">
                         <Radio.Group buttonStyle="solid" onChange={this.handleView}>
                             <Radio.Button value="book">Book</Radio.Button>
@@ -59,7 +50,7 @@ export default class MediaForm extends React.Component {
                 </Form>
                 <Divider />
                 {formComponent[this.state.mediaType]}
-            </div>
+            </Card>
         );
     }
 }
