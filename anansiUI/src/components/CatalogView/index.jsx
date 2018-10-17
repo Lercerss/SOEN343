@@ -27,10 +27,6 @@ export default class CatalogView extends React.Component {
     };
     render() {
         const { token } = this.props;
-        return (
-            <div className="viewItems">
-                <ItemsList items={this.state.itemList} token={token} />
-            </div>
-        );
+        return <ItemsList items={this.state.itemList} token={token} />;
     }
 }

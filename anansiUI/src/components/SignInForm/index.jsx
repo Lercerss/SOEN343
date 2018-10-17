@@ -2,10 +2,28 @@ import React from 'react';
 import { Form, Icon, Input, Button, message } from 'antd';
 import { Cookies } from 'react-cookie';
 import { userLogin } from '../../utils/httpUtils';
-import './index.css';
 
 const FormItem = Form.Item;
-
+const styles = {
+    Form: {
+        minWidth: '400px',
+        padding: '20px',
+        backgroundColor: 'white',
+        position: 'fixed',
+        paddingTop: '40px'
+    },
+    Submit: {
+        width: '100%'
+    },
+    Close: {
+        textAlign: 'right',
+        position: 'absolute',
+        right: '4px',
+        top: '4px',
+        padding: '5px 10px',
+        cursor: 'pointer'
+    }
+};
 class SignInForm extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
@@ -20,8 +38,9 @@ class SignInForm extends React.Component {
 
                         handleLogin(username, isAdmin, token);
                         handleCloseButton();
-                    }).catch(err => {
-                        alert(err.response.data.message);  
+                    })
+                    .catch(err => {
+                        alert(err.response.data.message);
                     });
             }
         });
@@ -32,9 +51,9 @@ class SignInForm extends React.Component {
         const { handleCloseButton } = this.props;
 
         return (
-            <Form onSubmit={this.handleSubmit} className="SignInForm">
+            <Form onSubmit={this.handleSubmit} style={styles.Form}>
                 <div
-                    className="SignInForm_close"
+                    style={styles.Close}
                     onClick={() => handleCloseButton()}
                     onKeyPress={() => handleCloseButton()}
                     role="button"
@@ -53,12 +72,7 @@ class SignInForm extends React.Component {
                         ]
                     })(
                         <Input
-                            prefix={
-                                <Icon
-                                    type="user"
-                                    style={{ color: 'rgba(0,0,0,.25)' }}
-                                />
-                            }
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             placeholder="Username"
                             required
                         />
@@ -74,23 +88,14 @@ class SignInForm extends React.Component {
                         ]
                     })(
                         <Input
-                            prefix={
-                                <Icon
-                                    type="lock"
-                                    style={{ color: 'rgba(0,0,0,.25)' }}
-                                />
-                            }
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                             type="password"
                             placeholder="Password"
                         />
                     )}
                 </FormItem>
                 <FormItem>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        className="SignInForm_submit"
-                    >
+                    <Button type="primary" htmlType="submit" style={styles.Submit}>
                         Sign In
                     </Button>
                 </FormItem>

@@ -34,7 +34,7 @@ export default class UsersList extends React.Component {
             return <h2>Loading...</h2>;
         }
         return (
-            <Card style={styles.card} className="user-card">
+            <Card style={styles.card}>
                 <List
                     itemLayout="horizontal"
                     size="small"

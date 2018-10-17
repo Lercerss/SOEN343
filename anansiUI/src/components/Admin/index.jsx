@@ -35,10 +35,10 @@ export default class Admin extends React.Component {
     render() {
         const { token } = this.props;
         return (
-            <div className="admin">
+            <div>
                 <h1>Welcome Admin!</h1>
                 <RegisterAdmin token={token} onUserRegistered={this.hideUserList} />
-                <AddMedia token={token}/>
+                <AddMedia token={token} />
                 {this.state.showUserList ? (
                     <div>
                         <UsersList users={this.state.userList} />

@@ -67,7 +67,7 @@ class App extends React.Component {
     };
     render() {
         return (
-            <main className="App">
+            <main>
                 <Layout style={styles.Layout}>
                     <NavigationBar
                         handleLogin={this.handleLogin}
