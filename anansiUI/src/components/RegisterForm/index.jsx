@@ -32,10 +32,6 @@ class RegisterForm extends React.Component {
                     token
                 ).then(response => {
                     console.log(response);
-                    const { onUserRegistered } = this.props;
-                    if (onUserRegistered) {
-                        onUserRegistered();
-                    }
                 });
             }
         });

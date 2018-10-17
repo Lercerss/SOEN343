@@ -5,7 +5,6 @@ import { viewItems } from '../../utils/httpUtils';
 
 export default class CatalogView extends React.Component {
     state = {
-        showItemList: false,
         itemList: []
     };
     componentDidMount() {
@@ -20,11 +19,6 @@ export default class CatalogView extends React.Component {
             });
     }
 
-    hideItemList = () => {
-        this.setState({
-            showItemList: false
-        });
-    };
     render() {
         const { token } = this.props;
         return <ItemsList items={this.state.itemList} token={token} />;
