@@ -2,7 +2,6 @@
     min-width: 400px;
     padding: 20px;
     background-color: white;
-    position: fixed;
     padding-top: 40px;
 }
 
@@ -20,6 +19,5 @@
 .MetaForm {
     background-color: white;
     min-width: 40%;
-    margin-left: 30%;
     min-height: 750px;
 }

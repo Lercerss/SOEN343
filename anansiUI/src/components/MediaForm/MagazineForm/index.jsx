@@ -1,34 +1,10 @@
 import React from 'react';
 import { Form, Input, Button, DatePicker } from 'antd';
-import { addNewItem, editItem } from '../../utils/httpUtils';
 import moment from 'moment';
 
 const FormItem = Form.Item;
 
 class MagazineForm extends React.Component {
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
-                console.log('Received values of form: ', values);
-                const { token, handleClose } = this.props;
-
-                if (this.props.action == 'insert') {
-                    addNewItem('Magazine', values, token).then(response => {
-                        console.log(response);
-                        handleClose();
-                    });
-                } else if (this.props.action == 'update') {
-                    editItem('Magazine', values, token).then(response => {
-                        values['id'] = this.props.item.id;
-                        console.log(response);
-                        handleClose();
-                    });
-                }
-            }
-        });
-    };
-
     render() {
         const { getFieldDecorator } = this.props.form;
         const item = this.props.item ? this.props.item : {};
@@ -57,7 +33,7 @@ class MagazineForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="Form">
+            <Form onSubmit={(e) => this.props.handleSubmit(e, this.props.form)} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
