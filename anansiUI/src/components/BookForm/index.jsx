@@ -58,7 +58,7 @@ class BookForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={this.handleSubmit} className="Form">
+            <Form onSubmit={this.handleSubmit}>
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [

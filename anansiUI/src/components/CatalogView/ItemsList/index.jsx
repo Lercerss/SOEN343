@@ -80,7 +80,7 @@ export default class ItemsList extends React.Component {
             return <h2>Loading...</h2>;
         }
         return (
-            <Card className="item-card">
+            <Card>
                 <List
                     itemLayout="horizontal"
                     size="small"

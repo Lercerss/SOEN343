@@ -1,9 +1,27 @@
 import React from 'react';
-import NavigationBar from './components/NavigationBar';
+import { Layout } from 'antd';
 import { withCookies, Cookies } from 'react-cookie';
+import { Route, Switch } from 'react-router-dom';
 import { getTokenInfo } from './utils/httpUtils';
-import Admin from './components/Admin';
+import NavigationBar from './components/NavigationBar';
+import AdminSider from './components/AdminSider';
+import UsersList from './components/Admin/UsersList';
+import RegisterForm from './components/RegisterForm';
+import CatalogView from './components/CatalogView';
+import AddMediaForm from './components/AddMediaForm';
 
+const { Header, Sider, Content, Footer } = Layout;
+const styles = {
+    Layout: {
+        minHeight: '100vh'
+    },
+    Content: {
+        padding: '24px'
+    },
+    Footer: {
+        textAlign: 'center'
+    }
+};
 class App extends React.Component {
     state = {
         loggedIn: false,
@@ -49,13 +67,45 @@ class App extends React.Component {
     };
     render() {
         return (
-            <main className="App">
-                <NavigationBar
-                    handleLogin={this.handleLogin}
-                    handleLogout={this.handleLogout}
-                    loggedIn={this.state.loggedIn}
-                />
-                {this.state.isAdmin && (<Admin token={this.props.cookies.get('jwt')}/>)}
+            <main>
+                <Layout style={styles.Layout}>
+                    <NavigationBar
+                        handleLogin={this.handleLogin}
+                        handleLogout={this.handleLogout}
+                        loggedIn={this.state.loggedIn}
+                    />
+
+                    <Layout>
+                        {this.state.isAdmin && <AdminSider />}
+                        <Content style={styles.Content}>
+                            <Switch>
+                                <Route exact path="/users/" component={UsersList} />
+                                <Route
+                                    exact
+                                    path="/users/register/"
+                                    render={props => (
+                                        <RegisterForm token={this.props.cookies.get('jwt')} />
+                                    )}
+                                />
+                                <Route
+                                    exact
+                                    path="/media/"
+                                    render={props => (
+                                        <CatalogView token={this.props.cookies.get('jwt')} />
+                                    )}
+                                />
+                                <Route
+                                    exact
+                                    path="/media/create/"
+                                    render={props => (
+                                        <AddMediaForm token={this.props.cookies.get('jwt')} />
+                                    )}
+                                />
+                            </Switch>
+                        </Content>
+                    </Layout>
+                    <Footer style={styles.Footer}>Ansansi - SOEN343 Team 0</Footer>
+                </Layout>
             </main>
         );
     }
