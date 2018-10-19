@@ -44,6 +44,28 @@ class RegisterForm extends React.Component {
         });
     };
 
+    // validateEmail(email) {
+    //      var email = document.getElementById('email').value;
+   //       var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    //      if (email.match(re))
+    //      return re.test(email);
+   // else alert("Please input a valid email");
+    //   }
+
+    // emailValidator(email){
+    //     var validator = require("email-validator");
+    //     validator.validate(email);
+    // }
+
+    // validateNumber(num) {
+    //     var re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/;
+    // }
+
+    // numberValidator(num){
+    //     isMobilePhone(num);
+    //     PhoneValidator.init(num).isValid();
+    // }
+
     render() {
         const { getFieldDecorator } = this.props.form;
 
