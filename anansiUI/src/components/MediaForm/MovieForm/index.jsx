@@ -195,7 +195,7 @@ class MovieForm extends React.Component {
                                 message: 'Please input an integer'
                             }
                         ],
-                        initialValue: item.runtime
+                        initialValue: item.runTime
                     })(<InputNumber placeholder="127" />)}
                 </FormItem>
 
