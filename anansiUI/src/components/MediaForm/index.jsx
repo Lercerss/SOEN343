@@ -4,6 +4,7 @@ import MagazineForm from './MagazineForm';
 import MovieForm from './MovieForm';
 import MusicForm from './MusicForm';
 import { addNewItem, editItem } from '../../utils/httpUtils';
+import { Modal } from 'antd';
 
 export default class MediaForm extends React.Component {
     handleSubmit = (e, form) => {
@@ -22,11 +23,18 @@ export default class MediaForm extends React.Component {
             if (request) {
                 request(this.props.type, values, token).then(response => {
                     console.log(response);
+                    Modal.success({
+                        title: "Your registration is complete!",
+                    })
                     if (handleClose) {
                         handleClose(values);
                     }
                 }).catch(err => {
                     // TODO: Handle error when submitting form to backend
+                    Modal.error({
+                        title: "Failed to create a new user",
+                        content: err.response ? err.response.data.message : "Connection error"
+                    })
                     console.log(err)
                 })
             }
