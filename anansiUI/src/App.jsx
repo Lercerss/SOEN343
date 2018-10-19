@@ -5,10 +5,11 @@ import { Route, Switch } from 'react-router-dom';
 import { getTokenInfo } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
-import UsersList from './components/Admin/UsersList';
+import UsersList from './components/UsersList';
 import RegisterForm from './components/RegisterForm';
-import CatalogView from './components/CatalogView';
+import ItemsList from './components/ItemsList';
 import AddMediaForm from './components/AddMediaForm';
+import './index.css';
 
 const { Header, Sider, Content, Footer } = Layout;
 const styles = {
@@ -91,7 +92,7 @@ class App extends React.Component {
                                     exact
                                     path="/media/"
                                     render={props => (
-                                        <CatalogView token={this.props.cookies.get('jwt')} />
+                                        <ItemsList token={this.props.cookies.get('jwt')} />
                                     )}
                                 />
                                 <Route
