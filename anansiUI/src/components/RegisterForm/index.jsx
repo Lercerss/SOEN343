@@ -27,7 +27,7 @@ class RegisterForm extends React.Component {
                     .catch(error => {
                         Modal.error({
                             title: "Failed to create a new user",
-                            content: error.response.data.message
+                            content: error.response ? error.response.data.message : "Connection error"
                         })
                     });
             }
