@@ -28,15 +28,13 @@
         "db-migrate": "^0.11.3",
         "db-migrate-mysql": "^1.1.10",
         "dotenv": "^6.0.0",
-        "email-validator": "^2.0.4",
         "express": "^4.16.3",
         "jest-environment-node": "^23.4.0",
         "jsonwebtoken": "^8.3.0",
         "mariasql": "^0.2.6",
         "moment": "^2.22.2",
         "morgan": "^1.9.1",
-        "mysql": "^2.16.0",
-        "phonevalidator": "^1.1.4"
+        "mysql": "^2.16.0"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

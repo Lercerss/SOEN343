@@ -5,11 +5,6 @@ import { Form, Input, Tooltip, Icon, Checkbox, Modal, Button, Card } from 'antd'
 const FormItem = Form.Item;
 
 class RegisterForm extends React.Component {
-    state = {
-        submissionResult: null,
-        message: null
-    };
-
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
@@ -20,7 +15,9 @@ class RegisterForm extends React.Component {
 
                 createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
                     .then(response => {
-                        this.setState({ submissionResult: response.status, message: response.data.message });
+                        Modal.success({
+                            title: "Your registration is complete!",
+                        })
                         console.log(response);
                         const { onUserRegistered } = this.props;
                         if (onUserRegistered) {
@@ -28,10 +25,10 @@ class RegisterForm extends React.Component {
                         }
                     })
                     .catch(error => {
-                        this.setState({
-                            submissionResult: error.response.status,
-                            message: error.response.data.message
-                        });
+                        Modal.error({
+                            title: "Failed to create a new user",
+                            content: error.response.data.message
+                        })
                     });
             }
         });
@@ -43,28 +40,6 @@ class RegisterForm extends React.Component {
             message: null
         });
     };
-
-    // validateEmail(email) {
-    //      var email = document.getElementById('email').value;
-   //       var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    //      if (email.match(re))
-    //      return re.test(email);
-   // else alert("Please input a valid email");
-    //   }
-
-    // emailValidator(email){
-    //     var validator = require("email-validator");
-    //     validator.validate(email);
-    // }
-
-    // validateNumber(num) {
-    //     var re = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/;
-    // }
-
-    // numberValidator(num){
-    //     isMobilePhone(num);
-    //     PhoneValidator.init(num).isValid();
-    // }
 
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -113,8 +88,9 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your username!',
-                                    whitespace: true
+                                    message: 'Please input your username! Must be at least 4 characters long',
+                                    whitespace: true,
+                                    min: 4
                                 }
                             ]
                         })(<Input placeholder="PatTheSwedishCow" />)}
@@ -124,7 +100,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your password!'
+                                    message: 'Please input your password! Must be at least 4 characters long',
+                                    min: 4
                                 }
                             ]
                         })(<Input type="password" placeholder="Password" />)}
@@ -134,7 +111,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your first name!'
+                                    message: 'Please input your first name!',
+                                    pattern: /^(\w+-?\s?)+$/
                                 }
                             ]
                         })(<Input placeholder="Pat" />)}
@@ -145,7 +123,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your last name'
+                                    message: 'Please input your last name',
+                                    pattern: /^(\w+-?\s?)+$/
                                 }
                             ]
                         })(<Input placeholder="Ko" />)}
@@ -156,7 +135,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your E-mail!'
+                                    message: 'Please input your E-mail!',
+                                    type: 'email'
                                 }
                             ]
                         })(<Input placeholder="pat.ko@internet.com" />)}
@@ -167,7 +147,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your phone number!'
+                                    message: 'Please input your phone number!',
+                                    pattern: /^(\+?\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
                                 }
                             ]
                         })(<Input placeholder="xxx-xxx-xxxx" />)}
@@ -184,28 +165,6 @@ class RegisterForm extends React.Component {
                             Submit
                         </Button>
                     </FormItem>
-
-                    {(this.state.submissionResult === 200 && (
-                        <div>
-                            <Modal
-                                title="Your registration is complete!"
-                                visible={this.state.submissionResult === 200}
-                                footer={null}
-                            >
-                                <Button onClick={this.handleClose}>OK</Button>
-                            </Modal>
-                        </div>
-                    )) ||
-                        (this.state.submissionResult &&
-                            this.state.submissionResult > 300 && (
-                                <Modal
-                                    title={this.state.message}
-                                    visible={this.state.submissionResult && this.state.submissionResult > 300}
-                                    footer={null}
-                                >
-                                    <Button onClick={this.handleClose}>OK</Button>
-                                </Modal>
-                            ))}
                 </Form>
             </Card>
         );
