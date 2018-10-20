@@ -42,7 +42,7 @@ describe('routes: login', () => {
     };
     test('Valid login expects status 200', done => {
         request(app)
-            .post('/login/')
+            .post('/user/login/')
             .send(validUser)
             .then(response => {
                 expect(response.statusCode).toBe(200);
@@ -52,7 +52,7 @@ describe('routes: login', () => {
     });
     test('Invalid login expects status 400', done => {
         request(app)
-            .post('/login/')
+            .post('/user/login/')
             .send(invalidUser)
             .then(response => {
                 expect(response.statusCode).toBe(400);
@@ -62,7 +62,7 @@ describe('routes: login', () => {
     });
     test('Incorrect password expects status 400', done => {
         request(app)
-            .post('/login/')
+            .post('/user/login/')
             .send(invalidPass)
             .then(response => {
                 expect(response.statusCode).toBe(400);
@@ -85,7 +85,7 @@ describe('routes: create user', () => {
     };
     test('Correct information expects status 200', done => {
         request(app)
-            .post('/create-user/')
+            .post('/user/create/')
             .send({
                 token: adminToken,
                 userInfo: validUser
@@ -97,7 +97,7 @@ describe('routes: create user', () => {
     });
     test('Correct information, but unauthorized expects status 403', done => {
         request(app)
-            .post('/create-user/')
+            .post('/user/create/')
             .send({
                 token: clientToken,
                 userInfo: validUser
@@ -113,7 +113,7 @@ describe('routes: validate token', () => {
     const fakeToken = 'fmdsklfsdjlfnadjkvsdfkjvdf2343212/..a';
     test('Valid token expects status 200', done => {
         request(app)
-            .post('/validate/')
+            .post('/user/validate/')
             .send({
                 token: adminToken
             })
@@ -126,7 +126,7 @@ describe('routes: validate token', () => {
     });
     test('Invalid token sent', done => {
         request(app)
-            .post('/create-user/')
+            .post('/user/create/')
             .send({
                 token: fakeToken
             })
@@ -140,7 +140,7 @@ describe('routes: validate token', () => {
 describe('routes: get user list', () => {
     test('Valid token expects status 200 and user list', done => {
         request(app)
-            .post('/get-users/')
+            .post('/user/display-all/')
             .send({
                 token: adminToken
             })
@@ -152,7 +152,7 @@ describe('routes: get user list', () => {
     });
     test.skip('Valid client token, forbidden request expects status 403', done => {
         request(app)
-            .post('/get-users/')
+            .post('/user/display-all/')
             .send({
                 token: clientToken
             })
@@ -166,7 +166,7 @@ describe('routes: get user list', () => {
 describe('routes: retrieve catalog elements', () => {
     test.skip('It should respond with a complete array of catalog elements', (done) => {
         request(app)
-            .get('/catalog-items/')
+            .get('/item/display-all/')
             .then((response) => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toMatchObject(mediaData.initial);
@@ -187,7 +187,7 @@ describe('routes: addition of a media item', () => {
     for (let i = 0; i < media.length; i++){
         test.skip(`It should respond to adding a ${ media[i].mediaInfo.type } item with 200`, (done) => {
             request(app)
-                .post('/add-item/')
+                .post('/item/add/')
                 .send(media[i])
                 .then((response) => {
                     expect(response.statusCode).toBe(200);
@@ -203,7 +203,7 @@ describe('routes: addition of a media item', () => {
 
     test.skip(`It should respond to adding already existing ${ mediaData.initial[0].type } item with 400`, (done) => {
         request(app)
-            .post('/add-item/')
+            .post('/item/add/')
             .send(existingMedia)
             .then((response) => {
                 expect(response.statusCode).toBe(400);
@@ -227,7 +227,7 @@ describe('routes: editing of a media item in the catalog', () => {
         test.skip(`It should respond to editing a ${ media[i].mediaInfo.type } item with 200`, (done) => {
             media[i].mediaInfo.title += 'o';
             request(app)
-                .post('/edit-item/')
+                .post('/item/edit/')
                 .send(media[i])
                 .then((response) => {
                     expect(response.statusCode).toBe(200);
@@ -241,7 +241,7 @@ describe('routes: editing of a media item in the catalog', () => {
     test.skip(`It should respond to editing an isbn of ${ media[0].mediaInfo.type } item with 400`, (done) => {
         media[0].mediaInfo.isbn10 = '1524796973';
         request(app)
-            .post('/edit-item/')
+            .post('/item/edit/')
             .send(media[0])
             .then((response) => {
                 expect(response.statusCode).toBe(400);
@@ -254,7 +254,7 @@ describe('routes: editing of a media item in the catalog', () => {
     test.skip(`It should respond to editing an asin of ${ media[3].mediaInfo.type } item with 400`, (done) => {
         mediaData[3].mediaInfo.asin = 'B008FOB125';
         request(app)
-            .post('/edit-item/')
+            .post('/item/edit/')
             .send(media[3])
             .then((response) => {
                 expect(response.statusCode).toBe(400);
