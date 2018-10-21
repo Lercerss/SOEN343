@@ -124,7 +124,7 @@ class App extends React.Component {
                             </Switch>
                         </Content>
                     </Layout>
-                    <Footer style={styles.Footer}>Ansansi - SOEN343 Team 0</Footer>
+                    <Footer style={styles.Footer}>Anansi - SOEN343 Team 0</Footer>
                 </Layout>
             </main>
         );
