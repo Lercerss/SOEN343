@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Input, Tooltip, Icon, Checkbox, Button, Card } from 'antd';
 import { createNewUser } from '../../utils/httpUtils';
+import { Form, Input, Tooltip, Icon, Checkbox, Modal, Button, Card } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -10,30 +10,34 @@ class RegisterForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const {
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin
-                } = values;
+                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
                 const { token } = this.props;
 
-                createNewUser(
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin,
-                    token
-                ).then(response => {
-                    console.log(response);
-                });
+                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
+                    .then(response => {
+                        Modal.success({
+                            title: "Your registration is complete!",
+                        })
+                        console.log(response);
+                        const { onUserRegistered } = this.props;
+                        if (onUserRegistered) {
+                            onUserRegistered();
+                        }
+                    })
+                    .catch(error => {
+                        Modal.error({
+                            title: "Failed to create a new user",
+                            content: error.response ? error.response.data.message : "Connection error"
+                        })
+                    });
             }
+        });
+    };
+
+    handleClose = e => {
+        this.setState({
+            submissionResult: null,
+            message: null
         });
     };
 
@@ -84,8 +88,9 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your username!',
-                                    whitespace: true
+                                    message: 'Please input your username! Must be at least 4 characters long',
+                                    whitespace: true,
+                                    min: 4
                                 }
                             ]
                         })(<Input placeholder="PatTheSwedishCow" />)}
@@ -95,7 +100,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your password!'
+                                    message: 'Please input your password! Must be at least 4 characters long',
+                                    min: 4
                                 }
                             ]
                         })(<Input type="password" placeholder="Password" />)}
@@ -105,7 +111,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your first name!'
+                                    message: 'Please input your first name!',
+                                    pattern: /^(\w+-?\s?)+$/
                                 }
                             ]
                         })(<Input placeholder="Pat" />)}
@@ -116,7 +123,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your last name'
+                                    message: 'Please input your last name',
+                                    pattern: /^(\w+-?\s?)+$/
                                 }
                             ]
                         })(<Input placeholder="Ko" />)}
@@ -127,7 +135,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your E-mail!'
+                                    message: 'Please input your E-mail!',
+                                    type: 'email'
                                 }
                             ]
                         })(<Input placeholder="pat.ko@internet.com" />)}
@@ -138,7 +147,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your phone number!'
+                                    message: 'Please input your phone number!',
+                                    pattern: /^(\+?\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
                                 }
                             ]
                         })(<Input placeholder="xxx-xxx-xxxx" />)}
