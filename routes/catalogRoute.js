@@ -4,7 +4,7 @@ import { validateToken } from './router';
 export function displayItems(req, res) {
     var catalog = Catalog.viewItems();
     if (catalog.length === 0) {
-        res.send({
+        res.status(200).send({
             message: 'Catalog is empty'
         });
     } else {
@@ -14,7 +14,7 @@ export function displayItems(req, res) {
                 type: val.constructor.name
             };
         });
-        res.send(typedCatalog);
+        res.status(200).send(typedCatalog);
     }
 };
 
@@ -95,7 +95,9 @@ export function deleteItem(req, res) {
                         error: err
                     });
                 }
-                res.status(200).send();
+                res.status(200).send({
+                    message: 'Item was deleted',
+                });
             });
         }
     });
