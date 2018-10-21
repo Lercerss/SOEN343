@@ -11,4 +11,21 @@ export class MediaGateway extends DatabaseManager {
            } 
         });
     }
+    
+    static editMedia(type, fields, callback) {
+
+    }
+
+    static findMedia(type, fields, callback) {
+
+    }
+
+    static deleteMedia(type, fields, callback) {
+
+    }
+
+    static getAll() {
+        // insert code that connects the four tablesz
+    }
+
 }
