@@ -100,7 +100,9 @@ export function deleteItem(req, res) {
                         error: err
                     });
                 }
-                res.status(200).send();
+                res.status(200).send({
+                    message: 'Item was deleted',
+                });
             });
         }
     });
