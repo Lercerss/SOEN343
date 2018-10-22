@@ -21,6 +21,7 @@ exports.up = function(db) {
             primaryKey: true,
             autoIncrement: true
         },
+        title: 'string',
         releaseDate: 'datetime',
         type: 'string',
         artist: 'string',
