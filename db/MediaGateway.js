@@ -1,16 +1,24 @@
 import { DatabaseManager } from './DatabaseManager';
 import { connection as db } from './dbConnection';
+import { Media } from '../models/Media';
 
 export class MediaGateway extends DatabaseManager {
     static saveMedia(type, fields, callback) {
-        this.findMedia(type, title);
+        this.findMedia(type, fields, (err, rows) => {
+            if (err) {
+                throw new Error('Media does not exist');
+            }
+            return rows;
+        });
     }
 
     static editMedia(type, fields, callback) {
-        const SQLQuery = db.format('SELECT * FROM ? WHERE title=?' [
-            type,
-            title
-        ]);
+        this.findMedia(type, fields, (err, rows) => {
+            if (err) {
+                throw new Error('Media does not exist');
+            }
+            return rows;
+        });
 
         if (type === 'Book') {
         } else if (type === 'Magazine') {
@@ -20,10 +28,8 @@ export class MediaGateway extends DatabaseManager {
         } else if (type === 'Movie') {
 
         } else {
-             //// error statement will be included once we figure something out for logical stuff.
+            // error statement will be included once we figure something out for logical stuff.
         }
-       
-
     }
 
     static findMedia(type, fields, callback) {
@@ -36,19 +42,19 @@ export class MediaGateway extends DatabaseManager {
 
         db.query(SQLQuery, (err, rows, fields) => {
             MediaGateway.jsonToMedia(err, rows, fields, callback);
-        })
+        });
     }
 
     static deleteMedia(type, fields, callback) {
         var mediaTitle = fields['title'];
-        findMedia(type, fields, (err, rows) => {
+        this.findMedia(type, fields, (err, rows) => {
             if (err) {
-                err = new Error('Media does not exist');
-                return;
+                throw new Error('Media does not exist');
             }
+            return rows;
         });
 
-        const SQLQuery = db.format('REMOVE * FROM ? WHERE title=?' [
+        const SQLQuery = db.format('REMOVE * FROM ? WHERE title=?', [
             type,
             mediaTitle
         ]);
@@ -56,13 +62,11 @@ export class MediaGateway extends DatabaseManager {
         db.query(SQLQuery, (err, rows, fields) => {
             callback(err);
         });
-        
     }
 
     static jsonToMedia(err, jsonArray, fields, callback) {
         if (err) {
             callback(err, []);
-
         }
         var mediaArray = [];
         for (var mediaJson of jsonArray) {
@@ -70,11 +74,9 @@ export class MediaGateway extends DatabaseManager {
             mediaArray.push(media);
         }
         callback(err, mediaArray);
-
     }
     static getAll(callback) {
         // insert code that connects the four tablesz
     }
-
 }
 
