@@ -1,6 +1,6 @@
 import express from 'express';
-import { postLogin, postAllUsers, postValidate, postCreateUser } from './route-controllers/validationRouteController';
-import { postItems, postAddItem, postEditItem, postDeleteItem } from './route-controllers/catalogRouteController';
+import { loginUser, displayUsers, validateUser, createUser } from './userRoute';
+import { displayItems, addItem, editItem, deleteItem } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
 var router = express.Router();
@@ -27,13 +27,13 @@ router.get('/', (req, res) => {
     });
 });
 
-router.route('/user/login').post(postLogin);
-router.route('/user/display-all').post(postAllUsers);
-router.route('/user/validate').post(postValidate);
-router.route('/user/create').post(postCreateUser);
-router.route('/item/display-all').post(postItems);
-router.route('/item/add').post(postAddItem);
-router.route('/item/edit').post(postEditItem);
-router.route('/item/delete').post(postDeleteItem);
+router.route('/user/login').post(loginUser);
+router.route('/user/display-all').post(displayUsers);
+router.route('/user/validate').post(validateUser);
+router.route('/user/create').post(createUser);
+router.route('/item/display-all').post(displayItems);
+router.route('/item/add').post(addItem);
+router.route('/item/edit').post(editItem);
+router.route('/item/delete').delete(deleteItem);
 
 export { router, validateToken };

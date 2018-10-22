@@ -1,8 +1,8 @@
-import { UserRegistry } from '../../models/UserRegistry';
-import { createToken } from '../../utils/Auth';
-import { validateToken } from '../router';
+import { UserRegistry } from '../models/UserRegistry';
+import { createToken } from '../utils/Auth';
+import { validateToken } from './router';
 
-export function postLogin(req, res) {
+export function loginUser(req, res) {
     let { username, password } = req.body;
 
     UserRegistry.searchUser(username, (err, userArray) => {
@@ -38,7 +38,7 @@ export function postLogin(req, res) {
     });
 };
 
-export function postAllUsers(req, res) {
+export function displayUsers(req, res) {
     // TODO: Validate Token
     UserRegistry.getAllUsers((err, rows) => {
         if (err) {
@@ -48,7 +48,7 @@ export function postAllUsers(req, res) {
     });
 };
 
-export function postValidate(req, res) {
+export function validateUser(req, res) {
     // Validates jwt and sends user information
     // back to frontend
     const token = req.body.token;
@@ -60,7 +60,7 @@ export function postValidate(req, res) {
     });
 };
 
-export function postCreateUser(req, res) {
+export function createUser(req, res) {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);

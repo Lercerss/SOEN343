@@ -1,7 +1,7 @@
-import { Catalog } from '../../models/Catalog';
-import { validateToken } from '../router';
+import { Catalog } from '../models/Catalog';
+import { validateToken } from './router';
 
-export function postItems(req, res) {
+export function displayItems(req, res) {
     var catalog = Catalog.viewItems();
     if (catalog.length === 0) {
         res.send({
@@ -18,7 +18,7 @@ export function postItems(req, res) {
     }
 };
 
-export function postAddItem(req, res) {
+export function addItem(req, res) {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
@@ -50,7 +50,7 @@ export function postAddItem(req, res) {
     });
 };
 
-export function postEditItem(req, res) {
+export function editItem(req, res) {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
@@ -79,7 +79,7 @@ export function postEditItem(req, res) {
     });
 };
 
-export function postDeleteItem(req, res) {
+export function deleteItem(req, res) {
     validateToken(req.body.token, res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
