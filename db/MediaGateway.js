@@ -85,8 +85,8 @@ export class MediaGateway extends DatabaseManager {
                 });
             } else if (type === 'Movie') {
                 query = db.format('UPDATE movie SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                    'language = ?, subtitles = ?, dubbed = ?, runtime = ?',
-                    [fields['title'], fields['releaseDate'], fields['director'], fields['producers'], fields['actors'], fields['language'],
+                    'language = ?, subtitles = ?, dubbed = ?, runtime = ?', [fields['title'], fields['releaseDate'],
+                    fields['director'], fields['producers'], fields['actors'], fields['language'],
                     fields['subtites'], fields['dubbed'], fields['runtime']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
@@ -163,4 +163,3 @@ export class MediaGateway extends DatabaseManager {
         callback(err, mediaArray);
     }
 }
-
