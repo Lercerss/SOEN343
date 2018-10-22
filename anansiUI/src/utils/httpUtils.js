@@ -3,28 +3,28 @@ import axios from 'axios';
 const backendURL = 'http://localhost:3000/';
 
 export function userLogin(username, password) {
-    return axios.post(`${backendURL}login/`, {
+    return axios.post(`${backendURL}user/login/`, {
         username: username,
         password: password
     });
 }
 
 export function getTokenInfo(jwt) {
-    return axios.post(`${backendURL}validate/`, {
+    return axios.post(`${backendURL}user/validate/`, {
         token: jwt
     });
 }
 
 export function getAllUsers() {
-    return axios.post(`${backendURL}get-users/`);
+    return axios.post(`${backendURL}user/display-all/`);
 }
 
 export function viewItems() { // retrieves all contents of the catalog without criteria
-    return axios.post(`${ backendURL }catalog-items/`);
+    return axios.post(`${ backendURL }item/display-all/`);
 }
 
 export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token) {
-    return axios.post(`${backendURL}create-user/`, {
+    return axios.post(`${backendURL}user/create/`, {
         userInfo: {
             firstName: firstName,
             lastName: lastName,
@@ -39,7 +39,7 @@ export function createNewUser(firstName, lastName, email, username, password, ph
 }
 
 export function addNewItem(type, itemInfo, token) {
-    return axios.post(`${backendURL}add-item/`, {
+    return axios.post(`${backendURL}item/add/`, {
         type: type,
         itemInfo: itemInfo,
         token: token
@@ -47,7 +47,7 @@ export function addNewItem(type, itemInfo, token) {
 }
 
 export function editItem(type, itemInfo, token) {
-    return axios.post(`${backendURL}edit-item/`, {
+    return axios.post(`${backendURL}item/edit/`, {
         type: type,
         itemInfo: itemInfo,
         token: token
@@ -56,7 +56,7 @@ export function editItem(type, itemInfo, token) {
 
 export function deleteItem(id, itemInfo, token) {
     console.log(token);
-    return axios.delete(`${backendURL}delete-item/`, {
+    return axios.delete(`${backendURL}item/delete/`, {
         data: {
             id: id,
             itemInfo: itemInfo,
