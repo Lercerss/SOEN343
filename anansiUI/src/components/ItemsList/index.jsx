@@ -30,16 +30,24 @@ export default class ItemsList extends React.Component {
     };
     handleDelete = item => {
         deleteItem(item.itemInfo.id, item.itemInfo, this.props.token)
-        .then(response => {
-            this.setState({
-                itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+            .then(response => {
+                this.setState({
+                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+                });
             })
-        }).catch(err => {
-            // TODO: Handle error when deleting item in backend
-            console.log(err)
-        });
+            .catch(err => {
+                if (err.response.status === 401) {
+                    Modal.error({
+                        title: 'Expired Token',
+                        content: 'Please log in for this request.'
+                    });
+                    this.props.handleLogout();
+                }
+                // TODO: Handle error when deleting item in backend
+                console.log(err);
+            });
     };
-    handleClose = (item) => {
+    handleClose = item => {
         if (!item) {
             this.setState({
                 isEditFormShown: false
@@ -54,7 +62,7 @@ export default class ItemsList extends React.Component {
         });
     };
     render() {
-        const { token} = this.props;
+        const { token } = this.props;
         const { itemInfo, itemList } = this.state;
         if (!itemList) {
             return <h2>Loading...</h2>;
@@ -90,12 +98,13 @@ export default class ItemsList extends React.Component {
                 <Modal
                     visible={this.state.isEditFormShown}
                     title="Edit Item"
-                    onCancel={(e) => this.handleClose(null)}
+                    onCancel={e => this.handleClose(null)}
                     footer={null} // Removes default footer
                 >
                     <div className="MetaForm">
                         <MediaForm
                             type={this.state.editFormMediaType}
+                            handleLogout={this.props.handleLogout}
                             action="update"
                             token={token}
                             item={itemInfo}

@@ -8,12 +8,8 @@ const validateToken = (token, res, callback) => {
     verifyToken(token, (err, decoded) => {
         if (err) {
             console.log(err);
-            res.status(500).send({
-                message: 'There was an error decrypting token'
-            });
-        } else if (!decoded) {
-            res.status(400).send({
-                message: 'Token has expired'
+            res.status(401).send({
+                message: 'Token is expired or invalid'
             });
         } else {
             callback(decoded);

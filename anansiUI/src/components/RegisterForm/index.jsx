@@ -10,14 +10,31 @@ class RegisterForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
+                const {
+                    firstName,
+                    lastName,
+                    email,
+                    username,
+                    password,
+                    phoneNumber,
+                    isAdmin
+                } = values;
                 const { token } = this.props;
 
-                createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token)
+                createNewUser(
+                    firstName,
+                    lastName,
+                    email,
+                    username,
+                    password,
+                    phoneNumber,
+                    isAdmin,
+                    token
+                )
                     .then(response => {
                         Modal.success({
-                            title: "Your registration is complete!",
-                        })
+                            title: 'Your registration is complete!'
+                        });
                         console.log(response);
                         const { onUserRegistered } = this.props;
                         if (onUserRegistered) {
@@ -25,10 +42,20 @@ class RegisterForm extends React.Component {
                         }
                     })
                     .catch(error => {
-                        Modal.error({
-                            title: "Failed to create a new user",
-                            content: error.response ? error.response.data.message : "Connection error"
-                        })
+                        if (error.response.status === 401) {
+                            Modal.error({
+                                title: 'Expired Token',
+                                content: 'Please log in for this request.'
+                            });
+                            this.props.handleLogout();
+                        } else {
+                            Modal.error({
+                                title: 'Failed to create a new user',
+                                content: error.response
+                                    ? error.response.data.message
+                                    : 'Connection error'
+                            });
+                        }
                     });
             }
         });
@@ -88,7 +115,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your username! Must be at least 4 characters long',
+                                    message:
+                                        'Please input your username! Must be at least 4 characters long',
                                     whitespace: true,
                                     min: 4
                                 }
@@ -100,7 +128,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your password! Must be at least 4 characters long',
+                                    message:
+                                        'Please input your password! Must be at least 4 characters long',
                                     min: 4
                                 }
                             ]

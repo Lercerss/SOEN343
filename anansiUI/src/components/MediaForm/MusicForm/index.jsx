@@ -35,7 +35,7 @@ class MusicForm extends React.Component {
         };
 
         return (
-            <Form onSubmit={(e) => this.props.handleSubmit(e, this.props.form)} className="Form">
+            <Form onSubmit={e => this.props.handleSubmit(e, this.props.form)} className="Form">
                 <FormItem {...formItemLayout} label="Type">
                     {getFieldDecorator('type', {
                         rules: [
@@ -115,7 +115,7 @@ class MusicForm extends React.Component {
                             }
                         ],
                         initialValue: item.asin
-                    })(<Input placeholder="B008FOB124" disabled={this.props.action == 'update'} />)}
+                    })(<Input placeholder="B008FOB124" />)}
                 </FormItem>
 
                 <FormItem {...tailFormItemLayout}>

@@ -9,6 +9,7 @@ import UsersList from './components/UsersList';
 import RegisterForm from './components/RegisterForm';
 import ItemsList from './components/ItemsList';
 import AddMediaForm from './components/AddMediaForm';
+import PrivateRoute from './components/PrivateRoute';
 import './index.css';
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -47,6 +48,7 @@ class App extends React.Component {
                 })
                 .catch(err => {
                     console.log('Token has expired.');
+                    this.props.cookies.remove('jwt');
                 });
         }
     }
@@ -80,26 +82,35 @@ class App extends React.Component {
                         {this.state.isAdmin && <AdminSider />}
                         <Content style={styles.Content}>
                             <Switch>
-                                <Route exact path="/users/" component={UsersList} />
-                                <Route
-                                    exact
-                                    path="/users/register/"
-                                    render={props => (
-                                        <RegisterForm token={this.props.cookies.get('jwt')} />
-                                    )}
+                                <PrivateRoute
+                                    path="/users/register"
+                                    isAdmin={this.state.isAdmin}
+                                    Component={RegisterForm}
+                                    handleLogout={this.handleLogout}
+                                    token={this.props.cookies.get('jwt')}
+                                />
+                                <PrivateRoute
+                                    path="/users"
+                                    isAdmin={this.state.isAdmin}
+                                    Component={UsersList}
+                                    handleLogout={this.handleLogout}
+                                    token={this.props.cookies.get('jwt')}
+                                />
+                                <PrivateRoute
+                                    path="/media/create"
+                                    isAdmin={this.state.isAdmin}
+                                    Component={AddMediaForm}
+                                    handleLogout={this.handleLogout}
+                                    token={this.props.cookies.get('jwt')}
                                 />
                                 <Route
                                     exact
-                                    path="/media/"
+                                    path="/media"
                                     render={props => (
-                                        <ItemsList token={this.props.cookies.get('jwt')} />
-                                    )}
-                                />
-                                <Route
-                                    exact
-                                    path="/media/create/"
-                                    render={props => (
-                                        <AddMediaForm token={this.props.cookies.get('jwt')} />
+                                        <ItemsList
+                                            handleLogout={this.handleLogout}
+                                            token={this.props.cookies.get('jwt')}
+                                        />
                                     )}
                                 />
                             </Switch>
