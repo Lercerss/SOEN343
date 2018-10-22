@@ -15,7 +15,7 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-    return db.createTable('book', {
+    return db.createTable('books', {
         book_id: {
             type: 'int',
             primaryKey: true,
@@ -36,9 +36,9 @@ exports.up = function(db) {
 };
 
 exports.down = function(db) {
-    return db.dropTable('book', { ifExists: true });
+    return db.dropTable('books', { ifExists: true });
 };
 
 exports._meta = {
-    "version": 1
+    'version': 1
 };

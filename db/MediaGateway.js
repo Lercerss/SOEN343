@@ -18,13 +18,13 @@ export class MediaGateway extends DatabaseManager {
 
             var query;
             if (type === 'Book') {
-                query = db.format('INSERT INTO book(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
+                query = db.format('INSERT INTO books(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
                     fields);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Magazine') {
-                query = db.format('INSERT INTO magazine(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
+                query = db.format('INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
                     fields);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
@@ -36,7 +36,7 @@ export class MediaGateway extends DatabaseManager {
                     callback(err);
                 });
             } else if (type === 'Movie') {
-                query = db.format('INSERT INTO movie(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?)',
+                query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?)',
                     fields);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
@@ -63,7 +63,7 @@ export class MediaGateway extends DatabaseManager {
 
             var query;
             if (type === 'Book') {
-                query = db.format('UPDATE book SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
+                query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
                     'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ?', [fields['title'], fields['language'],
                     fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'],
                     fields['author'], fields['format'], fields['pages']]);
@@ -71,7 +71,7 @@ export class MediaGateway extends DatabaseManager {
                     callback(err);
                 });
             } else if (type === 'Magazine') {
-                query = db.format('UPDATE magazine SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
+                query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
                     'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
                     fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate']]);
                 db.query(query, (err, rows, fields) => {
@@ -84,7 +84,7 @@ export class MediaGateway extends DatabaseManager {
                     callback(err);
                 });
             } else if (type === 'Movie') {
-                query = db.format('UPDATE movie SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
+                query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
                     'language = ?, subtitles = ?, dubbed = ?, runtime = ?', [fields['title'], fields['releaseDate'],
                     fields['director'], fields['producers'], fields['actors'], fields['language'],
                     fields['subtites'], fields['dubbed'], fields['runtime']]);
@@ -102,16 +102,16 @@ export class MediaGateway extends DatabaseManager {
         var query;
 
         if (type === 'Book') {
-            query = db.format('SELECT * FROM book WHERE isbn10 = ?',
+            query = db.format('SELECT * FROM books WHERE isbn10 = ?',
                 fields['isbn10']);
         } else if (type === 'Magazine') {
-            query = db.format('SELECT * FROM magazine WHERE isbn10 = ?',
+            query = db.format('SELECT * FROM magazines WHERE isbn10 = ?',
                 fields['isbn10']);
         } else if (type === 'Music') {
             query = db.format('SELECT * FROM music WHERE asin = ?',
                 fields['asin']);
         } else if (type === 'Movie') {
-            query = db.format('SELECT * FROM movie WHERE title = ? AND releaseDate = ?',
+            query = db.format('SELECT * FROM movies WHERE title = ? AND releaseDate = ?',
                 [fields['title'], fields['releaseDate']]);
         }
 
@@ -128,16 +128,16 @@ export class MediaGateway extends DatabaseManager {
             var query;
 
             if (type === 'Book') {
-                query = db.format('DELETE FROM book WHERE isbn10 = ?',
+                query = db.format('DELETE FROM books WHERE isbn10 = ?',
                     fields['isbn10']);
             } else if (type === 'Magazine') {
-                query = db.format('DELETE FROM magazine WHERE isbn10 = ?',
+                query = db.format('DELETE FROM magazines WHERE isbn10 = ?',
                     fields['isbn10']);
             } else if (type === 'Music') {
                 query = db.format('DELETE FROM music WHERE asin = ?',
                     fields['asin']);
             } else if (type === 'Movie') {
-                query = db.format('DELETE FROM movie WHERE title = ? AND releaseDate = ?',
+                query = db.format('DELETE FROM movies WHERE title = ? AND releaseDate = ?',
                     [fields['title'], fields['releaseDate']]);
             }
 
@@ -148,7 +148,7 @@ export class MediaGateway extends DatabaseManager {
     }
 
     static getAll(callback) {
-        var query = 'SELECT title, author, publisher, publicationDate, language, pages, format, isbn10, isbn13 FROM book';
+        // var query = 'SELECT title, author, publisher, publicationDate, language, pages, format, isbn10, isbn13 FROM book';
     }
 
     static jsonToMedia(err, jsonArray, fields, callback) {
