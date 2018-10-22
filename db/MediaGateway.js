@@ -15,6 +15,7 @@ export class MediaGateway extends DatabaseManager {
                 callback(err, rows);
                 return;
             }
+
             var query;
             if (type === 'Book') {
                 query = db.format('INSERT INTO book(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
@@ -62,28 +63,59 @@ export class MediaGateway extends DatabaseManager {
 
             var query;
             if (type === 'Book') {
-
+                query = db.format('UPDATE book SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
+                    'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ?', [fields['title'], fields['language'],
+                    fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'],
+                    fields['author'], fields['format'], fields['pages']]);
+                db.query(query, (err, rows, fields) => {
+                    callback(err);
+                });
             } else if (type === 'Magazine') {
-
+                query = db.format('UPDATE magazine SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
+                    'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
+                    fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate']]);
+                db.query(query, (err, rows, fields) => {
+                    callback(err);
+                });
             } else if (type === 'Music') {
-
+                query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ?',
+                    [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin']]);
+                db.query(query, (err, rows, fields) => {
+                    callback(err);
+                });
             } else if (type === 'Movie') {
-
+                query = db.format('UPDATE movie SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
+                    'language = ?, subtitles = ?, dubbed = ?, runtime = ?',
+                    [fields['title'], fields['releaseDate'], fields['director'], fields['producers'], fields['actors'], fields['language'],
+                    fields['subtites'], fields['dubbed'], fields['runtime']]);
+                db.query(query, (err, rows, fields) => {
+                    callback(err);
+                });
             } else {
-
+                err = new Error('Error in specified type');
+                callback(err);
             }
         });
     }
 
     static findMedia(type, fields, callback) {
-        var mediaTitle = fields['title'];
+        var query;
 
-        const SQLQuery = db.format('SELECT * FROM ? WHERE title=?', [
-            type,
-            mediaTitle
-        ]);
+        if (type === 'Book') {
+            query = db.format('SELECT * FROM book WHERE isbn10 = ?',
+                fields['isbn10']);
+        } else if (type === 'Magazine') {
+            query = db.format('SELECT * FROM magazine WHERE isbn10 = ?',
+                fields['isbn10']);
+        } else if (type === 'Music') {
+            query = db.format('SELECT * FROM music WHERE asin = ?',
+                fields['asin']);
+        } else if (type === 'Movie') {
+            query = db.format('SELECT * FROM movie WHERE title = ? AND releaseDate = ?',
+                [fields['title'], fields['releaseDate']]);
+        }
 
-        db.query(SQLQuery, (err, rows, fields) => {
+        db.query(query, (err, rows, fields) => {
             MediaGateway.jsonToMedia(err, rows, fields, callback);
         });
     }
@@ -110,13 +142,13 @@ export class MediaGateway extends DatabaseManager {
             }
 
             db.query(query, (err, rows, fields) => {
-            callback(err);
-        });
+                callback(err);
+            });
         });
     }
 
     static getAll(callback) {
-        // insert code that connects the four tablesz
+        var query = 'SELECT title, author, publisher, publicationDate, language, pages, format, isbn10, isbn13 FROM book';
     }
 
     static jsonToMedia(err, jsonArray, fields, callback) {

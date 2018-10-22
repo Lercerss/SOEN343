@@ -208,7 +208,7 @@ router.delete('/delete-item', (req, res) => {
                 message: 'Only administrators can delete media items'
             });
         } else {
-            Catalog.deleteItem(req.body.itemInfo.id, err => {
+            Catalog.deleteItem(req.body.type, req.body.itemInfo, err => {
                 if (err) {
                     console.log(err);
                     res.status(500).send({
