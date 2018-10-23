@@ -19,25 +19,27 @@ export class MediaGateway extends DatabaseManager {
             var query;
             if (type === 'Book') {
                 query = db.format('INSERT INTO books(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
-                    fields);
+                    [fields['title'], fields['author'], fields['format'], fields['pages'], fields['publisher'], fields['publicationDate'],
+                        fields['language'], fields['isbn10'], fields['isbn13']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Magazine') {
                 query = db.format('INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
-                    fields);
+                    [fields['title'], fields['publisher'], fields['publicationDate'], fields['language'], fields['isbn10'], fields['isbn13']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Music') {
                 query = db.format('INSERT INTO music(type, title, artist, label, releaseDate, asin) VALUES (?)',
-                    fields);
+                    [fields['type'], fields['title'], fields['artist'], fields['label'], fields['releaseDate'], fields['asin']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Movie') {
                 query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?)',
-                    fields);
+                    [fields['title'], fields['releaseDate'], fields['director'], fields['producers'], fields['actors'], fields['language'],
+                        fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], fields['releaseDate']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
