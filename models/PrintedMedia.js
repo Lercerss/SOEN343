@@ -7,5 +7,6 @@ export class PrintedMedia extends Media {
         this.language = userJSON.language;
         this.isbn10 = userJSON.isbn10;
         this.isbn13 = userJSON.isbn13;
+        this.publicationDate = userJSON.publicationDate;
     }
 }

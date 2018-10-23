@@ -1,18 +1,18 @@
 import request from 'supertest';
 import { app } from '../app';
 import { connection as db } from '../db/dbConnection';
-import { globalSetUp } from '../utils/testUtils';
+import { globalSetUp, usersTable, mediaTables } from '../utils/testUtils';
 import { mediaData } from '../utils/hardcoded';
 
 var clientToken = '';
 var adminToken = '';
 
-function buildRequestBody(arr, token){
+function buildCatalogRequest(arr, token){
     let builtArr = [];
 
     for (let i = 0; i < arr.length; i++){
         let m = {};
-        m['type'] = arr[i].type;
+        m['type'] = arr[i].mediaType;
         m['itemInfo'] = arr[i];
         m['token'] = token;
         builtArr.push(m);
@@ -190,8 +190,7 @@ describe('routes: retrieve catalog elements', () => {
 
 describe('routes: addition of a media item', () => {
     test(`It should respond to adding an item with 200`, (done) => {
-        let media = buildRequestBody(mediaData.addAndEdit, adminToken);
-        console.log(media);
+        let media = buildCatalogRequest(mediaData.addAndEdit, adminToken);
         for (let i = 0; i < media.length; i++){
             request(app)
                 .post('/item/add/')
@@ -203,8 +202,8 @@ describe('routes: addition of a media item', () => {
         }
     });
 
-    test.skip(`It should respond to adding already existing ${ mediaData.initial[0].type } item with 400`, (done) => {
-        let existingMedia = buildRequestBody(mediaData.initial, adminToken);
+    test.skip(`It should respond to adding already existing ${ mediaData.initial[0].mediaType } item with 400`, (done) => {
+        let existingMedia = buildCatalogRequest(mediaData.initial, adminToken);
         request(app)
             .post('/item/add/')
             .send(existingMedia[0])
@@ -218,7 +217,7 @@ describe('routes: addition of a media item', () => {
 
 describe('routes: editing and deleting of a media item in the catalog', () => {
     test.skip(`It should respond to editing an item with 200`, (done) => {
-        let media = buildRequestBody(mediaData.initial, adminToken);
+        let media = buildCatalogRequest(mediaData.initial, adminToken);
         for (let i = 0; i < media.length; i++){
             media[i].itemInfo.title += 'o';
             request(app)
@@ -232,8 +231,8 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         }
     });
 
-    test.skip(`It should respond to deleting of an existing ${ mediaData.initial[0].type } item with 200`, (done) => {
-        let media = buildRequestBody(mediaData.initial, adminToken);
+    test.skip(`It should respond to deleting of an existing ${ mediaData.initial[0].mediaType } item with 200`, (done) => {
+        let media = buildCatalogRequest(mediaData.initial, adminToken);
         media[0]['id'] = 0;
         request(app)
             .del('/item/delete/')
@@ -247,14 +246,28 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
 });
 
 afterAll(done => {
-    db.query('DELETE FROM users', (err, rows, fields) => {
+    const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
+    db.query(deleteUsersItemsQuery, (err, rows, fields) => {
         if (err) {
+            console.log('Error while wiping out users test db');
             process.exit(1);
         }
+
+        Object.keys(mediaTables).forEach(key => {
+            const deleteCatalogItemsQuery = db.format('DELETE FROM ??', mediaTables[key]);
+            db.query(deleteCatalogItemsQuery, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while wiping out catalog test dbs');
+                    process.exit(1);
+                }
+            });
+        });
+
         db.end(function(err) {
             if (err) {
                 return console.log('error:' + err.message);
             }
+
             console.log('Closed the database connection.');
             done();
         });
