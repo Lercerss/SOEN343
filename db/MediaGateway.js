@@ -148,7 +148,50 @@ export class MediaGateway extends DatabaseManager {
     }
 
     static getAll(callback) {
-        // var query = 'SELECT title, author, publisher, publicationDate, language, pages, format, isbn10, isbn13 FROM book';
+        var queryBook = 'SELECT * FROM books';
+        var queryMagazine = 'SELECT * FROM magazines';
+        var queryMusic = 'SELECT * FROM music';
+        var queryMovie = 'SELECT * FROM movies';
+
+        var books = [];
+        db.query(queryBook, function(err, results, fields) {
+            if (err) {
+                throw new Error('Error querying database.');
+            }
+            books = results;
+        });
+
+        var magazines = [];
+        db.query(queryMagazine, function(err, results, fields) {
+            if (err) {
+                throw new Error('Error querying database.');
+            }
+            magazines = results;
+        });
+
+        var music = [];
+        db.query(queryMusic, function(err, results, fields) {
+            if (err) {
+                throw new Error('Error querying database.');
+            }
+            music = results;
+        });
+
+        var movies = [];
+        db.query(queryMovie, function(err, results, fields) {
+            if (err) {
+                throw new Error('Error querying database.');
+            }
+            movies = results;
+        });
+
+        var media = [];
+        media.push(books);
+        media.push(magazines);
+        media.push(music);
+        media.push(movies);
+
+        return media;
     }
 
     static jsonToMedia(err, jsonArray, fields, callback) {
