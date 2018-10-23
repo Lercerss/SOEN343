@@ -64,30 +64,30 @@ export class MediaGateway extends DatabaseManager {
             var query;
             if (type === 'Book') {
                 query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
-                    'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ?', [fields['title'], fields['language'],
+                    'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ? WHERE isbn10 = ?', [fields['title'], fields['language'],
                     fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'],
-                    fields['author'], fields['format'], fields['pages']]);
+                    fields['author'], fields['format'], fields['pages'], fields['isbn10']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Magazine') {
-                query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
+                query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE isbn10 = ?' +
                     'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
-                    fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate']]);
+                    fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'], fields['isbn10']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Music') {
-                query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ?',
-                    [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin']]);
+                query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE asin = ?',
+                    [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin'], fields['asin']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
             } else if (type === 'Movie') {
                 query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                    'language = ?, subtitles = ?, dubbed = ?, runtime = ?', [fields['title'], fields['releaseDate'],
+                    'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE title = ? AND releaseDate = ?', [fields['title'], fields['releaseDate'],
                     fields['director'], fields['producers'], fields['actors'], fields['language'],
-                    fields['subtites'], fields['dubbed'], fields['runtime']]);
+                    fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], fields['releaseDate']]);
                 db.query(query, (err, rows, fields) => {
                     callback(err);
                 });
