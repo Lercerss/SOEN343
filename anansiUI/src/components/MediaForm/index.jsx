@@ -30,7 +30,6 @@ export default class MediaForm extends React.Component {
                         handleClose(values);
                     }
                 }).catch(err => {
-                    // TODO: Handle error when submitting form to backend
                     Modal.error({
                         title: "Failed to create a new user",
                         content: err.response ? err.response.data.message : "Connection error"
