@@ -118,42 +118,43 @@ export class MediaGateway extends DatabaseManager {
         var queryMovie = 'SELECT * FROM movies';
 
         var books = [];
+        var magazines = [];
+        var music = [];
+        var movies = [];
+        var media = [];
+
         db.query(queryBook, function(err, results, fields) {
             if (err) {
                 throw new Error('Error querying database.');
             }
             books = results;
-        });
 
-        var magazines = [];
-        db.query(queryMagazine, function(err, results, fields) {
-            if (err) {
-                throw new Error('Error querying database.');
-            }
-            magazines = results;
-        });
+            db.query(queryMagazine, function(err, results, fields) {
+                if (err) {
+                    throw new Error('Error querying database.');
+                }
+                magazines = results;
 
-        var music = [];
-        db.query(queryMusic, function(err, results, fields) {
-            if (err) {
-                throw new Error('Error querying database.');
-            }
-            music = results;
-        });
+                db.query(queryMusic, function(err, results, fields) {
+                    if (err) {
+                        throw new Error('Error querying database.');
+                    }
+                    music = results;
 
-        var movies = [];
-        db.query(queryMovie, function(err, results, fields) {
-            if (err) {
-                throw new Error('Error querying database.');
-            }
-            movies = results;
-        });
+                    db.query(queryMovie, function(err, results, fields) {
+                        if (err) {
+                            throw new Error('Error querying database.');
+                        }
+                        movies = results;
 
-        var media = [];
-        media.push(books);
-        media.push(magazines);
-        media.push(music);
-        media.push(movies);
+                        media.push(books);
+                        media.push(magazines);
+                        media.push(music);
+                        media.push(movies);
+                    });
+                });
+            });
+        });
 
         return media;
     }
