@@ -26,7 +26,7 @@ export class Catalog {
     }
 
     static editItem(type, fields, callback) {
-        this.findMedia(type, fields, (err, rows) => {
+        MediaGateway.findMedia(type, fields, (err, rows) => {
             if (err) {
                 err = new Error('There was an error checking for the item\'s existence');
                 callback(err, rows);
@@ -63,7 +63,7 @@ export class Catalog {
     }
 
     static deleteItem(type, fields, callback){
-        this.findMedia(type, fields, (err, rows) => {
+        MediaGateway.findMedia(type, fields, (err, rows) => {
             if (err) {
                 throw new Error('Media does not exist');
             }
