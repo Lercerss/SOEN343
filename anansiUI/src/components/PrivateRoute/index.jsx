@@ -3,15 +3,14 @@ import { Route, Redirect } from 'react-router-dom';
 
 export default class PrivateRoute extends React.Component {
     render() {
-        let { isAdmin, Component, token } = this.props;
-        console.log(this.props.path);
+        const { condition, children, ...otherProps } = this.props;
         return (
             <Route
                 exact
-                path={this.props.path}
+                {...otherProps}
                 render={props =>
-                    isAdmin ? (
-                        <Component token={token} />
+                    condition ? (
+                        children
                     ) : (
                         <Redirect to="/" />
                     )

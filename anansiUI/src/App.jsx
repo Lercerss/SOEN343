@@ -80,8 +80,9 @@ class App extends React.Component {
             content: 'Please log in for this request.'
         });
         this.handleLogout();
-    }
+    };
     render() {
+        const token = this.props.cookies.get('jwt');
         return (
             <main>
                 <Layout style={styles.Layout}>
@@ -97,30 +98,28 @@ class App extends React.Component {
                             <Switch>
                                 <PrivateRoute
                                     path="/users/register"
-                                    isAdmin={this.state.isAdmin}
-                                    Component={RegisterForm}
-                                    token={this.props.cookies.get('jwt')}
-                                />
+                                    condition={this.state.isAdmin}
+                                >
+                                    <RegisterForm token={token} />
+                                </PrivateRoute>
                                 <PrivateRoute
                                     path="/users"
-                                    isAdmin={this.state.isAdmin}
-                                    Component={UsersList}
-                                    token={this.props.cookies.get('jwt')}
-                                />
+                                    condition={this.state.isAdmin}
+                                >
+                                    <UsersList token={token} />
+                                </PrivateRoute>
                                 <PrivateRoute
                                     path="/media/create"
-                                    isAdmin={this.state.isAdmin}
-                                    Component={AddMediaForm}
-                                    token={this.props.cookies.get('jwt')}
-                                />
+                                    condition={this.state.isAdmin}
+                                >
+                                    <AddMediaForm token={token} />
+                                </PrivateRoute>
                                 <Route
                                     exact
                                     path="/media"
-                                    render={props => (
-                                        <ItemsList
-                                            token={this.props.cookies.get('jwt')}
-                                        />
-                                    )}
+                                    render={props =>
+                                        <ItemsList token={token} />
+                                    }
                                 />
                             </Switch>
                         </Content>
