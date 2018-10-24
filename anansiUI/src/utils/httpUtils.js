@@ -1,6 +1,20 @@
 import axios from 'axios';
 
 const backendURL = 'http://localhost:3000/';
+var appInterceptor;
+
+axios.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response.status === 401 && appInterceptor) {
+        appInterceptor();
+    }
+    return Promise.reject(error);
+});
+
+export function setAppInterceptor(interceptor) {
+    appInterceptor = interceptor;
+}
 
 export function userLogin(username, password) {
     return axios.post(`${backendURL}user/login/`, {

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Layout } from 'antd';
+import { Layout, Modal } from 'antd';
 import { withCookies, Cookies } from 'react-cookie';
 import { Route, Switch } from 'react-router-dom';
-import { getTokenInfo } from './utils/httpUtils';
+import { getTokenInfo, setAppInterceptor } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
 import UsersList from './components/UsersList';
@@ -32,6 +32,7 @@ class App extends React.Component {
     };
 
     componentDidMount() {
+        setAppInterceptor(this.handleExpired);
         // If jwt is stored in cookies
         // It sends it to server to validate it
         // and gather user info
@@ -68,6 +69,18 @@ class App extends React.Component {
         });
         this.props.cookies.remove('jwt');
     };
+    handleExpired = () => {
+        if (!this.state.loggedIn) {
+            // Should not warn for invalid token when user is not logged in
+            return;
+        }
+        console.log('Expired token found by App');
+        Modal.error({
+            title: 'Expired Token',
+            content: 'Please log in for this request.'
+        });
+        this.handleLogout();
+    }
     render() {
         return (
             <main>
@@ -86,21 +99,18 @@ class App extends React.Component {
                                     path="/users/register"
                                     isAdmin={this.state.isAdmin}
                                     Component={RegisterForm}
-                                    handleLogout={this.handleLogout}
                                     token={this.props.cookies.get('jwt')}
                                 />
                                 <PrivateRoute
                                     path="/users"
                                     isAdmin={this.state.isAdmin}
                                     Component={UsersList}
-                                    handleLogout={this.handleLogout}
                                     token={this.props.cookies.get('jwt')}
                                 />
                                 <PrivateRoute
                                     path="/media/create"
                                     isAdmin={this.state.isAdmin}
                                     Component={AddMediaForm}
-                                    handleLogout={this.handleLogout}
                                     token={this.props.cookies.get('jwt')}
                                 />
                                 <Route
@@ -108,7 +118,6 @@ class App extends React.Component {
                                     path="/media"
                                     render={props => (
                                         <ItemsList
-                                            handleLogout={this.handleLogout}
                                             token={this.props.cookies.get('jwt')}
                                         />
                                     )}

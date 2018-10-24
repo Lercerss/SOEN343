@@ -36,13 +36,6 @@ export default class ItemsList extends React.Component {
                 });
             })
             .catch(err => {
-                if (err.response.status === 401) {
-                    Modal.error({
-                        title: 'Expired Token',
-                        content: 'Please log in for this request.'
-                    });
-                    this.props.handleLogout();
-                }
                 // TODO: Handle error when deleting item in backend
                 console.log(err);
             });
@@ -104,7 +97,6 @@ export default class ItemsList extends React.Component {
                     <div className="MetaForm">
                         <MediaForm
                             type={this.state.editFormMediaType}
-                            handleLogout={this.props.handleLogout}
                             action="update"
                             token={token}
                             item={itemInfo}

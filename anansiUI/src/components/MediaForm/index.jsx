@@ -33,13 +33,7 @@ export default class MediaForm extends React.Component {
                     })
                     .catch(err => {
                         // TODO: Handle error when submitting form to backend
-                        if (err.response.status === 401) {
-                            Modal.error({
-                                title: 'Expired Token',
-                                content: 'Please log in for this request.'
-                            });
-                            this.props.handleLogout();
-                        } else {
+                        if (err.response.status !== 401) {
                             Modal.error({
                                 title: 'Failed to create a new user',
                                 content: err.response ? err.response.data.message : 'Connection error'

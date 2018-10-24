@@ -39,7 +39,6 @@ export default class AddMediaForm extends React.Component {
                 <Divider />
                 <MediaForm
                     type={this.state.mediaType}
-                    handleLogout={this.props.handleLogout}
                     action="insert"
                     token={token}
                     handleClose={handleClose}

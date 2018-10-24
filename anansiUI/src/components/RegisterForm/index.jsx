@@ -42,13 +42,7 @@ class RegisterForm extends React.Component {
                         }
                     })
                     .catch(error => {
-                        if (error.response.status === 401) {
-                            Modal.error({
-                                title: 'Expired Token',
-                                content: 'Please log in for this request.'
-                            });
-                            this.props.handleLogout();
-                        } else {
+                        if (error && error.response.status !== 401) {
                             Modal.error({
                                 title: 'Failed to create a new user',
                                 content: error.response
