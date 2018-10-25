@@ -71,6 +71,9 @@ export class MediaGateway extends DatabaseManager {
     static findMediaById(type, id, callback) {
         var query;
 
+        console.log(type);
+        console.log(id);
+
         if (type === 'Book') {
             query = db.format('SELECT * FROM books WHERE book_id = ?',
                 id);
@@ -81,9 +84,11 @@ export class MediaGateway extends DatabaseManager {
             query = db.format('SELECT * FROM music WHERE music_id = ?',
                 id);
         } else if (type === 'Movie') {
-            query = db.format('SELECT * FROM movies WHERE movie_id',
+            query = db.format('SELECT * FROM movies WHERE movie_id = ?',
                 id);
         }
+
+        console.log(query);
 
         db.query(query, (err, rows, fields) => {
             callback(type, err, rows);
@@ -112,21 +117,21 @@ export class MediaGateway extends DatabaseManager {
         });
     }
 
-    static deleteMedia(type, fields, callback) {
+    static deleteMedia(type, id, callback) {
         var query;
 
         if (type === 'Book') {
-            query = db.format('DELETE FROM books WHERE isbn10 = ?',
-                fields['isbn10']);
+            query = db.format('DELETE FROM books WHERE book_id = ?',
+                id);
         } else if (type === 'Magazine') {
-            query = db.format('DELETE FROM magazines WHERE isbn10 = ?',
-                fields['isbn10']);
+            query = db.format('DELETE FROM magazines WHERE magazine_id = ?',
+                id);
         } else if (type === 'Music') {
-            query = db.format('DELETE FROM music WHERE asin = ?',
-                fields['asin']);
+            query = db.format('DELETE FROM music WHERE music_id',
+                id);
         } else if (type === 'Movie') {
-            query = db.format('DELETE FROM movies WHERE title = ? AND releaseDate = ?',
-                [fields['title'], fields['releaseDate']]);
+            query = db.format('DELETE FROM movies WHERE title = ? AND movie_id',
+                id);
         }
 
         db.query(query, (err, rows, fields) => {

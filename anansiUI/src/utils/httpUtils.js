@@ -72,11 +72,11 @@ export function editItem(type, itemInfo, token) {
     });
 }
 
-export function deleteItem(id, itemInfo, token) {
+export function deleteItem(type, itemInfo, token) {
     console.log(token);
     return axios.delete(`${backendURL}item/delete/`, {
         data: {
-            id: id,
+            type: type,
             itemInfo: itemInfo,
             token: token
         }
