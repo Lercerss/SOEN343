@@ -41,12 +41,19 @@ export class User {
     }
 
     validate() {
+        console.log(this.username.length > 4)
+        console.log(this.password.length > 4)
+        console.log(this.firstName.match(/^(\w+-?\s?)+$/))
+        console.log(this.lastName.match(/^(\w+-?\s?)+$/))
+        console.log(this.email.match(/.+\@.+\..+/))
+        console.log(this.phoneNumber.match(/^(\+?\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/))
         return (
-            this.username &&
-            this.password &&
-            this.firstName &&
-            this.lastName &&
-            this.email
+            this.username.length > 4 &&
+            this.password.length > 4 &&
+            this.firstName.match(/^(\w+-?\s?)+$/) &&
+            this.lastName.match(/^(\w+-?\s?)+$/) &&
+            this.email.match(/.+\@.+\..+/) &&
+            this.phoneNumber.match(/^(\+?\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/)
         );
     }
 
