@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { connection as db } from '../db/dbConnection';
-import { UserGateway } from '../db/UserGateway';
 
 export class User {
     constructor(userJson) {

@@ -1,5 +1,4 @@
 import { UserRegistry } from '../models/UserRegistry';
-import { UserGateway} from '../db/UserGateway';
 import { createToken } from '../utils/Auth';
 import { validateToken } from './router';
 
@@ -76,29 +75,22 @@ export function createUser(req, res) {
                 message: 'Only administrators can register new users'
             });
         } else {
-            UserRegistry.searchUser(req.body.userInfo.username, (err, userArray) => {
+            UserRegistry.makeNewUser(req.body.userInfo, err => {
                 if (err) {
-                    res.status(500).send({
-                        message: 'There was an error checking for username existence'
-                    });
-                    return;
-                }
-                if (userArray.length !== 0) {
-                    res.status(400).send({
-                        message: 'Username already exists'
-                    });
-                    return;
-                }
-                UserRegistry.makeNewUser(req.body.userInfo, err => {
-                    if (err) {
-                        console.log(err);
+                    console.log(err);
+                    if (err.reason === 'username') {
                         res.status(400).send({
+                            message: 'Username already exists'
+                        });
+                    } else {
+                        res.status(500).send({
                             message: 'Could not create user',
                             error: err
                         });
                     }
-                    res.status(200).send();
-                });
+                    return;
+                }
+                res.status(200).send();
             });
         }
     });
