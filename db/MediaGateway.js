@@ -25,9 +25,9 @@ export class MediaGateway extends DatabaseManager {
                 callback(err);
             });
         } else if (type === 'Movie') {
-            query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                [fields['title'], fields['releaseDate'], fields['director'], fields['producers'], fields['actors'], fields['language'],
-                    fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss')]);
+            query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [fields['title'], fields['director'], fields['producers'], fields['actors'], fields['language'],
+                    fields['subtitles'], fields['dubbed'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['runTime']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
@@ -174,11 +174,11 @@ export class MediaGateway extends DatabaseManager {
                         media.push(magazines);
                         media.push(music);
                         media.push(movies);
+                        callback(err, media);
+                        // console.log(media);
                     });
                 });
             });
         });
-
-        return media;
     }
 }
