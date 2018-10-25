@@ -79,7 +79,20 @@ export class Catalog {
         }
         var mediaArray = [];
         for (var mediaJson of jsonArray) {
-            var media = new Media(mediaJson);
+            var media;
+                if (type == 'book') {
+                    media = new Book(mediaJson)
+                }
+                else if (type == 'magazine') {
+                    media = new Magazine(mediaJson)
+                }
+                else if (type == 'movie') {
+                    media = new Movie(mediaJson)
+                }
+                else if (type == 'music') {
+                    media = new Music(mediaJson)
+                }
+                
             mediaArray.push(media);
         }
         callback(err, mediaArray);
