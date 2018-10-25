@@ -1,5 +1,6 @@
 import { DatabaseManager } from './DatabaseManager';
 import { connection as db } from './dbConnection';
+import { Catalog } from '../models/Catalog';
 
 export class MediaGateway extends DatabaseManager {
     static saveMedia(type, fields, callback) {
@@ -37,34 +38,56 @@ export class MediaGateway extends DatabaseManager {
         var query;
         if (type === 'Book') {
             query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
-                'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ? WHERE isbn10 = ?', [fields['title'], fields['language'],
+                'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ? WHERE book_id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'],
-                fields['author'], fields['format'], fields['pages'], fields['isbn10']]);
+                fields['author'], fields['format'], fields['pages'], fields['id']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Magazine') {
-            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE isbn10 = ?' +
+            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE magazin_id = ?' +
                 'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
-                fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'], fields['isbn10']]);
+                fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'], fields['id']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Music') {
-            query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE asin = ?',
-                [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin'], fields['asin']]);
+            query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE music_id = ?',
+                [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin'], fields['id']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Movie') {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE title = ? AND releaseDate = ?', [fields['title'], fields['releaseDate'],
+                'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE movie_id = ?', [fields['title'], fields['releaseDate'],
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
-                fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], fields['releaseDate']]);
+                fields['subtites'], fields['dubbed'], fields['runtime'], fields['id']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         }
+    }
+
+    static findMediaById(type, id, callback) {
+        var query;
+
+        if (type === 'Book') {
+            query = db.format('SELECT * FROM books WHERE book_id = ?',
+                id);
+        } else if (type === 'Magazine') {
+            query = db.format('SELECT * FROM magazines WHERE magazine_id = ?',
+                id);
+        } else if (type === 'Music') {
+            query = db.format('SELECT * FROM music WHERE music_id = ?',
+                id);
+        } else if (type === 'Movie') {
+            query = db.format('SELECT * FROM movies WHERE movie_id',
+                id);
+        }
+
+        db.query(query, (err, rows, fields) => {
+            Catalog.jsonToMedia(err, rows, fields, callback);
+        });
     }
 
     static findMedia(type, fields, callback) {
@@ -85,7 +108,7 @@ export class MediaGateway extends DatabaseManager {
         }
 
         db.query(query, (err, rows, fields) => {
-            MediaGateway.jsonToMedia(err, rows, fields, callback);
+            Catalog.jsonToMedia(err, rows, fields, callback);
         });
     }
 
