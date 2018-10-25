@@ -165,13 +165,19 @@ describe('routes: get user list', () => {
 
 describe('routes: retrieve catalog elements', () => {
     test.skip('It should respond with a complete array of catalog elements', done => {
-        request(app)
-            .get('/item/display-all/')
-            .then(response => {
-                expect(response.statusCode).toBe(200);
-                expect(response.body).toMatchObject(mediaData.initial);
-                done();
-            });
+        var tokens = [adminToken, clientToken];
+        tokens.forEach(token => {
+            request(app)
+                .post('/item/display-all/')
+                .send({
+                    token: token
+                })
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    expect(response.body).toMatchObject(mediaData.initial);
+                    done();
+                });
+        });
     });
 });
 

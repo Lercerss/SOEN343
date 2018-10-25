@@ -39,20 +39,27 @@ export function loginUser(req, res) {
 };
 
 export function displayUsers(req, res) {
-    // TODO: Validate Token
-    UserRegistry.getAllUsers((err, rows) => {
-        if (err) {
-            console.log(err);
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.isAdmin){
+            res.status(403).send({
+                message: 'Only administrator can view all users',
+                isAdmin: decoded.data.isAdmin
+            });
+        } else {
+            UserRegistry.getAllUsers((err, rows) => {
+                if (err) {
+                    console.log(err);
+                }
+                res.send(rows);
+            });
         }
-        res.send(rows);
     });
 };
 
 export function validateUser(req, res) {
     // Validates jwt and sends user information
     // back to frontend
-    const token = req.body.token;
-    validateToken(token, res, decoded => {
+    validateToken(req.body.token, res, decoded => {
         res.status(200).send({
             username: decoded.data.username,
             isAdmin: decoded.data.isAdmin

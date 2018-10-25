@@ -17,7 +17,7 @@ export default class UsersList extends React.Component {
         console.log(`TODO: Implement editing user info.\nClicked ${JSON.stringify(item)}`);
     };
     componentDidMount() {
-        getAllUsers()
+        getAllUsers(this.props.token)
             .then(response => {
                 this.setState({
                     users: response.data

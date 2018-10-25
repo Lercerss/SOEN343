@@ -114,13 +114,13 @@ class App extends React.Component {
                                 >
                                     <AddMediaForm token={token} />
                                 </PrivateRoute>
-                                <Route
+                                <PrivateRoute
                                     exact
                                     path="/media"
-                                    render={props =>
-                                        <ItemsList token={token} />
-                                    }
-                                />
+                                    condition={this.state.loggedIn}
+                                >
+                                    <ItemsList token={token} />
+                                </PrivateRoute>
                             </Switch>
                         </Content>
                     </Layout>

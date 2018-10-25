@@ -11,7 +11,7 @@ export default class ItemsList extends React.Component {
         itemInfo: undefined
     };
     componentDidMount() {
-        viewItems()
+        viewItems(this.props.token)
             .then(response => {
                 this.setState({
                     itemList: response.data
