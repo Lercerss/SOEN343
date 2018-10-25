@@ -29,18 +29,19 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-{{ checksum "anansiBE/package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: npm install
+      - run: npm install --prefix ./anansiBE
 
       - run: sudo apt-get install -y mysql-client
 
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+            - anansiBE/node_modules
+          key: v1-dependencies-{{ checksum "anansiBE/package.json" }}
+          when: always
 
       - run:
           name: Wait for DB
@@ -51,16 +52,16 @@ jobs:
         # Create db and run all migrations
           command: |
             mysql -u root -h 127.0.0.1 -e "GRANT ALL PRIVILEGES ON anansi_db_test.* TO 'dbuser'@'%'; FLUSH PRIVILEGES"
-            node_modules/db-migrate/bin/db-migrate db:create anansi_db_test -e creation && node_modules/db-migrate/bin/db-migrate -e test up
+            anansiBE/node_modules/db-migrate/bin/db-migrate --config anansiBE/database.json db:create anansi_db_test -e creation && anansiBE/node_modules/db-migrate/bin/db-migrate --config anansiBE/database.json -m anansiBE/migrations -e test up
         
       - run: 
-          name: test
-          command: npm test
+          name: test back-end
+          command: npm test --prefix ./anansiBE
           no_output_timeout: 5m
       
       - run:
           name: lint
-          command: npm run lint
+          command: npm run lint --prefix ./anansiBE
       
       - store_artifacts: 
           path: test-report.html
