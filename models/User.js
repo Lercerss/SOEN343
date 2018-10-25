@@ -46,7 +46,7 @@ export class User {
             this.password.length > 4 &&
             this.firstName.match(/^(\w+-?\s?)+$/) &&
             this.lastName.match(/^(\w+-?\s?)+$/) &&
-            this.email.match(/.+\@.+\..+/) &&
+            this.email.match(/.+@.+\..+/) &&
             this.phoneNumber.match(/^(\+?\d{1,2}\s?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/)
         );
     }

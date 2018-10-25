@@ -46,7 +46,6 @@ export class UserRegistry {
             ]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
-                return;
             });
         });
     }
