@@ -1,22 +1,15 @@
 import { User } from './User';
 import { connection as db } from '../db/dbConnection';
+import { UserGateway } from '../db/UserGateway';
+
 
 export class UserRegistry {
     static searchUser(username, callback) {
-        const SQLQuery = db.format('SELECT * FROM users WHERE username=?', [
-            username
-        ]);
-        db.query(SQLQuery, (err, rows, fields) => {
-            UserRegistry.jsonToUser(err, rows, fields, callback);
-        });
+       UserGateway.findUser(username, callback);   
     }
-    static getAllUsers(callback) {
-        db.query(
-            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM users',
-            (err, rows, fields) => {
-                UserRegistry.jsonToUser(err, rows, fields, callback);
-            }
-        );
+
+    static getAllUsers() {
+        return UserGateway.getAll();
     }
     static jsonToUser(err, jsonArray, fields, callback) {
         if (err) {
@@ -27,7 +20,8 @@ export class UserRegistry {
             var user = new User(userJson);
             userArray.push(user);
         }
-        callback(err, userArray);
+        if (callback) {
+            callback(err, userArray);}
     }
 
     static makeNewUser(userJson, callback) {
@@ -41,12 +35,8 @@ export class UserRegistry {
                 callback(err);
                 return;
             }
-            const query = db.format('INSERT INTO users VALUES (?)', [
-                user.toDbRow()
-            ]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
+            UserGateway.saveUser(userJson, callback);
             });
-        });
+        };
     }
-}
+
