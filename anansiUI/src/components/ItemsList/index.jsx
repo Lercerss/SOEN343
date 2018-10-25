@@ -29,11 +29,10 @@ export default class ItemsList extends React.Component {
         });
     };
     handleDelete = item => {
-        deleteItem(item.itemInfo.id, item.itemInfo, this.props.token)
-            .then(response => {
-                this.setState({
-                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
-                });
+        deleteItem(item.type, item.itemInfo, this.props.token)
+        .then(response => {
+            this.setState({
+                itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
             })
             .catch(err => {
                 // TODO: Handle error when deleting item in backend

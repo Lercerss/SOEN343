@@ -27,16 +27,9 @@ export class Catalog {
     static editItem(type, fields, callback) {
         var id = fields['id'];
 
-        MediaGateway.findMediaById(type, id, (err, rows) => {
-            if (err) {
-                err = new Error('There was an error checking for the item\'s existence');
-                callback(err, rows);
-                return;
-            }
+        MediaGateway.findMediaById(type, id, (rows) => {
             if (rows == null) {
-                err = new Error('Media item does not exist in the database');
-                callback(err, rows);
-                return;
+                throw new Error('Media item does not exist in the database');
             }
             MediaGateway.editMedia(type, id, fields, callback);
         });
@@ -62,14 +55,15 @@ export class Catalog {
         });
     }
 
-    static deleteItem(type, fields, callback){
-        MediaGateway.findMedia(type, fields, (err, rows) => {
-            if (err) {
-                throw new Error('Media does not exist');
+    static deleteItem(type, id, callback){
+        console.log(type);
+        console.log(id);
+
+        MediaGateway.findMediaById(type, id, (rows) => {
+            if (rows == null) {
+                throw new Error('Media item does not exist in the database');
             }
-            if (rows != null) {
-                MediaGateway.deleteMedia(type, fields, callback);
-            }
+            MediaGateway.deleteMedia(type, id, callback);
         });
     }
 
