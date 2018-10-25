@@ -34,16 +34,19 @@ export class UserRegistry {
         let user = new User(userJson);
         if (!user.validate()) {
             callback(new Error('Invalid user information'));
+            return;
         }
         user.hashPassword(err => {
             if (err) {
                 callback(err);
+                return;
             }
             const query = db.format('INSERT INTO users VALUES (?)', [
                 user.toDbRow()
             ]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
+                return;
             });
         });
     }
