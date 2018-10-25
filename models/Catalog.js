@@ -26,7 +26,9 @@ export class Catalog {
     }
 
     static editItem(type, fields, callback) {
-        MediaGateway.findMedia(type, fields, (err, rows) => {
+        var id = fields['id'];
+
+        MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
                 err = new Error('There was an error checking for the item\'s existence');
                 callback(err, rows);
