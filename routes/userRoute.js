@@ -1,4 +1,5 @@
 import { UserRegistry } from '../models/UserRegistry';
+import { UserGateway} from '../db/UserGateway';
 import { createToken } from '../utils/Auth';
 import { validateToken } from './router';
 
