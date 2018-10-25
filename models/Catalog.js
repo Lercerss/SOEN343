@@ -39,7 +39,7 @@ export class Catalog {
                 callback(err, rows);
                 return;
             }
-            MediaGateway.editMedia(type, fields, callback);
+            MediaGateway.editMedia(type, id, fields, callback);
         });
     }
 
@@ -48,20 +48,9 @@ export class Catalog {
     }
 
     static searchItem(type, fields, callback) {
-        MediaGateway.findMedia(type, fields, callback);
-    }
-
-    static searchByID(id, callback){
-        var err = null;
-        var index = 0;
-        for (var item of mediaList){
-            if (item.id === id) {
-                callback(err, item, index);
-                return;
-            }
-            index++;
-        }
-        callback(err, null, null);
+        MediaGateway.findMedia(type, fields, function(type, err, jsonArray) {
+            this.jsonToMedia(type, err, jsonArray);
+        });
     }
 
     static deleteItem(type, fields, callback){
@@ -69,30 +58,29 @@ export class Catalog {
             if (err) {
                 throw new Error('Media does not exist');
             }
-            MediaGateway.deleteMedia(type, fields, callback);
+            if (rows != null) {
+                MediaGateway.deleteMedia(type, fields, callback);
+            }
         });
     }
 
-    static jsonToMedia(err, jsonArray, fields, callback) {
+    static jsonToMedia(type, err, jsonArray, callback) {
         if (err) {
             callback(err, []);
         }
         var mediaArray = [];
         for (var mediaJson of jsonArray) {
             var media;
-                if (type == 'book') {
-                    media = new Book(mediaJson)
-                }
-                else if (type == 'magazine') {
-                    media = new Magazine(mediaJson)
-                }
-                else if (type == 'movie') {
-                    media = new Movie(mediaJson)
-                }
-                else if (type == 'music') {
-                    media = new Music(mediaJson)
-                }
-                
+            if (type === 'book') {
+                media = new Book(mediaJson);
+            } else if (type === 'magazine') {
+                media = new Magazine(mediaJson);
+            } else if (type === 'movie') {
+                media = new Movie(mediaJson);
+            } else if (type === 'music') {
+                media = new Music(mediaJson);
+            }
+
             mediaArray.push(media);
         }
         callback(err, mediaArray);

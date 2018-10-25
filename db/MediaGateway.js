@@ -34,26 +34,26 @@ export class MediaGateway extends DatabaseManager {
         }
     }
 
-    static editMedia(type, fields, callback) {
+    static editMedia(type, id, fields, callback) {
         var query;
         if (type === 'Book') {
             query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?,' +
                 'publisher = ? publicationDate = ?, author = ?, format = ?, pages = ? WHERE book_id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'],
-                fields['author'], fields['format'], fields['pages'], fields['id']]);
+                fields['author'], fields['format'], fields['pages'], id]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Magazine') {
-            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE magazin_id = ?' +
+            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE magazine_id = ?' +
                 'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
-                fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'], fields['id']]);
+                fields['isbn10'], fields['isbn13'], fields['publisher'], fields['publicationDate'], id]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Music') {
             query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE music_id = ?',
-                [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin'], fields['id']]);
+                [fields['title'], fields['releaseDate'], fields['type'], fields['artist'], fields['label'], fields['asin'], id]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
@@ -61,7 +61,7 @@ export class MediaGateway extends DatabaseManager {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
                 'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE movie_id = ?', [fields['title'], fields['releaseDate'],
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
-                fields['subtites'], fields['dubbed'], fields['runtime'], fields['id']]);
+                fields['subtites'], fields['dubbed'], fields['runtime'], id]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
@@ -86,7 +86,7 @@ export class MediaGateway extends DatabaseManager {
         }
 
         db.query(query, (err, rows, fields) => {
-            Catalog.jsonToMedia(err, rows, fields, callback);
+            callback(type, err, rows);
         });
     }
 
@@ -108,7 +108,7 @@ export class MediaGateway extends DatabaseManager {
         }
 
         db.query(query, (err, rows, fields) => {
-            Catalog.jsonToMedia(err, rows, fields, callback);
+            callback(type, err, rows);
         });
     }
 
