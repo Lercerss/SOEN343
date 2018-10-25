@@ -1,33 +1,33 @@
 import { DatabaseManager } from './DatabaseManager';
 import { connection as db } from './dbConnection';
-import { Catalog } from '../models/Catalog';
+import moment from 'moment';
 
 export class MediaGateway extends DatabaseManager {
     static saveMedia(type, fields, callback) {
         var query;
         if (type === 'Book') {
-            query = db.format('INSERT INTO books(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
-                [fields['title'], fields['author'], fields['format'], fields['pages'], fields['publisher'], fields['publicationDate'],
+            query = db.format('INSERT INTO books(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [fields['title'], fields['author'], fields['format'], fields['pages'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'),
                     fields['language'], fields['isbn10'], fields['isbn13']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Magazine') {
-            query = db.format('INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?)',
-                [fields['title'], fields['publisher'], fields['publicationDate'], fields['language'], fields['isbn10'], fields['isbn13']]);
+            query = db.format('INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?)',
+                [fields['title'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'), fields['language'], fields['isbn10'], fields['isbn13']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Music') {
-            query = db.format('INSERT INTO music(type, title, artist, label, releaseDate, asin) VALUES (?)',
-                [fields['type'], fields['title'], fields['artist'], fields['label'], fields['releaseDate'], fields['asin']]);
+            query = db.format('INSERT INTO music(type, title, artist, label, releaseDate, asin) VALUES (?, ?, ?, ?, ?, ?)',
+                [fields['type'], fields['title'], fields['artist'], fields['label'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['asin']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
         } else if (type === 'Movie') {
-            query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?)',
+            query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [fields['title'], fields['releaseDate'], fields['director'], fields['producers'], fields['actors'], fields['language'],
-                    fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], fields['releaseDate']]);
+                    fields['subtites'], fields['dubbed'], fields['runtime'], fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss')]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });

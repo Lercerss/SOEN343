@@ -11,11 +11,13 @@ var mediaList = new Array();
 export class Catalog {
     static addItem(type, fields, callback) {
         MediaGateway.findMedia(type, fields, (err, rows) => {
+            /*
             if (err) {
                 err = new Error('There was an error checking for the item\'s existence');
                 callback(err, rows);
                 return;
             }
+            */
             if (rows != null) {
                 err = new Error('Media item already exists in the database');
                 callback(err, rows);
