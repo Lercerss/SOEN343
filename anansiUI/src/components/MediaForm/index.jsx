@@ -25,7 +25,7 @@ export default class MediaForm extends React.Component {
                     .then(response => {
                         console.log(response);
                         Modal.success({
-                            title: `${this.props.title} has been saved.`
+                            title: `${values.title} has been saved.`
                         });
                         if (handleClose) {
                             handleClose(values);
