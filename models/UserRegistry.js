@@ -29,13 +29,13 @@ export class UserRegistry {
     }
 
     static makeNewUser(userJson, callback) {
-        this.searchUser(userJson.username, (error, users) => {
+        UserGateway.findUser(userJson.username, (error, users) => {
             if (error) {
                 callback(error);
                 return;
             }
             console.log(users);
-            if (users && users.length) {
+            if (users.length==0) {
                 error = new Error('User already exists');
                 error.reason = 'username';
                 callback(error);
