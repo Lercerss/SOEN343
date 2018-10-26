@@ -71,6 +71,7 @@ export function editItem(req, res) {
                         message: 'Could not edit item',
                         error: err
                     });
+                    return;
                 }
                 if (err && item) {
                     console.log(err);
@@ -78,6 +79,7 @@ export function editItem(req, res) {
                         message: err.message,
                         error: err
                     });
+                    return;
                 }
                 res.status(200).send();
             });
