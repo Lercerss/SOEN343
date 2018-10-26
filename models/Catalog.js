@@ -29,7 +29,7 @@ export class Catalog {
 
         MediaGateway.findMediaById(type, id, (rows) => {
             if (rows == null) {
-                throw new Error('Media item does not exist in the database');
+                callback(new Error('Media item does not exist in the database'));
             }
             MediaGateway.editMedia(type, id, fields, callback);
         });
@@ -40,7 +40,7 @@ export class Catalog {
         var jsonArray = [];
         MediaGateway.getAll(function(err, media) {
             if (err) {
-                throw new Error('Error retrieving media items');
+                callback(new Error('Error retrieving media items'));
             }
             jsonArray = media;
             mediaArray = Catalog.jsonToMedia(jsonArray);
@@ -61,7 +61,7 @@ export class Catalog {
 
         MediaGateway.findMediaById(type, id, (rows) => {
             if (rows == null) {
-                throw new Error('Media item does not exist in the database');
+                callback(new Error('Media item does not exist in the database'));
             }
             MediaGateway.deleteMedia(type, id, callback);
         });
