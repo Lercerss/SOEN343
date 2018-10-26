@@ -35,7 +35,7 @@ export class UserRegistry {
                 return;
             }
             console.log(users);
-            if (users.length==0) {
+            if (users.length !== 0) {
                 error = new Error('User already exists');
                 error.reason = 'username';
                 callback(error);
