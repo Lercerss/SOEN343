@@ -7,7 +7,7 @@ export default class ItemsList extends React.Component {
     state = {
         itemList: [],
         isEditFormShown: false,
-        editFormMediaType: undefined,
+        editFormMediaType: '',
         itemInfo: undefined
     };
     componentDidMount() {
@@ -43,16 +43,20 @@ export default class ItemsList extends React.Component {
     handleClose = item => {
         if (!item) {
             this.setState({
-                isEditFormShown: false
+                isEditFormShown: false,
+                editFormMediaType: ''
             });
             return;
         }
         const items = this.state.itemList;
-        items[items.findIndex(el => el.itemInfo.id === item.id)].itemInfo = item;
+        console.log(item.id)
+        items[items.findIndex(el => el.itemInfo.id === item.id && el.type == this.state.editFormMediaType)].itemInfo = item;
         this.setState({
             isEditFormShown: false,
+            editFormMediaType: '',
             itemsList: items
         });
+        console.log(items)
     };
     render() {
         const { token } = this.props;
