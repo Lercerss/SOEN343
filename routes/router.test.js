@@ -163,7 +163,7 @@ describe('routes: get user list', () => {
                 done();
             });
     });
-    test.skip('Valid client token, forbidden request expects status 403', done => {
+    test('Valid client token, forbidden request expects status 403', done => {
         request(app)
             .post('/user/display-all/')
             .send({
@@ -177,7 +177,7 @@ describe('routes: get user list', () => {
 });
 
 describe('routes: retrieve catalog elements', () => {
-    test.skip('It should respond with a complete array of catalog elements', done => {
+    test('It should respond with a complete array of catalog elements', done => {
         var tokens = [adminToken, clientToken];
         tokens.forEach(token => {
             request(app)
@@ -187,7 +187,7 @@ describe('routes: retrieve catalog elements', () => {
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body).toMatchObject(mediaData.initial);
+                    expect(response.body[0].itemInfo.title).toBe(mediaData.initial[0].title);
                     done();
                 });
         });
@@ -208,23 +208,23 @@ describe('routes: addition of a media item', () => {
         }
     });
 
-    test.skip(`It should respond to adding already existing ${ mediaData.initial[0].mediaType } item with 400`, (done) => {
+    test(`It should respond to adding already existing ${ mediaData.initial[0].mediaType } item with 400`, (done) => {
         let existingMedia = buildCatalogRequest(mediaData.initial, adminToken);
         request(app)
             .post('/item/add/')
             .send(existingMedia[0])
             .then((response) => {
                 expect(response.statusCode).toBe(400);
-                console.log(response.body.message);
                 done();
             });
     });
 });
 
 describe('routes: editing and deleting of a media item in the catalog', () => {
-    test.skip(`It should respond to editing an item with 200`, (done) => {
+    test(`It should respond to editing an item with 200`, (done) => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
         for (let i = 0; i < media.length; i++){
+            media[i]['itemInfo']['id'] = 1;
             media[i].itemInfo.title += 'o';
             request(app)
                 .post('/item/edit/')
@@ -237,9 +237,9 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         }
     });
 
-    test.skip(`It should respond to deleting of an existing ${ mediaData.initial[0].mediaType } item with 200`, (done) => {
+    test(`It should respond to deleting of an existing ${ mediaData.initial[0].mediaType } item with 200`, (done) => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
-        media[0]['id'] = 0;
+        media[0]['itemInfo']['id'] = 1;
         request(app)
             .del('/item/delete/')
             .send(media[0])

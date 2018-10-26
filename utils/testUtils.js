@@ -61,13 +61,24 @@ export function globalSetUp() {
 
                 Object.keys(mediaTables).forEach(key => {
                     const values = catalogQueryBuilder(key);
-                    const catalogQuery = db.format('INSERT INTO ?? VALUES ?', [mediaTables[key], values]);
-
-                    db.query(catalogQuery, (err, rows, fields) => {
-                        if (err) {
-                            console.log(err);
+                    const clearTable = db.format(
+                        'TRUNCATE TABLE ??', // truncate to reset primary keys
+                        [mediaTables[key]]
+                    );
+                    const catalogQuery = db.format(
+                        'INSERT INTO ?? VALUES ?',
+                        [mediaTables[key], values]
+                    );
+                    db.query(clearTable, (err, rows, fields) => {
+                        if (err){
                             throw err;
                         }
+                        db.query(catalogQuery, (err, rows, fields) => {
+                            if (err) {
+                                console.log(err);
+                                throw err;
+                            }
+                        });
                     });
                 });
 
