@@ -1,7 +1,7 @@
 export class Media {
-    constructor(userJSON) {
-        this.id = userJSON.id;
-        this.title = userJSON.title;
+    constructor(mediaJSON) {
+        this.id = mediaJSON.id;
+        this.title = mediaJSON.title;
     }
 
     getID() {

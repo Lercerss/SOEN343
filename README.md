@@ -68,6 +68,8 @@ npm run migrate db:create anansi_db_test
 npm run test_migrate up
 ```
 
+The first hardcoded administrator user is already included the migrations. The username/password credentials are set to **tester/test**
+
 ### Running the Server
 
 To start the web application, use the following command in the base directory:
@@ -78,7 +80,7 @@ npm start
 
 ### Running Webpack Dev Server
 
-Inside anansiUI/, run the following command as a separate process from the node server (on another terminal):
+Inside anansiUI/, run the following command as a separate process from the Express server (on another terminal):
 
 ```
 npm start

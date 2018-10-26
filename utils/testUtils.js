@@ -1,11 +1,23 @@
 import bcrypt from 'bcrypt';
-import { connection as db } from '../db/dbConnection';
 import moment from 'moment';
 import { createToken } from '../utils/Auth';
+import { catalogQueryBuilder, mediaMapper } from '../utils/hardcoded';
+import { DatabaseManager } from '../db/DatabaseManager';
+
+const db = DatabaseManager.getConnection();
+
+export const usersTable = 'users';
+export const mediaTables = {
+    Book: 'books',
+    Magazine: 'magazines',
+    Music: 'music',
+    Movie: 'movies'
+};
 
 export function globalSetUp() {
     return new Promise((resolve, reject) => {
-        db.query('DELETE FROM users', (err, rows, fields) => {
+        const deleteUsersQuery = db.format('DELETE FROM ??', usersTable);
+        db.query(deleteUsersQuery, (err, rows, fields) => {
             if (err) {
                 process.exit(1);
             }
@@ -41,14 +53,37 @@ export function globalSetUp() {
                     ]
                 ];
 
-                const query = db.format('INSERT INTO users VALUES ?', [values]);
-                // console.log(query);
-                db.query(query, (err, rows, fields) => {
+                const userQuery = db.format('INSERT INTO ?? VALUES ?', [usersTable, values]);
+                db.query(userQuery, (err, rows, fields) => {
                     if (err) {
                         console.log(err);
                         throw err;
                     }
                 });
+
+                Object.keys(mediaTables).forEach(key => {
+                    const values = catalogQueryBuilder(key);
+                    const clearTable = db.format(
+                        'TRUNCATE TABLE ??', // truncate to reset primary keys
+                        [mediaTables[key]]
+                    );
+                    const catalogQuery = db.format(
+                        'INSERT INTO ?? VALUES ?',
+                        [mediaTables[key], values]
+                    );
+                    db.query(clearTable, (err, rows, fields) => {
+                        if (err){
+                            throw err;
+                        }
+                        db.query(catalogQuery, (err, rows, fields) => {
+                            if (err) {
+                                console.log(err);
+                                throw err;
+                            }
+                        });
+                    });
+                });
+
                 const infoArray = [
                     {
                         client_id: 1,

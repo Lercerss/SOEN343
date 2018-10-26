@@ -9,6 +9,6 @@ export class Movie extends DigitalMedia {
         this.language = userJSON.language;
         this.subtitles = userJSON.subtitles;
         this.dubbed = userJSON.dubbed;
-        this.runTime = userJSON.runTime;
+        this.runTime = userJSON.runtime;
     }
 }

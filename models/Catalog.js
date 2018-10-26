@@ -2,144 +2,108 @@ import { Book } from './Book';
 import { Magazine } from './Magazine';
 import { Movie } from './Movie';
 import { Music } from './Music';
-
-var id = 0;
-var mediaList = new Array();
+import { MediaGateway } from '../db/MediaGateway';
 
 export class Catalog {
     static addItem(type, fields, callback) {
-        console.log(mediaList);
-        this.searchItem(type, fields, (err, item, index) => {
+        MediaGateway.findMedia(type, fields, (err, rows) => {
             if (err) {
-                err = new Error('There was an error checking for item existence');
-                callback(err, item);
+                err = new Error('There was an error checking for the item\'s existence');
+                callback(err, rows);
                 return;
             }
-            if (item != null) {
-                err = new Error('Item already exists');
-                callback(err, item);
+            if (rows.length !== 0) {
+                err = new Error('Media item already exists in the database');
+                callback(err, rows);
                 return;
             }
-            if (type === 'Book') {
-                fields['id'] = id++;
-                var book = new Book(fields);
-                mediaList.push(book);
-                callback(err, item);
-            } else if (type === 'Magazine') {
-                fields['id'] = id++;
-                var magazine = new Magazine(fields);
-                mediaList.push(magazine);
-                callback(err, item);
-            } else if (type === 'Music') {
-                fields['id'] = id++;
-                var music = new Music(fields);
-                mediaList.push(music);
-                callback(err, item);
-            } else if (type === 'Movie') {
-                fields['id'] = id++;
-                var movie = new Movie(fields);
-                mediaList.push(movie);
-                callback(err, item);
-            } else {
-                err = new Error('Error in type specified.');
-                callback(err, item);
-            }
+
+            MediaGateway.saveMedia(type, fields, callback);
         });
     }
 
     static editItem(type, fields, callback) {
-        console.log(fields);
-        this.searchByID(fields.id, (err, item, index) => {
-            if (err) {
-                err = new Error('There was an error checking for particular item existence');
-                callback(err, item);
+        var id = fields['id'];
+
+        MediaGateway.findMedia(type, fields, (err, rows) => {
+            if (rows.length !== 0 && fields.id !== rows[0].id){
+                if (err){
+                    callback(err, null);
+                    return;
+                }
+                callback(
+                    new Error('Media item with the identifier you specified already exists in the database'),
+                    rows
+                );
                 return;
             }
-            if (item == null) {
-                err = new Error('Item could not be found');
-                callback(err, item);
-                return;
-            }
-            if (type === 'Book') {
-                var book = new Book(fields);
-                mediaList[index] = book;
-                callback(err, item);
-            } else if (type === 'Magazine') {
-                var magazine = new Magazine(fields);
-                mediaList[index] = magazine;
-                callback(err, item);
-            } else if (type === 'Music') {
-                var music = new Music(fields);
-                mediaList[index] = music;
-                callback(err, item);
-            } else if (type === 'Movie') {
-                var movie = new Movie(fields);
-                mediaList[index] = movie;
-                callback(err, item);
-            } else {
-                err = new Error('Error in type specified.');
-                callback(err, item);
-            }
+            MediaGateway.findMediaById(type, id, (err, rows) => {
+                if (err){
+                    callback(err, null);
+                    return;
+                } else if (rows.length === 0) {
+                    callback(
+                        new Error('Media item does not exist in the database'),
+                        rows
+                    );
+                    return;
+                }
+                MediaGateway.editMedia(type, id, fields, callback);
+            });
         });
     }
 
-    static viewItems() {
-        return mediaList;
+    static viewItems(callback) {
+        var mediaArray = [];
+        var jsonArray = [];
+        MediaGateway.getAll(function(err, media) {
+            if (err) {
+                callback(new Error('Error retrieving media items'));
+                return;
+            }
+            jsonArray = media;
+            mediaArray = Catalog.jsonToMedia(jsonArray);
+            callback(mediaArray);
+        });
     }
 
     static searchItem(type, fields, callback) {
-        var err = null;
-        var index = 0;
-
-        for (var item of mediaList) {
-            if (type === 'Book' && item instanceof Book) {
-                if (fields.isbn10 === item.isbn10) {
-                    callback(err, item, index);
-                    return;
-                }
-            } else if (type === 'Magazine' && item instanceof Magazine) {
-                if (fields.isbn10 === item.isbn10) {
-                    callback(err, item, index);
-                    return;
-                }
-            } else if (type === 'Music' && item instanceof Music) {
-                if (fields.asin === item.asin) {
-                    callback(err, item, index);
-                    return;
-                }
-            } else if (type === 'Movie' && item instanceof Movie) {
-                if (fields.title === item.title && fields.releaseDate === item.releaseDate) {
-                    callback(err, item, index);
-                    return;
-                }
-            }
-            index++;
-        }
-        callback(err, null, index);
+        MediaGateway.findMedia(type, fields, function(type, err, jsonArray) {
+            this.jsonToMedia(type, err, jsonArray);
+        });
     }
 
-    static searchByID(id, callback){
-        var err = null;
-        var index = 0;
-        for (var item of mediaList){
-            if (item.id === id) {
-                callback(err, item, index);
-                return;
-            }
-            index++;
-        }
-        callback(err, null, null);
-    }
-
-    static deleteItem(id, callback){
-        this.searchByID(id, (err, item, index) => {
-            if (item == null){
-                err = new Error('Error while deleting from in-memory collection');
+    static deleteItem(type, id, callback){
+        MediaGateway.findMediaById(type, id, (err, rows) => {
+            if (err) {
                 callback(err);
                 return;
+            } else if (rows.length === 0){
+                callback(new Error('Media item does not exist in the database'));
+                return;
             }
-            mediaList.splice(index, 1);
-            callback(err);
+            MediaGateway.deleteMedia(type, id, callback);
         });
+    }
+
+    static jsonToMedia(jsonArray) {
+        var mediaArray = [];
+
+        for (var i = 0; i < jsonArray.length; i++) {
+            for (var mediaJson of jsonArray[i]) {
+                var media;
+                if (i === 0) { // book type
+                    media = new Book(mediaJson);
+                } else if (i === 1) { // magazine type
+                    media = new Magazine(mediaJson);
+                } else if (i === 2) { // movie type
+                    media = new Music(mediaJson);
+                } else if (i === 3) { // music type
+                    media = new Movie(mediaJson);
+                }
+                mediaArray.push(media);
+            }
+        }
+        return mediaArray;
     }
 }

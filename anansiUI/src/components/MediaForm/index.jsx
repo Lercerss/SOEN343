@@ -25,7 +25,7 @@ export default class MediaForm extends React.Component {
                     .then(response => {
                         console.log(response);
                         Modal.success({
-                            title: 'Your registration is complete!'
+                            title: `${values.title} has been saved.`
                         });
                         if (handleClose) {
                             handleClose(values);
@@ -36,13 +36,16 @@ export default class MediaForm extends React.Component {
                         if (err.response.status !== 401) {
                             Modal.error({
                                 title: 'Failed to create a new user',
-                                content: err.response ? err.response.data.message : 'Connection error'
+                                content: err.response
+                                    ? err.response.data.message
+                                    : 'Connection error'
                             });
                         }
                         console.log(err);
                     });
             }
         });
+        form.resetFields();
     };
     render() {
         const { type, ...props } = this.props;

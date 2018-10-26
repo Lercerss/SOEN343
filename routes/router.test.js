@@ -1,11 +1,26 @@
 import request from 'supertest';
 import { app } from '../app';
-import { connection as db } from '../db/dbConnection';
-import { globalSetUp } from '../utils/testUtils';
-import { mediaData } from '../test/hardcoded';
+import { globalSetUp, usersTable, mediaTables } from '../utils/testUtils';
+import { mediaData } from '../utils/hardcoded';
+import { DatabaseManager } from '../db/DatabaseManager';
 
-let clientToken = '';
-let adminToken = '';
+const db = DatabaseManager.getConnection();
+
+var clientToken = '';
+var adminToken = '';
+
+function buildCatalogRequest(arr, token){
+    let builtArr = [];
+
+    for (let i = 0; i < arr.length; i++){
+        let m = {};
+        m['type'] = arr[i].mediaType;
+        m['itemInfo'] = arr[i];
+        m['token'] = token;
+        builtArr.push(m);
+    }
+    return builtArr;
+}
 
 beforeAll(done => {
     globalSetUp().then(tokenArray => {
@@ -150,7 +165,7 @@ describe('routes: get user list', () => {
                 done();
             });
     });
-    test.skip('Valid client token, forbidden request expects status 403', done => {
+    test('Valid client token, forbidden request expects status 403', done => {
         request(app)
             .post('/user/display-all/')
             .send({
@@ -164,7 +179,7 @@ describe('routes: get user list', () => {
 });
 
 describe('routes: retrieve catalog elements', () => {
-    test.skip('It should respond with a complete array of catalog elements', done => {
+    test('It should respond with a complete array of catalog elements', done => {
         var tokens = [adminToken, clientToken];
         tokens.forEach(token => {
             request(app)
@@ -174,7 +189,7 @@ describe('routes: retrieve catalog elements', () => {
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body).toMatchObject(mediaData.initial);
+                    expect(response.body[0].itemInfo.title).toBe(mediaData.initial[0].title);
                     done();
                 });
         });
@@ -182,114 +197,85 @@ describe('routes: retrieve catalog elements', () => {
 });
 
 describe('routes: addition of a media item', () => {
-    let media = [];
-    for (let i = 0; i < mediaData.addAndEdit.length; i++) {
-        let m = {};
-        m['mediaInfo'] = mediaData.addAndEdit[i];
-        m['token'] = adminToken;
-        media.push(m);
-    }
-
-    for (let i = 0; i < media.length; i++) {
-        test.skip(`It should respond to adding a ${
-            media[i].mediaInfo.type
-        } item with 200`, done => {
+    test(`It should respond to adding an item with 200`, (done) => {
+        let media = buildCatalogRequest(mediaData.addAndEdit, adminToken);
+        for (let i = 0; i < media.length; i++){
             request(app)
                 .post('/item/add/')
                 .send(media[i])
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body.isAdmin).toBe(1);
                     done();
                 });
-        });
-    }
+        }
+    });
 
-    let existingMedia = {};
-    existingMedia['mediaInfo'] = mediaData.initial[0];
-    existingMedia['token'] = adminToken;
-
-    test.skip(`It should respond to adding already existing ${
-        mediaData.initial[0].type
-    } item with 400`, done => {
+    test(`It should respond to adding already existing ${ mediaData.initial[0].mediaType } item with 400`, (done) => {
+        let existingMedia = buildCatalogRequest(mediaData.initial, adminToken);
         request(app)
             .post('/item/add/')
-            .send(existingMedia)
-            .then(response => {
+            .send(existingMedia[0])
+            .then((response) => {
                 expect(response.statusCode).toBe(400);
-                expect(response.body.message).stringContaining('existing isbn');
                 done();
             });
     });
 });
 
-describe('routes: editing of a media item in the catalog', () => {
-    let media = [];
-
-    for (let i = 0; i < mediaData.addAndEdit.length; i++) {
-        let m = {};
-        m['mediaInfo'] = mediaData.addAndEdit[i];
-        m['token'] = adminToken;
-        media.push(m);
-    }
-
-    for (let i = 0; i < media.length; i++) {
-        test.skip(`It should respond to editing a ${
-            media[i].mediaInfo.type
-        } item with 200`, done => {
-            media[i].mediaInfo.title += 'o';
+describe('routes: editing and deleting of a media item in the catalog', () => {
+    test(`It should respond to editing an item with 200`, (done) => {
+        let media = buildCatalogRequest(mediaData.initial, adminToken);
+        for (let i = 0; i < media.length; i++){
+            media[i]['itemInfo']['id'] = 1;
+            media[i].itemInfo.title += 'o';
             request(app)
                 .post('/item/edit/')
                 .send(media[i])
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body.isAdmin).toBe(1);
-                    media[i].mediaInfo.title.slice(0, -1);
+                    media[i].itemInfo.title.slice(0, -1);
                     done();
                 });
-        });
-    }
-
-    test.skip(`It should respond to editing an isbn of ${
-        media[0].mediaInfo.type
-    } item with 400`, done => {
-        media[0].mediaInfo.isbn10 = '1524796973';
-        request(app)
-            .post('/item/edit/')
-            .send(media[0])
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body.message).stringContaining('cannot modify existing isbn');
-                mediaData[0].mediaInfo.isbn10 = '1524796972';
-                done();
-            });
+        }
     });
 
-    test.skip(`It should respond to editing an asin of ${
-        media[3].mediaInfo.type
-    } item with 400`, done => {
-        mediaData[3].mediaInfo.asin = 'B008FOB125';
+    test(`It should respond to deleting of an existing ${ mediaData.initial[0].mediaType } item with 200`, (done) => {
+        let media = buildCatalogRequest(mediaData.initial, adminToken);
+        media[0]['itemInfo']['id'] = 1;
         request(app)
-            .post('/item/edit/')
-            .send(media[3])
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body.message).stringContaining('cannot modify existing asin');
-                mediaData[3].mediaInfo.asin = 'B008FOB124';
+            .del('/item/delete/')
+            .send(media[0])
+            .then((response) => {
+                expect(response.statusCode).toBe(200);
+                expect(response.body.message).toEqual('Item was deleted');
                 done();
             });
     });
 });
 
 afterAll(done => {
-    db.query('DELETE FROM users', (err, rows, fields) => {
+    const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
+    db.query(deleteUsersItemsQuery, (err, rows, fields) => {
         if (err) {
+            console.log('Error while wiping out users test db');
             process.exit(1);
         }
+
+        Object.keys(mediaTables).forEach(key => {
+            const deleteCatalogItemsQuery = db.format('DELETE FROM ??', mediaTables[key]);
+            db.query(deleteCatalogItemsQuery, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while wiping out catalog test dbs');
+                    process.exit(1);
+                }
+            });
+        });
+
         db.end(function(err) {
             if (err) {
                 return console.log('error:' + err.message);
             }
+
             console.log('Closed the database connection.');
             done();
         });

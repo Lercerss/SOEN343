@@ -10,15 +10,7 @@ class RegisterForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const {
-                    firstName,
-                    lastName,
-                    email,
-                    username,
-                    password,
-                    phoneNumber,
-                    isAdmin
-                } = values;
+                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
                 const { token } = this.props;
 
                 createNewUser(
@@ -31,26 +23,35 @@ class RegisterForm extends React.Component {
                     isAdmin,
                     token
                 )
-                    .then(response => {
-                        Modal.success({
-                            title: 'Your registration is complete!'
-                        });
-                        console.log(response);
-                        const { onUserRegistered } = this.props;
-                        if (onUserRegistered) {
-                            onUserRegistered();
-                        }
-                    })
-                    .catch(error => {
-                        if (error && error.response.status !== 401) {
-                            Modal.error({
-                                title: 'Failed to create a new user',
-                                content: error.response
-                                    ? error.response.data.message
-                                    : 'Connection error'
-                            });
-                        }
+                .then(response => {
+                    Modal.success({
+                        title: 'Your registration is complete!'
                     });
+                    this.setState({
+                        submissionResult: response.status,
+                        message: response.data.message 
+                    });
+                    
+                    console.log(response);
+                    const { onUserRegistered } = this.props;
+                    if (onUserRegistered) {
+                        onUserRegistered();
+                    }
+                })
+                .catch(error => {
+                    if (error && error.response.status !== 401) {
+                        Modal.error({
+                            title: 'Failed to create a new user',
+                            content: error.response
+                                ? error.response.data.message
+                                : 'Connection error'
+                        });
+                    }
+                    this.setState({
+                        submissionResult: error.response.status,
+                        message: error.response.data.message
+                    });
+                });
             }
         });
     };
@@ -109,8 +110,7 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message:
-                                        'Please input your username! Must be at least 4 characters long',
+                                    message: 'Please input your username! Must be at least 4 characters long',
                                     whitespace: true,
                                     min: 4
                                 }
@@ -122,8 +122,7 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message:
-                                        'Please input your password! Must be at least 4 characters long',
+                                    message: 'Please input your password! Must be at least 4 characters long',
                                     min: 4
                                 }
                             ]

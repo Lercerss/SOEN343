@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import moment from 'moment';
-import { connection as db } from '../db/dbConnection';
+import { DatabaseManager } from '../db/DatabaseManager';
+
+const db = DatabaseManager.getConnection();
 
 export class User {
     constructor(userJson) {
