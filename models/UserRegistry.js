@@ -1,24 +1,20 @@
 import { User } from './User';
-import { connection as db } from '../db/dbConnection';
+import { UserGateway } from '../db/UserGateway';
 
 export class UserRegistry {
     static searchUser(username, callback) {
-        const SQLQuery = db.format('SELECT * FROM users WHERE username=?', [
-            username
-        ]);
-        db.query(SQLQuery, (err, rows, fields) => {
-            UserRegistry.jsonToUser(err, rows, fields, callback);
+        UserGateway.findUser(username, (err, rows) => {
+            this.jsonToUser(err, rows, callback);
         });
     }
+
     static getAllUsers(callback) {
-        db.query(
-            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM users',
-            (err, rows, fields) => {
-                UserRegistry.jsonToUser(err, rows, fields, callback);
-            }
-        );
+        UserGateway.getAll((error, rows) => {
+            this.jsonToUser(error, rows, callback);
+        });
     }
-    static jsonToUser(err, jsonArray, fields, callback) {
+
+    static jsonToUser(err, jsonArray, callback) {
         if (err) {
             callback(err, []);
         }
@@ -27,26 +23,36 @@ export class UserRegistry {
             var user = new User(userJson);
             userArray.push(user);
         }
-        callback(err, userArray);
+        if (callback) {
+            callback(err, userArray);
+        }
     }
 
     static makeNewUser(userJson, callback) {
-        let user = new User(userJson);
-        if (!user.validate()) {
-            callback(new Error('Invalid user information'));
-            return;
-        }
-        user.hashPassword(err => {
-            if (err) {
-                callback(err);
+        UserGateway.findUser(userJson.username, (error, users) => {
+            if (error) {
+                callback(error);
                 return;
             }
-            const query = db.format('INSERT INTO users VALUES (?)', [
-                user.toDbRow()
-            ]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
+            console.log(users);
+            if (users.length !== 0) {
+                error = new Error('User already exists');
+                error.reason = 'username';
+                callback(error);
+                return;
+            }
+            let user = new User(userJson);
+            if (!user.validate()) {
+                callback(new Error('Invalid user information'));
+                return;
+            }
+            user.hashPassword(err => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                UserGateway.saveUser(user.toDbRow(), callback);
             });
         });
     }
-}
+};
