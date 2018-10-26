@@ -38,6 +38,7 @@ export default class ItemsList extends React.Component {
                 // TODO: Handle error when deleting item in backend
                 console.log(err);
             });
+        });
     };
     handleClose = item => {
         if (!item) {
@@ -99,7 +100,7 @@ export default class ItemsList extends React.Component {
                             action="update"
                             token={token}
                             item={itemInfo}
-                            handleClose={this.handleClose}
+                            handleClose={e => this.handleClose(null)}
                         />
                     </div>
                 </Modal>
