@@ -7,13 +7,11 @@ import { MediaGateway } from '../db/MediaGateway';
 export class Catalog {
     static addItem(type, fields, callback) {
         MediaGateway.findMedia(type, fields, (err, rows) => {
-            /* gives an error if the item doesn't exist
             if (err) {
                 err = new Error('There was an error checking for the item\'s existence');
                 callback(err, rows);
                 return;
             }
-            */
             if (rows.length !== 0) {
                 err = new Error('Media item already exists in the database');
                 callback(err, rows);
