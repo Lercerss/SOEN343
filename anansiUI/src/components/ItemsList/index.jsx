@@ -11,7 +11,7 @@ export default class ItemsList extends React.Component {
         itemInfo: undefined
     };
     componentDidMount() {
-        viewItems()
+        viewItems(this.props.token)
             .then(response => {
                 this.setState({
                     itemList: response.data
@@ -30,16 +30,17 @@ export default class ItemsList extends React.Component {
     };
     handleDelete = item => {
         deleteItem(item.itemInfo.id, item.itemInfo, this.props.token)
-        .then(response => {
-            this.setState({
-                itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+            .then(response => {
+                this.setState({
+                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+                });
             })
-        }).catch(err => {
-            // TODO: Handle error when deleting item in backend
-            console.log(err)
-        });
+            .catch(err => {
+                // TODO: Handle error when deleting item in backend
+                console.log(err);
+            });
     };
-    handleClose = (item) => {
+    handleClose = item => {
         if (!item) {
             this.setState({
                 isEditFormShown: false
@@ -54,7 +55,7 @@ export default class ItemsList extends React.Component {
         });
     };
     render() {
-        const { token} = this.props;
+        const { token } = this.props;
         const { itemInfo, itemList } = this.state;
         if (!itemList) {
             return <h2>Loading...</h2>;
@@ -90,7 +91,7 @@ export default class ItemsList extends React.Component {
                 <Modal
                     visible={this.state.isEditFormShown}
                     title="Edit Item"
-                    onCancel={(e) => this.handleClose(null)}
+                    onCancel={e => this.handleClose(null)}
                     footer={null} // Removes default footer
                 >
                     <div className="MetaForm">

@@ -1,10 +1,10 @@
 import React from 'react';
+import { Modal } from 'antd';
 import BookForm from './BookForm';
 import MagazineForm from './MagazineForm';
 import MovieForm from './MovieForm';
 import MusicForm from './MusicForm';
 import { addNewItem, editItem } from '../../utils/httpUtils';
-import { Modal } from 'antd';
 
 export default class MediaForm extends React.Component {
     handleSubmit = (e, form) => {
@@ -21,21 +21,26 @@ export default class MediaForm extends React.Component {
             console.log('Received values of form: ', values);
             const request = action == 'insert' ? addNewItem : action == 'update' ? editItem : null;
             if (request) {
-                request(this.props.type, values, token).then(response => {
-                    console.log(response);
-                    Modal.success({
-                        title: "Your registration is complete!",
+                request(this.props.type, values, token)
+                    .then(response => {
+                        console.log(response);
+                        Modal.success({
+                            title: 'Your registration is complete!'
+                        });
+                        if (handleClose) {
+                            handleClose(values);
+                        }
                     })
-                    if (handleClose) {
-                        handleClose(values);
-                    }
-                }).catch(err => {
-                    Modal.error({
-                        title: "Failed to create a new user",
-                        content: err.response ? err.response.data.message : "Connection error"
-                    })
-                    console.log(err)
-                })
+                    .catch(err => {
+                        // TODO: Handle error when submitting form to backend
+                        if (err.response.status !== 401) {
+                            Modal.error({
+                                title: 'Failed to create a new user',
+                                content: err.response ? err.response.data.message : 'Connection error'
+                            });
+                        }
+                        console.log(err);
+                    });
             }
         });
     };
@@ -43,22 +48,10 @@ export default class MediaForm extends React.Component {
         const { type, ...props } = this.props;
         let formComponent = '';
         props.handleSubmit = this.handleSubmit;
-        if (type == 'Book')
-                formComponent = (
-                    <BookForm { ...props }/>
-                );
-            else if (type == 'Magazine')
-                formComponent = (
-                    <MagazineForm { ...props }/>
-                );
-            else if (type == 'Movie')
-                formComponent = (
-                    <MovieForm { ...props }/>
-                );
-            else if (type == 'Music')
-                formComponent = (
-                    <MusicForm { ...props }/>
-                );
+        if (type == 'Book') formComponent = <BookForm {...props} />;
+        else if (type == 'Magazine') formComponent = <MagazineForm {...props} />;
+        else if (type == 'Movie') formComponent = <MovieForm {...props} />;
+        else if (type == 'Music') formComponent = <MusicForm {...props} />;
         return formComponent;
     }
 }

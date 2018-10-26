@@ -2,20 +2,25 @@ import { Catalog } from '../models/Catalog';
 import { validateToken } from './router';
 
 export function displayItems(req, res) {
-    var catalog = Catalog.viewItems();
-    if (catalog.length === 0) {
-        res.send({
-            message: 'Catalog is empty'
-        });
-    } else {
-        var typedCatalog = catalog.map(val => {
-            return {
-                itemInfo: val,
-                type: val.constructor.name
-            };
-        });
-        res.send(typedCatalog);
-    }
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.client_id){
+            return;
+        }
+        var catalog = Catalog.viewItems();
+        if (catalog.length === 0) {
+            res.send({
+                message: 'Catalog is empty'
+            });
+        } else {
+            var typedCatalog = catalog.map(val => {
+                return {
+                    itemInfo: val,
+                    type: val.constructor.name
+                };
+            });
+            res.send(typedCatalog);
+        }
+    });
 };
 
 export function addItem(req, res) {

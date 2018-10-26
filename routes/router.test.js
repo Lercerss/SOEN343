@@ -131,7 +131,7 @@ describe('routes: validate token', () => {
                 token: fakeToken
             })
             .then(response => {
-                expect(response.statusCode).toBe(500);
+                expect(response.statusCode).toBe(401);
                 done();
             });
     });
@@ -164,48 +164,58 @@ describe('routes: get user list', () => {
 });
 
 describe('routes: retrieve catalog elements', () => {
-    test.skip('It should respond with a complete array of catalog elements', (done) => {
-        request(app)
-            .get('/item/display-all/')
-            .then((response) => {
-                expect(response.statusCode).toBe(200);
-                expect(response.body).toMatchObject(mediaData.initial);
-                done();
-            });
+    test.skip('It should respond with a complete array of catalog elements', done => {
+        var tokens = [adminToken, clientToken];
+        tokens.forEach(token => {
+            request(app)
+                .post('/item/display-all/')
+                .send({
+                    token: token
+                })
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    expect(response.body).toMatchObject(mediaData.initial);
+                    done();
+                });
+        });
     });
 });
 
 describe('routes: addition of a media item', () => {
     let media = [];
-    for (let i = 0; i < mediaData.addAndEdit.length; i++){
+    for (let i = 0; i < mediaData.addAndEdit.length; i++) {
         let m = {};
         m['mediaInfo'] = mediaData.addAndEdit[i];
         m['token'] = adminToken;
         media.push(m);
     }
 
-    for (let i = 0; i < media.length; i++){
-        test.skip(`It should respond to adding a ${ media[i].mediaInfo.type } item with 200`, (done) => {
+    for (let i = 0; i < media.length; i++) {
+        test.skip(`It should respond to adding a ${
+            media[i].mediaInfo.type
+        } item with 200`, done => {
             request(app)
                 .post('/item/add/')
                 .send(media[i])
-                .then((response) => {
+                .then(response => {
                     expect(response.statusCode).toBe(200);
                     expect(response.body.isAdmin).toBe(1);
                     done();
                 });
         });
-    };
+    }
 
     let existingMedia = {};
     existingMedia['mediaInfo'] = mediaData.initial[0];
     existingMedia['token'] = adminToken;
 
-    test.skip(`It should respond to adding already existing ${ mediaData.initial[0].type } item with 400`, (done) => {
+    test.skip(`It should respond to adding already existing ${
+        mediaData.initial[0].type
+    } item with 400`, done => {
         request(app)
             .post('/item/add/')
             .send(existingMedia)
-            .then((response) => {
+            .then(response => {
                 expect(response.statusCode).toBe(400);
                 expect(response.body.message).stringContaining('existing isbn');
                 done();
@@ -216,34 +226,38 @@ describe('routes: addition of a media item', () => {
 describe('routes: editing of a media item in the catalog', () => {
     let media = [];
 
-    for (let i = 0; i < mediaData.addAndEdit.length; i++){
+    for (let i = 0; i < mediaData.addAndEdit.length; i++) {
         let m = {};
         m['mediaInfo'] = mediaData.addAndEdit[i];
         m['token'] = adminToken;
         media.push(m);
     }
 
-    for (let i = 0; i < media.length; i++){
-        test.skip(`It should respond to editing a ${ media[i].mediaInfo.type } item with 200`, (done) => {
+    for (let i = 0; i < media.length; i++) {
+        test.skip(`It should respond to editing a ${
+            media[i].mediaInfo.type
+        } item with 200`, done => {
             media[i].mediaInfo.title += 'o';
             request(app)
                 .post('/item/edit/')
                 .send(media[i])
-                .then((response) => {
+                .then(response => {
                     expect(response.statusCode).toBe(200);
                     expect(response.body.isAdmin).toBe(1);
                     media[i].mediaInfo.title.slice(0, -1);
                     done();
                 });
         });
-    };
+    }
 
-    test.skip(`It should respond to editing an isbn of ${ media[0].mediaInfo.type } item with 400`, (done) => {
+    test.skip(`It should respond to editing an isbn of ${
+        media[0].mediaInfo.type
+    } item with 400`, done => {
         media[0].mediaInfo.isbn10 = '1524796973';
         request(app)
             .post('/item/edit/')
             .send(media[0])
-            .then((response) => {
+            .then(response => {
                 expect(response.statusCode).toBe(400);
                 expect(response.body.message).stringContaining('cannot modify existing isbn');
                 mediaData[0].mediaInfo.isbn10 = '1524796972';
@@ -251,12 +265,14 @@ describe('routes: editing of a media item in the catalog', () => {
             });
     });
 
-    test.skip(`It should respond to editing an asin of ${ media[3].mediaInfo.type } item with 400`, (done) => {
+    test.skip(`It should respond to editing an asin of ${
+        media[3].mediaInfo.type
+    } item with 400`, done => {
         mediaData[3].mediaInfo.asin = 'B008FOB125';
         request(app)
             .post('/item/edit/')
             .send(media[3])
-            .then((response) => {
+            .then(response => {
                 expect(response.statusCode).toBe(400);
                 expect(response.body.message).stringContaining('cannot modify existing asin');
                 mediaData[3].mediaInfo.asin = 'B008FOB124';

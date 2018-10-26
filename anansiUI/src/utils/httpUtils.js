@@ -1,6 +1,20 @@
 import axios from 'axios';
 
 const backendURL = 'http://localhost:3000/';
+var appInterceptor;
+
+axios.interceptors.response.use(response => {
+    return response;
+}, error => {
+    if (error.response.status === 401 && appInterceptor) {
+        appInterceptor();
+    }
+    return Promise.reject(error);
+});
+
+export function setAppInterceptor(interceptor) {
+    appInterceptor = interceptor;
+}
 
 export function userLogin(username, password) {
     return axios.post(`${backendURL}user/login/`, {
@@ -15,12 +29,16 @@ export function getTokenInfo(jwt) {
     });
 }
 
-export function getAllUsers() {
-    return axios.post(`${backendURL}user/display-all/`);
+export function getAllUsers(jwt) {
+    return axios.post(`${backendURL}user/display-all/`, {
+        token: jwt
+    });
 }
 
-export function viewItems() { // retrieves all contents of the catalog without criteria
-    return axios.post(`${ backendURL }item/display-all/`);
+export function viewItems(jwt) { // retrieves all contents of the catalog without criteria
+    return axios.post(`${ backendURL }item/display-all/`, {
+        token: jwt
+    });
 }
 
 export function createNewUser(firstName, lastName, email, username, password, phoneNumber, isAdmin, token) {
