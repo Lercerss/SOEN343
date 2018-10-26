@@ -6,20 +6,21 @@ export function displayItems(req, res) {
         if (!decoded.data.client_id){
             return;
         }
-        var catalog = Catalog.viewItems();
-        if (catalog.length === 0) {
-            res.send({
-                message: 'Catalog is empty'
-            });
-        } else {
-            var typedCatalog = catalog.map(val => {
-                return {
-                    itemInfo: val,
-                    type: val.constructor.name
-                };
-            });
-            res.send(typedCatalog);
-        }
+        Catalog.viewItems(catalog => {
+            if (catalog.length === 0) {
+                res.send({
+                    message: 'Catalog is empty'
+                });
+            } else {
+                var typedCatalog = catalog.map(val => {
+                    return {
+                        itemInfo: val,
+                        type: val.constructor.name
+                    };
+                });
+                res.send(typedCatalog);
+            }
+        });
     });
 };
 
@@ -64,17 +65,17 @@ export function editItem(req, res) {
             });
         } else {
             Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
-                if (err) {
+                if (err && !item) {
                     console.log(err);
                     res.status(500).send({
                         message: 'Could not edit item',
                         error: err
                     });
                 }
-                if (item == null) {
+                if (err && item) {
                     console.log(err);
                     res.status(400).send({
-                        message: 'Item could not be found',
+                        message: err.message,
                         error: err
                     });
                 }
@@ -92,13 +93,14 @@ export function deleteItem(req, res) {
                 message: 'Only administrators can delete media items'
             });
         } else {
-            Catalog.deleteItem(req.body.itemInfo.id, err => {
+            Catalog.deleteItem(req.body.type, req.body.itemInfo.id, err => {
                 if (err) {
                     console.log(err);
                     res.status(500).send({
                         message: 'Could not delete item',
                         error: err
                     });
+                    return;
                 }
                 res.status(200).send({
                     message: 'Item was deleted',

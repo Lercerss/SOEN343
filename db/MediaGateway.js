@@ -38,32 +38,32 @@ export class MediaGateway extends DatabaseManager {
         var query;
         if (type === 'Book') {
             query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE book_id = ?', [fields['title'], fields['language'],
+                'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['author'], fields['format'], fields['pages'], id]);
-            db.query(query, (err, result) => {
-                callback(err, result);
+            db.query(query, (err, rows) => {
+                callback(err);
             });
         } else if (type === 'Magazine') {
             query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                'publisher = ?, publicationDate = ? WHERE magazine_id = ?', [fields['title'], fields['language'],
+                'publisher = ?, publicationDate = ? WHERE id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'), id]);
-            db.query(query, (err, result) => {
-                callback(err, result);
+            db.query(query, (err, rows) => {
+                callback(err);
             });
         } else if (type === 'Music') {
-            query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE music_id = ?',
+            query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE id = ?',
                 [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['type'], fields['artist'], fields['label'], fields['asin'], id]);
-            db.query(query, (err, result) => {
-                callback(err, result);
+            db.query(query, (err, rows) => {
+                callback(err);
             });
         } else if (type === 'Movie') {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE movie_id = ?', [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
+                'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?', [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
                 fields['subtites'], fields['dubbed'], fields['runtime'], id]);
-            db.query(query, (err, result) => {
-                callback(err, result);
+            db.query(query, (err, rows) => {
+                callback(err);
             });
         }
     }
@@ -71,27 +71,22 @@ export class MediaGateway extends DatabaseManager {
     static findMediaById(type, id, callback) {
         var query;
 
-        console.log(type);
-        console.log(id);
-
         if (type === 'Book') {
-            query = db.format('SELECT * FROM books WHERE book_id = ?',
+            query = db.format('SELECT * FROM books WHERE id = ?',
                 id);
         } else if (type === 'Magazine') {
-            query = db.format('SELECT * FROM magazines WHERE magazine_id = ?',
+            query = db.format('SELECT * FROM magazines WHERE id = ?',
                 id);
         } else if (type === 'Music') {
-            query = db.format('SELECT * FROM music WHERE music_id = ?',
+            query = db.format('SELECT * FROM music WHERE id = ?',
                 id);
         } else if (type === 'Movie') {
-            query = db.format('SELECT * FROM movies WHERE movie_id = ?',
+            query = db.format('SELECT * FROM movies WHERE id = ?',
                 id);
         }
 
-        console.log(query);
-
         db.query(query, (err, rows, fields) => {
-            callback(type, err, rows);
+            callback(err, rows);
         });
     }
 
@@ -113,7 +108,7 @@ export class MediaGateway extends DatabaseManager {
         }
 
         db.query(query, (err, rows, fields) => {
-            callback(type, err, rows);
+            callback(err, rows);
         });
     }
 
@@ -121,16 +116,16 @@ export class MediaGateway extends DatabaseManager {
         var query;
 
         if (type === 'Book') {
-            query = db.format('DELETE FROM books WHERE book_id = ?',
+            query = db.format('DELETE FROM books WHERE id = ?',
                 id);
         } else if (type === 'Magazine') {
-            query = db.format('DELETE FROM magazines WHERE magazine_id = ?',
+            query = db.format('DELETE FROM magazines WHERE id = ?',
                 id);
         } else if (type === 'Music') {
-            query = db.format('DELETE FROM music WHERE music_id',
+            query = db.format('DELETE FROM music WHERE id = ?',
                 id);
         } else if (type === 'Movie') {
-            query = db.format('DELETE FROM movies WHERE title = ? AND movie_id',
+            query = db.format('DELETE FROM movies WHERE id = ?',
                 id);
         }
 
@@ -151,36 +146,35 @@ export class MediaGateway extends DatabaseManager {
         var movies = [];
         var media = [];
 
-        db.query(queryBook, function(err, results, fields) {
+        db.query(queryBook, function(err, rows, fields) {
             if (err) {
                 throw new Error('Error querying database.');
             }
-            books = results;
+            books = rows;
 
-            db.query(queryMagazine, function(err, results, fields) {
+            db.query(queryMagazine, function(err, rows, fields) {
                 if (err) {
                     throw new Error('Error querying database.');
                 }
-                magazines = results;
+                magazines = rows;
 
-                db.query(queryMusic, function(err, results, fields) {
+                db.query(queryMusic, function(err, rows, fields) {
                     if (err) {
                         throw new Error('Error querying database.');
                     }
-                    music = results;
+                    music = rows;
 
-                    db.query(queryMovie, function(err, results, fields) {
+                    db.query(queryMovie, function(err, rows, fields) {
                         if (err) {
                             throw new Error('Error querying database.');
                         }
-                        movies = results;
+                        movies = rows;
 
                         media.push(books);
                         media.push(magazines);
                         media.push(music);
                         media.push(movies);
                         callback(err, media);
-                        // console.log(media);
                     });
                 });
             });
