@@ -41,29 +41,29 @@ export class MediaGateway extends DatabaseManager {
                 'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE book_id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['author'], fields['format'], fields['pages'], id]);
-            db.query(query, (rows) => {
-                callback(rows);
+            db.query(query, (err, result) => {
+                callback(err, result);
             });
         } else if (type === 'Magazine') {
-            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ? WHERE magazine_id = ?' +
-                'publisher = ? publicationDate = ?', [fields['title'], fields['language'],
+            query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
+                'publisher = ?, publicationDate = ? WHERE magazine_id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'), id]);
-            db.query(query, (rows) => {
-                callback(rows);
+            db.query(query, (err, result) => {
+                callback(err, result);
             });
         } else if (type === 'Music') {
             query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE music_id = ?',
                 [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['type'], fields['artist'], fields['label'], fields['asin'], id]);
-            db.query(query, (rows) => {
-                callback(rows);
+            db.query(query, (err, result) => {
+                callback(err, result);
             });
         } else if (type === 'Movie') {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
                 'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE movie_id = ?', [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
                 fields['subtites'], fields['dubbed'], fields['runtime'], id]);
-            db.query(query, (rows) => {
-                callback(rows);
+            db.query(query, (err, result) => {
+                callback(err, result);
             });
         }
     }
