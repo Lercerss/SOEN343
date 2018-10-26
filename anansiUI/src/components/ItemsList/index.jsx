@@ -30,15 +30,15 @@ export default class ItemsList extends React.Component {
     };
     handleDelete = item => {
         deleteItem(item.type, item.itemInfo, this.props.token)
-        .then(response => {
-            this.setState({
-                itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+            .then(response => {
+                this.setState({
+                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+                });
             })
             .catch(err => {
                 // TODO: Handle error when deleting item in backend
                 console.log(err);
             });
-        });
     };
     handleClose = item => {
         if (!item) {
@@ -100,7 +100,7 @@ export default class ItemsList extends React.Component {
                             action="update"
                             token={token}
                             item={itemInfo}
-                            handleClose={e => this.handleClose(null)}
+                            handleClose={this.handleClose}
                         />
                     </div>
                 </Modal>
