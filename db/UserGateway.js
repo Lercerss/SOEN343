@@ -1,4 +1,6 @@
-import { connection as db } from './dbConnection';
+import { DatabaseManager } from '../db/DatabaseManager';
+
+const db = DatabaseManager.getConnection();
 
 export class UserGateway {
     static saveUser(userRow, callback) {

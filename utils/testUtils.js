@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
-import { connection as db } from '../db/dbConnection';
 import moment from 'moment';
 import { createToken } from '../utils/Auth';
 import { catalogQueryBuilder, mediaMapper } from '../utils/hardcoded';
+import { DatabaseManager } from '../db/DatabaseManager';
+
+const db = DatabaseManager.getConnection();
 
 export const usersTable = 'users';
 export const mediaTables = {

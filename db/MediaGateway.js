@@ -1,8 +1,9 @@
 import { DatabaseManager } from './DatabaseManager';
-import { connection as db } from './dbConnection';
 import moment from 'moment';
 
-export class MediaGateway extends DatabaseManager {
+const db = DatabaseManager.getConnection();
+
+export class MediaGateway {
     static saveMedia(type, fields, callback) {
         var query;
         if (type === 'Book') {

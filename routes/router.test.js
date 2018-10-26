@@ -1,8 +1,10 @@
 import request from 'supertest';
 import { app } from '../app';
-import { connection as db } from '../db/dbConnection';
 import { globalSetUp, usersTable, mediaTables } from '../utils/testUtils';
 import { mediaData } from '../utils/hardcoded';
+import { DatabaseManager } from '../db/DatabaseManager';
+
+const db = DatabaseManager.getConnection();
 
 var clientToken = '';
 var adminToken = '';
