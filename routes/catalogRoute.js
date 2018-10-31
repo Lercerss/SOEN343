@@ -61,7 +61,7 @@ export function editItem(req, res) {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({
-                message: 'Only administrators can add media items'
+                message: 'Only administrators can edit media items'
             });
         } else {
             Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
