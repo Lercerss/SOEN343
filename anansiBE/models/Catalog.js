@@ -66,12 +66,6 @@ export class Catalog {
         });
     }
 
-    static searchItem(type, fields, callback) {
-        MediaGateway.findMedia(type, fields, function(type, err, jsonArray) {
-            this.jsonToMedia(type, err, jsonArray);
-        });
-    }
-
     static deleteItem(type, id, callback) {
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
