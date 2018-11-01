@@ -35,9 +35,11 @@ export function getAllUsers(jwt) {
     });
 }
 
-export function viewItems(jwt) { // retrieves all contents of the catalog without criteria
-    return axios.post(`${ backendURL }item/display-all/`, {
-        token: jwt
+export function viewItems(jwt, filters, sorting) { // retrieves all contents of the catalog without criteria
+    return axios.post(`${ backendURL }item/display/`, {
+        token: jwt,
+        filters: filters,
+        sorting: sorting
     });
 }
 
