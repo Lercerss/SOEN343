@@ -52,7 +52,7 @@ export class Catalog {
         });
     }
 
-    static viewItems(callback) {
+    static viewItems(callback, filters, ordering) {
         var mediaArray = [];
         var jsonArray = [];
         MediaGateway.getAll(function(err, media) {
@@ -63,6 +63,12 @@ export class Catalog {
             jsonArray = media;
             mediaArray = Catalog.jsonToMedia(jsonArray);
             callback(mediaArray);
+        });
+    }
+
+    static searchItem(type, fields, callback) {
+        MediaGateway.findMedia(type, fields, function(type, err, jsonArray) {
+            this.jsonToMedia(type, err, jsonArray);
         });
     }
 
