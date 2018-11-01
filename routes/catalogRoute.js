@@ -6,7 +6,7 @@ export function displayItems(req, res) {
         if (!decoded.data.client_id){
             return;
         }
-        Catalog.viewItems(catalog => {
+        Catalog.viewItems(req.body.filters, req.body.ordering, catalog => {
             if (catalog.length === 0) {
                 res.send({
                     message: 'Catalog is empty'
