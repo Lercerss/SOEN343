@@ -3,6 +3,10 @@ import { List, Button, Card, Modal } from 'antd';
 import MediaForm from '../MediaForm';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
 
+function compareMediaItems(item, type, other, otherType) {
+    return item.id === other.id && type === otherType ;
+}
+
 export default class ItemsList extends React.Component {
     state = {
         itemList: [],
@@ -32,7 +36,7 @@ export default class ItemsList extends React.Component {
         deleteItem(item.type, item.itemInfo, this.props.token)
             .then(response => {
                 this.setState({
-                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+                    itemList: this.state.itemList.filter(el => !compareMediaItems(item.itemInfo, item.type, el.itemInfo, el.type))
                 });
             })
             .catch(err => {
@@ -40,8 +44,8 @@ export default class ItemsList extends React.Component {
                 console.log(err);
             });
     };
-    handleClose = item => {
-        if (!item) {
+    handleClose = itemInfo => {
+        if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
                 editFormMediaType: ''
@@ -49,14 +53,12 @@ export default class ItemsList extends React.Component {
             return;
         }
         const items = this.state.itemList;
-        console.log(item.id)
-        items[items.findIndex(el => el.itemInfo.id === item.id && el.type == this.state.editFormMediaType)].itemInfo = item;
+        items[items.findIndex(el => compareMediaItems(itemInfo, this.state.editFormMediaType, el.itemInfo, el.type))].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
             editFormMediaType: '',
             itemsList: items
         });
-        console.log(items)
     };
     render() {
         const { token } = this.props;
