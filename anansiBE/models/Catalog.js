@@ -52,10 +52,10 @@ export class Catalog {
         });
     }
 
-    static viewItems(callback, filters, ordering) {
+    static viewItems(filters, ordering, callback) {
         var mediaArray = [];
         var jsonArray = [];
-        MediaGateway.getAll(function(err, media) {
+        MediaGateway.get(filters, ordering, function(err, media) {
             if (err) {
                 callback(new Error('Error retrieving media items'));
                 return;
