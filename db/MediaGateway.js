@@ -1,5 +1,6 @@
 import { DatabaseManager } from './DatabaseManager';
 import moment from 'moment';
+import knex from 'knex';
 
 const db = DatabaseManager.getConnection();
 
@@ -92,7 +93,9 @@ export class MediaGateway {
     }
 
     static findMedia(type, fields, callback) {
-        var query;
+        var query = knex({
+            client: 'mysql'
+        });
 
         if (type === 'Book') {
             query = db.format('SELECT * FROM books WHERE isbn10 = ?',
@@ -133,6 +136,9 @@ export class MediaGateway {
         db.query(query, (err, rows, fields) => {
             callback(err);
         });
+    }
+
+    static get(callback, filters, ordering) {
     }
 
     static getAll(callback) {

@@ -8,7 +8,7 @@ export class Catalog {
     static addItem(type, fields, callback) {
         MediaGateway.findMedia(type, fields, (err, rows) => {
             if (err) {
-                err = new Error('There was an error checking for the item\'s existence');
+                err = new Error("There was an error checking for the item's existence");
                 callback(err, rows);
                 return;
             }
@@ -26,26 +26,25 @@ export class Catalog {
         var id = fields['id'];
 
         MediaGateway.findMedia(type, fields, (err, rows) => {
-            if (rows.length !== 0 && fields.id !== rows[0].id){
-                if (err){
+            if (rows.length !== 0 && fields.id !== rows[0].id) {
+                if (err) {
                     callback(err, null);
                     return;
                 }
                 callback(
-                    new Error('Media item with the identifier you specified already exists in the database'),
+                    new Error(
+                        'Media item with the identifier you specified already exists in the database'
+                    ),
                     rows
                 );
                 return;
             }
             MediaGateway.findMediaById(type, id, (err, rows) => {
-                if (err){
+                if (err) {
                     callback(err, null);
                     return;
                 } else if (rows.length === 0) {
-                    callback(
-                        new Error('Media item does not exist in the database'),
-                        rows
-                    );
+                    callback(new Error('Media item does not exist in the database'), rows);
                     return;
                 }
                 MediaGateway.editMedia(type, id, fields, callback);
@@ -53,7 +52,7 @@ export class Catalog {
         });
     }
 
-    static viewItems(callback) {
+    static viewItems(callback, filters, ordering) {
         var mediaArray = [];
         var jsonArray = [];
         MediaGateway.getAll(function(err, media) {
@@ -73,12 +72,12 @@ export class Catalog {
         });
     }
 
-    static deleteItem(type, id, callback){
+    static deleteItem(type, id, callback) {
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
                 callback(err);
                 return;
-            } else if (rows.length === 0){
+            } else if (rows.length === 0) {
                 callback(new Error('Media item does not exist in the database'));
                 return;
             }
@@ -92,13 +91,17 @@ export class Catalog {
         for (var i = 0; i < jsonArray.length; i++) {
             for (var mediaJson of jsonArray[i]) {
                 var media;
-                if (i === 0) { // book type
+                if (i === 0) {
+                    // book type
                     media = new Book(mediaJson);
-                } else if (i === 1) { // magazine type
+                } else if (i === 1) {
+                    // magazine type
                     media = new Magazine(mediaJson);
-                } else if (i === 2) { // movie type
+                } else if (i === 2) {
+                    // movie type
                     media = new Music(mediaJson);
-                } else if (i === 3) { // music type
+                } else if (i === 3) {
+                    // music type
                     media = new Movie(mediaJson);
                 }
                 mediaArray.push(media);
