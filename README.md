@@ -39,7 +39,7 @@ npm install
 
 ### Database Setup
 
-Create a config file called `.env` in the root directory of the project with the following contents:
+Create a config file called `.env` in anansiBE/ (located in the root directory of the project) with the following contents:
 
 ```dosini
 MYSQL_PASSWORD="<password>"
@@ -72,7 +72,7 @@ The first hardcoded administrator user is already included the migrations. The u
 
 ### Running the Server
 
-To start the web application, use the following command in the base directory:
+To start the web application, use the following command inside anansiBE/:
 
 ```
 npm start
