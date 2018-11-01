@@ -153,9 +153,7 @@ export class MediaGateway {
     }
 
     static findMedia(type, fields, callback) {
-        var query = knex({
-            client: 'mysql'
-        });
+        var query;
 
         if (type === 'Book') {
             query = db.format('SELECT * FROM books WHERE isbn10 = ?',
@@ -196,9 +194,6 @@ export class MediaGateway {
         db.query(query, (err, rows, fields) => {
             callback(err);
         });
-    }
-
-    static get(callback, filters, ordering) {
     }
 
     static getAll(callback) {
