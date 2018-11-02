@@ -55,7 +55,7 @@ export class Catalog {
     static viewItems(filters, ordering, callback) {
         var mediaArray = [];
         var jsonArray = [];
-        MediaGateway.get(filters, ordering, function(err, media) {
+        MediaGateway.getItems(filters, ordering, function(err, media) {
             if (err) {
                 callback(new Error('Error retrieving media items'));
                 return;
