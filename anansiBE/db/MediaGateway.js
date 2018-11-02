@@ -136,7 +136,7 @@ export class MediaGateway {
         });
     }
 
-    static getAll(callback) {
+    static getItems(filters, ordering, callback) {
         var queryBook = 'SELECT * FROM books';
         var queryMagazine = 'SELECT * FROM magazines';
         var queryMusic = 'SELECT * FROM music';
@@ -147,6 +147,10 @@ export class MediaGateway {
         var music = [];
         var movies = [];
         var media = [];
+
+        var query = knex({
+            client: 'mysql'
+        });
 
         db.query(queryBook, function(err, rows, fields) {
             if (err) {
@@ -182,13 +186,5 @@ export class MediaGateway {
             });
         });
     }
-
-    static get(filters, ordering, callback) {
-        if (!filters){
-            this.getAll(callback);
-        }
-        var query = knex({
-            client: 'mysql'
-        });
-    }
+   
 }
