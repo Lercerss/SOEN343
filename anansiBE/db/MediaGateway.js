@@ -196,7 +196,7 @@ export class MediaGateway {
         });
     }
 
-    static getAll(callback) {
+    static getAll(filters, ordering, callback) {
         var queryBook = `SELECT a.*,
                             CONCAT(
                                 '{',
@@ -240,6 +240,10 @@ export class MediaGateway {
         var movies = [];
         var media = [];
 
+        var query = knex({
+            client: 'mysql'
+        });
+
         db.query(queryBook, function(err, rows, fields) {
             if (err) {
                 throw new Error('Error querying database.');
@@ -274,13 +278,5 @@ export class MediaGateway {
             });
         });
     }
-
-    static get(filters, ordering, callback) {
-        if (!filters){
-            this.getAll(callback);
-        }
-        var query = knex({
-            client: 'mysql'
-        });
-    }
+   
 }
