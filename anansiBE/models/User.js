@@ -12,10 +12,7 @@ export class User {
         this.phoneNumber = userJson.phoneNumber;
         this.isAdmin = Boolean(userJson.isAdmin);
         this.timestamp = userJson.timestamp;
-    }
-
-    setTimestamp(date) {
-        this.timestamp = moment(date).format('YYYY-MM-DD HH:mm:ss');
+        this.loggedIn = userJson.loggedIn || 0;
     }
 
     authenticate(password, callback) {
@@ -30,8 +27,8 @@ export class User {
 
     validate() {
         return (
-            this.username.length > 4 &&
-            this.password.length > 4 &&
+            this.username.length >= 4 &&
+            this.password.length >= 4 &&
             this.firstName.match(/^(\w+-?\s?)+$/) &&
             this.lastName.match(/^(\w+-?\s?)+$/) &&
             this.email.match(/.+@.+\..+/) &&
@@ -45,7 +42,6 @@ export class User {
                 callback(err);
             }
             this.password = res;
-            this.setTimestamp(Date.now());
             callback();
         });
     }
@@ -61,7 +57,8 @@ export class User {
             this.address,
             this.phoneNumber,
             this.isAdmin,
-            this.timestamp
+            this.timestamp,
+            this.loggedIn || 0
         ];
     }
 }

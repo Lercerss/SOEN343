@@ -18,6 +18,12 @@ export class UserGateway {
 
         db.query(SQLQuery);
     }
+    static logout(id, callback) {
+        const SQLQuery = db.format('UPDATE users SET loggedIn = 0 WHERE client_id = ?', [id]);
+        db.query(SQLQuery, (err, rows, fields) => {
+            callback(err, rows);
+        });
+    }
 
     static editUser() {
         // Temporarily left blank

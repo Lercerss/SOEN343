@@ -80,4 +80,13 @@ export class UserRegistry {
             });
         });
     }
+    static logout(id, callback) {
+        UserGateway.logout(id, (err, rows) => {
+            if (err) {
+                err.httpStatusCode = 500;
+                return callback(err);
+            }
+            callback(null);
+        });
+    }
 }

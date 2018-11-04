@@ -1,7 +1,6 @@
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken } from '../utils/Auth';
 import { validateToken } from './router';
-import { runInNewContext } from 'vm';
 
 export function loginUser(req, res, next) {
     let { username, password } = req.body;
@@ -15,6 +14,18 @@ export function loginUser(req, res, next) {
             isAdmin: user.isAdmin,
             username: user.username,
             token: createToken(user)
+        });
+    });
+}
+
+export function logoutUser(req, res, next) {
+    validateToken(req.body.token, res, decoded => {
+        console.log(decoded);
+        UserRegistry.logout(decoded.data.client_id, err => {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send();
         });
     });
 }
