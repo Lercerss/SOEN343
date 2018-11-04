@@ -66,7 +66,20 @@ export class UserRegistry {
                     err.httpStatusCode = 400;
                     return callback(err, null);
                 }
+
                 let user = userArray[0];
+
+                // Checking to see if account is logged in anywhere else
+                if (user.loggedIn) {
+                    let timeDelta = (Date.now() - user.timestamp) / (1000 * 60 * 60);
+
+                    if (timeDelta < 1) {
+                        let err = new Error('This account is logged in elsewhere');
+                        err.httpStatusCode = 401;
+                        return callback(err, null);
+                    }
+                }
+
                 user.authenticate(password, valid => {
                     if (valid) {
                         UserGateway.login(user);

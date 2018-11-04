@@ -20,7 +20,6 @@ export function loginUser(req, res, next) {
 
 export function logoutUser(req, res, next) {
     validateToken(req.body.token, res, decoded => {
-        console.log(decoded);
         UserRegistry.logout(decoded.data.client_id, err => {
             if (err) {
                 return next(err);
