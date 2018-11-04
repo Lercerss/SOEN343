@@ -42,7 +42,7 @@ export class UserGateway {
 
     static getAll(callback) {
         db.query(
-            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM users',
+            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp, loggedIn FROM users',
             (err, rows, fields) => {
                 callback(err, rows);
             }
