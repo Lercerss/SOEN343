@@ -28,7 +28,7 @@ export class MediaGateway {
         } else if (type === 'Movie') {
             query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [fields['title'], fields['director'], fields['producers'], fields['actors'], fields['language'],
-                    fields['subtitles'], fields['dubbed'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['runTime']]);
+                    fields['subtitles'], fields['dubbed'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['runtime']]);
             db.query(query, (err, rows, fields) => {
                 callback(err);
             });
@@ -62,7 +62,7 @@ export class MediaGateway {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
                 'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?', [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
-                fields['subtites'], fields['dubbed'], fields['runtime'], id]);
+                fields['subtitles'], fields['dubbed'], fields['runtime'], id]);
             db.query(query, (err, rows) => {
                 callback(err);
             });

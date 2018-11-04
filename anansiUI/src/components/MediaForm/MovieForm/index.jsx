@@ -184,7 +184,7 @@ class MovieForm extends React.Component {
                         </span>
                     }
                 >
-                    {getFieldDecorator('runTime', {
+                    {getFieldDecorator('runtime', {
                         rules: [
                             {
                                 required: true,
@@ -195,7 +195,7 @@ class MovieForm extends React.Component {
                                 message: 'Please input an integer'
                             }
                         ],
-                        initialValue: item.runTime
+                        initialValue: item.runtime
                     })(<InputNumber placeholder="127" />)}
                 </FormItem>
 

@@ -32,7 +32,7 @@ export const mediaData = {
         subtitles: 'English',
         dubbed: 'English, French',
         releaseDate: date,
-        runTime: 127
+        runtime: 127
     }, {
         mediaType: 'Music',
         title: 'Anastasis',
@@ -70,7 +70,7 @@ export const mediaData = {
         subtitles: 'English',
         dubbed: 'English, French',
         releaseDate: date,
-        runTime: 145
+        runtime: 145
     }, {
         mediaType: 'Music',
         title: 'WYD',
@@ -139,7 +139,7 @@ export function catalogQueryBuilder(type){
             dict.language,
             dict.subtitles,
             dict.dubbed,
-            dict.runTime
+            dict.runtime
         ];
         values.push(valuesArr);
         return values;
