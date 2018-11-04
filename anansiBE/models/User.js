@@ -1,8 +1,4 @@
 import bcrypt from 'bcrypt';
-import moment from 'moment';
-import { DatabaseManager } from '../db/DatabaseManager';
-
-const db = DatabaseManager.getConnection();
 
 export class User {
     constructor(userJson) {
@@ -30,16 +26,6 @@ export class User {
             }
             callback(res);
         });
-    }
-
-    login() {
-        this.setTimestamp(Date.now());
-        const SQLQuery = db.format(
-            'UPDATE users SET timestamp = ? WHERE username = ?',
-            [this.timestamp, this.username]
-        );
-
-        db.query(SQLQuery);
     }
 
     validate() {

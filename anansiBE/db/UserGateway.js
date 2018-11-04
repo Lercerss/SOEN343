@@ -1,4 +1,5 @@
 import { DatabaseManager } from '../db/DatabaseManager';
+import moment from 'moment';
 
 const db = DatabaseManager.getConnection();
 
@@ -8,6 +9,14 @@ export class UserGateway {
         db.query(query, (err, rows, fields) => {
             callback(err, rows);
         });
+    }
+    static login(user) {
+        const SQLQuery = db.format(
+            'UPDATE users SET timestamp = ?, loggedIn = 1 WHERE username = ?',
+            [moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'), user.username]
+        );
+
+        db.query(SQLQuery);
     }
 
     static editUser() {

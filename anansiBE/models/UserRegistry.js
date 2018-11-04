@@ -55,4 +55,29 @@ export class UserRegistry {
             });
         });
     }
-};
+    static login(username, password, callback) {
+        UserGateway.findUser(username, (err, rows) => {
+            this.jsonToUser(err, rows, (err, userArray) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                if (userArray.length === 0) {
+                    let err = new Error('Username does not exist');
+                    err.httpStatusCode = 400;
+                    return callback(err, null);
+                }
+                let user = userArray[0];
+                user.authenticate(password, valid => {
+                    if (valid) {
+                        UserGateway.login(user);
+                        callback(null, user);
+                    } else {
+                        let err = new Error('Password is incorrect');
+                        err.httpStatusCode = 400;
+                        return callback(err, null);
+                    }
+                });
+            });
+        });
+    }
+}
