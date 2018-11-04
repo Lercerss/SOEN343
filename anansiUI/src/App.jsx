@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal } from 'antd';
-import { withCookies, Cookies } from 'react-cookie';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
+import { Switch, Redirect, withRouter } from 'react-router-dom';
 import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
@@ -13,7 +13,7 @@ import PrivateRoute from './components/PrivateRoute';
 import UserProfile from './components/UserProfile';
 import './index.css';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 const styles = {
     Layout: {
         minHeight: '100vh'
