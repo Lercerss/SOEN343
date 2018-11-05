@@ -295,15 +295,6 @@ export class MediaGateway {
     }
 
     static getItems(filters, ordering, callback) {
-        filters = {
-            mediaType: 'books',
-            fields: {
-                title: 'tit',
-                author: 'dick',
-                publicationDate: '2018',
-                pages: '333'
-            }
-        };
         if (Object.keys(filters).length === 0) {
             var queryBook = `SELECT a.*,
                                 CONCAT(
@@ -423,7 +414,6 @@ export class MediaGateway {
                 });
                 query = query + fieldArray.join(' AND ');
             }
-            console.log(query);
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     throw new Error('Error querying database.');

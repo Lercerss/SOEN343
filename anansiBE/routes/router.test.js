@@ -183,9 +183,11 @@ describe('routes: retrieve catalog elements', () => {
         var tokens = [adminToken, clientToken];
         tokens.forEach(token => {
             request(app)
-                .post('/item/display-all/')
+                .post('/item/display/')
                 .send({
-                    token: token
+                    token: token,
+                    filters: {},
+                    sorting: {}
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
