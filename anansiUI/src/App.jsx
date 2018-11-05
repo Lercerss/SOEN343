@@ -87,7 +87,12 @@ class App extends React.Component {
             title: 'Expired Token',
             content: 'Please log in for this request.'
         });
-        this.handleLogout();
+        this.setState({
+            loggedIn: false,
+            username: '',
+            isAdmin: false
+        });
+        this.props.cookies.remove('jwt');
     };
     render() {
         const token = this.props.cookies.get('jwt');
