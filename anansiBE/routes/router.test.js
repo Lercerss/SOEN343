@@ -186,7 +186,9 @@ describe('routes: retrieve catalog elements', () => {
                 .post('/item/display/')
                 .send({
                     token: token,
-                    filters: {},
+                    filters: { mediaType: null,
+                        fields: {}
+                    },
                     sorting: {}
                 })
                 .then(response => {
