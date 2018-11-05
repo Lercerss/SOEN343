@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Button, Card, Icon, Form, Radio } from 'antd';
 import { getAllUsers } from '../../utils/httpUtils';
+import { Link } from 'react-router-dom';
 
 const maxLoginDelay = 60 * 60 * 1000; // 1 hour in milliseconds
 const styles = {
@@ -13,13 +14,17 @@ const styles = {
     }
 };
 export default class UsersList extends React.Component {
+
+    constructor(props){ 
+        super(props)
+        this.handleProfileViewing = this.props.handleProfileViewing.bind(this);
+    }
+    
     state = {
         users: [],
         shownList: []
     };
-    handleEdit = item => {
-        console.log(`TODO: Implement editing user info.\nClicked ${JSON.stringify(item)}`);
-    };
+
     handleView = e => {
         if (e.target.value === 'All') {
             this.setState({
@@ -79,9 +84,20 @@ export default class UsersList extends React.Component {
                         <List.Item
                             key={`${item.firstName} ${item.lastName}`}
                             actions={[
-                                <Button onClick={e => this.handleEdit(item)} type="primary">
-                                    Edit
-                                </Button>
+                                <Link
+                                    to={{
+                                        pathname: `/users/${item.username}/`,
+                                        user: item,
+                                        handleProfileViewing: this.handleProfileViewing
+                                    }}
+                                    onClick={e => this.handleProfileViewing(true)}
+                                >
+                                    <Button
+                                        type="primary"
+                                    >
+                                        View Profile
+                                    </Button>
+                                </Link>    
                             ]}
                         >
                             <List.Item.Meta

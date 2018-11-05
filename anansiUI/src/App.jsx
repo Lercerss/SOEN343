@@ -10,6 +10,7 @@ import RegisterForm from './components/RegisterForm';
 import ItemsList from './components/ItemsList';
 import AddMediaForm from './components/AddMediaForm';
 import PrivateRoute from './components/PrivateRoute';
+import UserProfile from './components/UsersList/UserProfile';
 import './index.css';
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -28,7 +29,8 @@ class App extends React.Component {
     state = {
         loggedIn: false,
         username: '',
-        isAdmin: false
+        isAdmin: false,
+        showingProfile: false,
     };
 
     componentDidMount() {
@@ -57,7 +59,8 @@ class App extends React.Component {
         this.setState({
             username: username,
             isAdmin: isAdmin,
-            loggedIn: true
+            loggedIn: true,
+            showingProfile: false,
         });
         this.props.cookies.set('jwt', token);
     };
@@ -69,7 +72,8 @@ class App extends React.Component {
                 this.setState({
                     loggedIn: false,
                     username: '',
-                    isAdmin: false
+                    isAdmin: false,
+                    showingProfile: false,
                 });
                 this.props.cookies.remove('jwt');
             })
@@ -97,7 +101,12 @@ class App extends React.Component {
         });
         this.props.cookies.remove('jwt');
     };
-    render() {
+    handleProfileViewing = (view) => {
+        this.setState({
+            showingProfile: view
+        });
+    };
+    render() { 
         const token = this.props.cookies.get('jwt');
         return (
             <main>
@@ -115,8 +124,11 @@ class App extends React.Component {
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm token={token} />
                                 </PrivateRoute>
+                                <PrivateRoute path="/users/:username" condition={this.state.isAdmin && this.state.showingProfile}>
+                                    <UserProfile />
+                                </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
-                                    <UsersList token={token} />
+                                    <UsersList token={token} handleProfileViewing={this.handleProfileViewing}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
                                     <AddMediaForm token={token} />
