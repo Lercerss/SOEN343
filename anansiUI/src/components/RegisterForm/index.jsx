@@ -110,9 +110,10 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your username! Must be at least 4 characters long',
+                                    message: 'Please input a correct username! Must be at least 4 characters long with no whitespace!',
                                     whitespace: true,
-                                    min: 4
+                                    min: 4,
+                                    pattern: /^\S*$/
                                 }
                             ]
                         })(<Input placeholder="PatTheSwedishCow" />)}
