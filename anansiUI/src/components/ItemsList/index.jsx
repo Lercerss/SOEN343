@@ -15,7 +15,7 @@ export default class ItemsList extends React.Component {
         itemInfo: undefined
     };
     componentDidMount() {
-        viewItems(this.props.token, {}, {})
+        viewItems(this.props.token, { mediaType: null, fields: {} }, {})
             .then(response => {
                 this.setState({
                     itemList: response.data

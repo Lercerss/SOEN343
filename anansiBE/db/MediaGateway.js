@@ -295,24 +295,27 @@ export class MediaGateway {
     }
 
     static getItems(filters, ordering, callback) {       
-        if (Object.keys(filters).length === 0) {
+        if (!filters.mediaType) {
+            var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';
             var queryBook = `SELECT a.*,
                                 CONCAT(
                                     '{',
                                     GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
                                     '}'
                                 ) as copies
-                            FROM books AS a
-                            LEFT JOIN book_copies AS b ON a.id = b.book_id
-                            GROUP BY a.id;`;
+                                FROM books AS a
+                                LEFT JOIN book_copies AS b ON a.id = b.book_id
+                                ${ title } 
+                                GROUP BY a.id;`;
             var queryMagazine = `SELECT a.*,
-                                    CONCAT(
-                                        '{',
-                                        GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                                        '}'
-                                    ) as copies
+                                CONCAT(
+                                    '{',
+                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                                    '}'
+                                ) as copies
                                 FROM magazines AS a
                                 LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                                ${ title } 
                                 GROUP BY a.id;`;
             var queryMusic = `SELECT a.*,
                                 CONCAT(
@@ -320,18 +323,20 @@ export class MediaGateway {
                                     GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
                                     '}'
                                 ) as copies
-                            FROM music AS a
-                            LEFT JOIN music_copies AS b ON a.id = b.music_id
-                            GROUP BY a.id;`;
+                                FROM music AS a
+                                LEFT JOIN music_copies AS b ON a.id = b.music_id
+                                ${ title } 
+                                GROUP BY a.id;`;
             var queryMovie = `SELECT a.*,
                                 CONCAT(
                                     '{',
                                     GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
                                     '}'
                                 ) as copies
-                            FROM movies AS a
-                            LEFT JOIN movie_copies AS b ON a.id = b.movie_id
-                            GROUP BY a.id;`;
+                                FROM movies AS a
+                                LEFT JOIN movie_copies AS b ON a.id = b.movie_id
+                                ${ title } 
+                                GROUP BY a.id;`;
 
             var books = [];
             var magazines = [];
@@ -394,34 +399,38 @@ export class MediaGateway {
                 table = 'music';
                 copyTable = 'music_copies';
                 type = 'music';
-                break
+                break;
             }
-            var query = `SELECT a.*,
-                    CONCAT(
-                        '{',
-                        GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                        '}'
-                    ) as copies
-                    FROM ${ table } AS a
-                    LEFT JOIN ${ copyTable } AS b ON a.id = b.${ type }_id
-                    GROUP BY a.id;`;
 
+            var filterClause;
             if (Object.keys(filters.fields).length !== 0) {
-                query = query + ' WHERE ';
+                filterClause = ' WHERE ';
                 var fieldArray = [];
                 Object.keys(filters.fields).forEach(function(key) {
                     fieldArray.push(key + " LIKE '%" + filters.fields[key] + "%'");
                 });
-                query = query + fieldArray.join(' AND ');
+                filterClause += fieldArray.join(' AND ');
             }
             if (Object.keys(ordering).length !== 0) {
-                query = query + ' ORDER BY ';
+                filterClause += ' ORDER BY ';
                 fieldArray = [];
                 Object.keys(ordering).forEach(function(key) {
                     fieldArray.push(key + ' ' + ordering[key]);
                 });
-                query = query + fieldArray.join(', ');
+                filterClause += fieldArray.join(', ');
             }
+
+            var query = `SELECT a.*,
+                        CONCAT(
+                            '{',
+                            GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                            '}'
+                        ) as copies
+                        FROM ${ table } AS a
+                        LEFT JOIN ${ copyTable } AS b ON a.id = b.${ type }_id
+                        ${ filterClause }
+                        GROUP BY a.id;`;
+
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     throw new Error('Error querying database.');
