@@ -1,5 +1,4 @@
 import { DatabaseManager } from '../db/DatabaseManager';
-import moment from 'moment';
 
 const db = DatabaseManager.getConnection();
 
@@ -44,7 +43,7 @@ export class UserGateway {
 
     static getAll(callback) {
         db.query(
-            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp, loggedIn FROM users',
+            'SELECT client_id, username, firstName, lastName, email, address, phoneNumber, isAdmin, timestamp, loggedIn FROM users',
             (err, rows, fields) => {
                 callback(err, rows);
             }

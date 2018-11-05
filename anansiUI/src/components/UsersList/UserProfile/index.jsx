@@ -31,20 +31,26 @@ export default class UserProfile extends React.Component{
         const initials = this.getInitials(user.firstName, user.lastName);
         const data = [
             {
-              title: 'First name',
-              content: user.firstName,
-            },
-            {
-              title: 'Last name',
-              content: user.lastName,
-            },
-            {
-              title: 'Username',
-              content: user.username,
-            },
-            {
-              title: 'Administrator',
-              content: user.isAdmin ? 'Yes': 'No',
+                title: 'First name',
+                content: user.firstName,
+            }, {
+                title: 'Last name',
+                content: user.lastName,
+            }, {
+                title: 'Username',
+                content: user.username,
+            }, {
+                title: 'Email',
+                content: user.email,
+            }, {
+                title: 'Address',
+                content: user.address ? user.address : 'N/A', 
+            }, {
+                title: 'Phone Number',
+                content: user.phoneNumber ? user.phoneNumber : 'N/A',
+            }, {
+                title: 'Administrator',
+                content: user.isAdmin ? 'Yes': 'No',
             },
           ];
 
