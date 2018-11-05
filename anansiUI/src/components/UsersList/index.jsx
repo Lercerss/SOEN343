@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Button, Card, Icon, Form, Radio } from 'antd';
 import { getAllUsers } from '../../utils/httpUtils';
 
-const maxLoginDelay = 60 * 60 * 1000; // 15 minutes in milliseconds
+const maxLoginDelay = 60 * 60 * 1000; // 1 hour in milliseconds
 const styles = {
     Card: {
         margin: '10px',
@@ -26,7 +26,6 @@ export default class UsersList extends React.Component {
                 shownList: this.state.users
             });
         } else {
-            let user = this.state.users[0];
             let shownList = this.state.users.filter(
                 user => user.loggedIn && Date.now() - new Date(user.timestamp) < maxLoginDelay
             );
