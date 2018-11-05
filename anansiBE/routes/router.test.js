@@ -186,14 +186,18 @@ describe('routes: retrieve catalog elements', () => {
                 .post('/item/display/')
                 .send({
                     token: token,
-                    filters: { mediaType: null,
+                    filters: {
+                        mediaType: null,
                         fields: {}
                     },
-                    sorting: {}
+                    sorting: {},
+                    nPage: 1
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    expect(response.body[0].itemInfo.title).toBe(mediaData.initial[0].title);
+                    expect(response.body.catalog[0].itemInfo.title).toBe(
+                        mediaData.initial[0].title
+                    );
                     done();
                 });
         });
