@@ -294,7 +294,16 @@ export class MediaGateway {
         });
     }
 
-    static getItems(filters, ordering, callback) {
+    static getItems(filters, ordering, callback) {   
+        filters = {
+            mediaType: 'books',
+            fields:{                
+            }
+        };
+        ordering = {
+            title: 'asc',
+            isbn10: 'desc',
+        };
         if (Object.keys(filters).length === 0) {
             var queryBook = `SELECT a.*,
                                 CONCAT(
@@ -413,6 +422,15 @@ export class MediaGateway {
                     fieldArray.push(key + " LIKE '%" + filters.fields[key] + "%'");
                 });
                 query = query + fieldArray.join(' AND ');
+            }
+            if (Object.keys(ordering).length !== 0) {
+                query = query + ' ORDER BY ';
+                fieldArray = [];
+                Object.keys(ordering).forEach(function(key) {
+                    fieldArray.push(key + ' ' + ordering[key]);
+                });
+                query = query + fieldArray.join(', ');
+                console.log(query);
             }
             db.query(query, function(err, rows, fields) {
                 if (err) {
