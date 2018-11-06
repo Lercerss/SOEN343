@@ -74,7 +74,10 @@ class App extends React.Component {
                 this.props.cookies.remove('jwt');
             })
             .catch(err => {
-                alert(err.response.data.message);
+                Modal.error({
+                    title: "Failed to sign out"
+                    content: err.response.data ? err.response.data.message : "Connection error"
+                });
             });
     };
     handleExpired = () => {
