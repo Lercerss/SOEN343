@@ -136,10 +136,42 @@ export class MediaGateway {
     }
 
     static getAll(callback) {
-        var queryBook = 'SELECT * FROM books';
-        var queryMagazine = 'SELECT * FROM magazines';
-        var queryMusic = 'SELECT * FROM music';
-        var queryMovie = 'SELECT * FROM movies';
+        var queryBook = `SELECT a.*,
+                            CONCAT(
+                                '{',
+                                GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                                '}'
+                            ) as copies
+                        FROM books AS a
+                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        GROUP BY a.id;`;
+        var queryMagazine = `SELECT a.*,
+                                CONCAT(
+                                    '{',
+                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                                    '}'
+                                ) as copies
+                            FROM magazines AS a
+                            LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                            GROUP BY a.id;`;
+        var queryMusic = `SELECT a.*,
+                            CONCAT(
+                                '{',
+                                GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                                '}'
+                            ) as copies
+                        FROM music AS a
+                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        GROUP BY a.id;`;
+        var queryMovie = `SELECT a.*,
+                            CONCAT(
+                                '{',
+                                GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
+                                '}'
+                            ) as copies
+                        FROM movies AS a
+                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        GROUP BY a.id;`;
 
         var books = [];
         var magazines = [];

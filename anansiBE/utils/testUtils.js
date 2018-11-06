@@ -64,7 +64,7 @@ export function globalSetUp() {
                 Object.keys(mediaTables).forEach(key => {
                     const values = catalogQueryBuilder(key);
                     const clearTable = db.format(
-                        'TRUNCATE TABLE ??', // truncate to reset primary keys
+                        'DELETE FROM ??',
                         [mediaTables[key]]
                     );
                     const catalogQuery = db.format(

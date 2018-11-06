@@ -8,18 +8,18 @@ class MagazineForm extends React.Component {
     handleAdd = () => {
         const { form } = this.props;
         const copyIds = form.getFieldValue('copyIds') || [];
-        const newCopyIds = copyIds.concat((Math.min(...copyIds, 0)) - 1);
+        const newCopyIds = copyIds.concat(Math.min(...copyIds, 0) - 1);
         form.setFieldsValue({
             copyIds: newCopyIds
         });
-    }
-    handleDelete = (copy) => {
+    };
+    handleDelete = copy => {
         const { form } = this.props;
         const copyIds = form.getFieldValue('copyIds');
         form.setFieldsValue({
             copyIds: copyIds.filter(el => el !== copy)
         });
-    }
+    };
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const item = this.props.item || {};
@@ -46,9 +46,11 @@ class MagazineForm extends React.Component {
                 }
             }
         };
-        getFieldDecorator('copyIds', {initialValue: item.copyIds || []});
+        getFieldDecorator('copyIds', {
+            initialValue: (item.copies && Object.keys(item.copies).map(e => parseInt(e))) || []
+        });
         return (
-            <Form onSubmit={(e) => this.props.handleSubmit(e, this.props.form)} className="Form">
+            <Form onSubmit={e => this.props.handleSubmit(e, this.props.form)} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
@@ -129,11 +131,11 @@ class MagazineForm extends React.Component {
                     })(<Input placeholder="9781603200189" />)}
                 </FormItem>
 
-                <Card>
+                <Card title="Magazine Copies">
                     {getFieldValue('copyIds').map((copy, index) => {
                         return (
                             <FormItem key={copy} {...formItemLayout}>
-                                {getFieldDecorator(`copyNames[${copy}]`, {
+                                {getFieldDecorator(`copies[${copy}]`, {
                                     rules: [
                                         {
                                             required: true,
@@ -141,13 +143,17 @@ class MagazineForm extends React.Component {
                                             message: 'Input a non-empty identifier or delete this copy'
                                         }
                                     ],
-                                    initialValue: item.copyNames && item.copyNames[copy]
-                                })(<Input placeholder="Copy identifier" style={{ width: '80%', marginRight: 8 }}/>)}
-                                <Button type="default" onClick={()=>this.handleDelete(copy)}>-</Button>
+                                    initialValue: item.copies && item.copies[copy]
+                                })(<Input placeholder="Copy identifier" style={{ width: '80%', marginRight: 8 }} />)}
+                                <Button type="default" onClick={() => this.handleDelete(copy)}>
+                                    -
+                                </Button>
                             </FormItem>
                         );
                     })}
-                    <Button type="default" onClick={this.handleAdd}>Add copy</Button>
+                    <Button type="default" onClick={this.handleAdd}>
+                        Add copy
+                    </Button>
                 </Card>
 
                 <FormItem {...tailFormItemLayout}>

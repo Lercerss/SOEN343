@@ -98,6 +98,7 @@ export class Catalog {
                     // music type
                     media = new Movie(mediaJson);
                 }
+                media.copies = JSON.parse(mediaJson.copies);
                 mediaArray.push(media);
             }
         }
