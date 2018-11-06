@@ -9,10 +9,10 @@ const db = DatabaseManager.getConnection();
 var clientToken = '';
 var adminToken = '';
 
-function buildCatalogRequest(arr, token){
+function buildCatalogRequest(arr, token) {
     let builtArr = [];
 
-    for (let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
         let m = {};
         m['type'] = arr[i].mediaType;
         m['itemInfo'] = arr[i];
@@ -55,6 +55,26 @@ describe('routes: login', () => {
         username: 'admintester',
         password: 'testl'
     };
+    test('Invalid login expects status 401', done => {
+        request(app)
+            .post('/user/login/')
+            .send(invalidUser)
+            .then(response => {
+                expect(response.statusCode).toBe(401);
+                expect(response.body).toHaveProperty('message');
+                done();
+            });
+    });
+    test('Incorrect password expects status 401', done => {
+        request(app)
+            .post('/user/login/')
+            .send(invalidPass)
+            .then(response => {
+                expect(response.statusCode).toBe(401);
+                expect(response.body).toHaveProperty('message');
+                done();
+            });
+    });
     test('Valid login expects status 200', done => {
         request(app)
             .post('/user/login/')
@@ -62,26 +82,6 @@ describe('routes: login', () => {
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toHaveProperty('token');
-                done();
-            });
-    });
-    test('Invalid login expects status 400', done => {
-        request(app)
-            .post('/user/login/')
-            .send(invalidUser)
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body).toHaveProperty('message');
-                done();
-            });
-    });
-    test('Incorrect password expects status 400', done => {
-        request(app)
-            .post('/user/login/')
-            .send(invalidPass)
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body).toHaveProperty('message');
                 done();
             });
     });
@@ -197,9 +197,9 @@ describe('routes: retrieve catalog elements', () => {
 });
 
 describe('routes: addition of a media item', () => {
-    test(`It should respond to adding an item with 200`, (done) => {
+    test(`It should respond to adding an item with 200`, done => {
         let media = buildCatalogRequest(mediaData.addAndEdit, adminToken);
-        for (let i = 0; i < media.length; i++){
+        for (let i = 0; i < media.length; i++) {
             request(app)
                 .post('/item/add/')
                 .send(media[i])
@@ -210,12 +210,14 @@ describe('routes: addition of a media item', () => {
         }
     });
 
-    test(`It should respond to adding already existing ${ mediaData.initial[0].mediaType } item with 400`, (done) => {
+    test(`It should respond to adding already existing ${
+        mediaData.initial[0].mediaType
+    } item with 400`, done => {
         let existingMedia = buildCatalogRequest(mediaData.initial, adminToken);
         request(app)
             .post('/item/add/')
             .send(existingMedia[0])
-            .then((response) => {
+            .then(response => {
                 expect(response.statusCode).toBe(400);
                 done();
             });
@@ -223,9 +225,9 @@ describe('routes: addition of a media item', () => {
 });
 
 describe('routes: editing and deleting of a media item in the catalog', () => {
-    test(`It should respond to editing an item with 200`, (done) => {
+    test(`It should respond to editing an item with 200`, done => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
-        for (let i = 0; i < media.length; i++){
+        for (let i = 0; i < media.length; i++) {
             media[i]['itemInfo']['id'] = 1;
             media[i].itemInfo.title += 'o';
             request(app)
@@ -239,13 +241,15 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         }
     });
 
-    test(`It should respond to deleting of an existing ${ mediaData.initial[0].mediaType } item with 200`, (done) => {
+    test(`It should respond to deleting of an existing ${
+        mediaData.initial[0].mediaType
+    } item with 200`, done => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
         media[0]['itemInfo']['id'] = 1;
         request(app)
             .del('/item/delete/')
             .send(media[0])
-            .then((response) => {
+            .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.message).toEqual('Item was deleted');
                 done();

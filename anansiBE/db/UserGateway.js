@@ -1,4 +1,5 @@
 import { DatabaseManager } from '../db/DatabaseManager';
+import moment from 'moment';
 
 const db = DatabaseManager.getConnection();
 
@@ -7,6 +8,22 @@ export class UserGateway {
         const query = db.format('INSERT INTO users VALUES (?)', [userRow]);
         db.query(query, (err, rows, fields) => {
             callback(err, rows);
+        });
+    }
+    static login(user, callback) {
+        const SQLQuery = db.format(
+            'UPDATE users SET timestamp = CURRENT_TIMESTAMP, loggedIn = 1 WHERE username = ?',
+            [user.username]
+        );
+
+        db.query(SQLQuery, (err, rows, fields) => {
+            callback(err);
+        });
+    }
+    static logout(id, callback) {
+        const SQLQuery = db.format('UPDATE users SET loggedIn = 0 WHERE client_id = ?', [id]);
+        db.query(SQLQuery, (err, rows, fields) => {
+            callback(err);
         });
     }
 
@@ -27,7 +44,7 @@ export class UserGateway {
 
     static getAll(callback) {
         db.query(
-            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp FROM users',
+            'SELECT client_id, username, firstName, lastName, isAdmin, timestamp, loggedIn FROM users',
             (err, rows, fields) => {
                 callback(err, rows);
             }

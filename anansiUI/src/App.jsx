@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout, Modal } from 'antd';
 import { withCookies, Cookies } from 'react-cookie';
 import { Route, Switch } from 'react-router-dom';
-import { getTokenInfo, setAppInterceptor } from './utils/httpUtils';
+import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
 import UsersList from './components/UsersList';
@@ -62,12 +62,23 @@ class App extends React.Component {
         this.props.cookies.set('jwt', token);
     };
     handleLogout = () => {
-        this.setState({
-            loggedIn: false,
-            username: '',
-            isAdmin: false
-        });
-        this.props.cookies.remove('jwt');
+        let token = this.props.cookies.get('jwt');
+
+        userLogout(token)
+            .then(response => {
+                this.setState({
+                    loggedIn: false,
+                    username: '',
+                    isAdmin: false
+                });
+                this.props.cookies.remove('jwt');
+            })
+            .catch(err => {
+                Modal.error({
+                    title: "Failed to sign out",
+                    content: err.response.data ? err.response.data.message : "Connection error"
+                });
+            });
     };
     handleExpired = () => {
         if (!this.state.loggedIn) {
@@ -79,7 +90,12 @@ class App extends React.Component {
             title: 'Expired Token',
             content: 'Please log in for this request.'
         });
-        this.handleLogout();
+        this.setState({
+            loggedIn: false,
+            username: '',
+            isAdmin: false
+        });
+        this.props.cookies.remove('jwt');
     };
     render() {
         const token = this.props.cookies.get('jwt');
@@ -96,29 +112,16 @@ class App extends React.Component {
                         {this.state.isAdmin && <AdminSider />}
                         <Content style={styles.Content}>
                             <Switch>
-                                <PrivateRoute
-                                    path="/users/register"
-                                    condition={this.state.isAdmin}
-                                >
+                                <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute
-                                    path="/users"
-                                    condition={this.state.isAdmin}
-                                >
+                                <PrivateRoute path="/users" condition={this.state.isAdmin}>
                                     <UsersList token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute
-                                    path="/media/create"
-                                    condition={this.state.isAdmin}
-                                >
+                                <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
                                     <AddMediaForm token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute
-                                    exact
-                                    path="/media"
-                                    condition={this.state.loggedIn}
-                                >
+                                <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
                                     <ItemsList token={token} />
                                 </PrivateRoute>
                             </Switch>

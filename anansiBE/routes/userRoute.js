@@ -2,45 +2,36 @@ import { UserRegistry } from '../models/UserRegistry';
 import { createToken } from '../utils/Auth';
 import { validateToken } from './router';
 
-export function loginUser(req, res) {
+export function loginUser(req, res, next) {
     let { username, password } = req.body;
 
-    UserRegistry.searchUser(username, (err, userArray) => {
+    UserRegistry.login(username, password, (err, user) => {
         if (err) {
-            res.status(500).send({
-                message: 'There was an error querying the database'
-            });
-            return;
-        }
-        if (userArray.length === 0) {
-            res.status(400).send({
-                message: 'Username does not exist'
-            });
-            return;
+            return next(err);
         }
 
-        let user = userArray[0];
-
-        user.authenticate(password, valid => {
-            if (valid) {
-                user.login();
-                res.status(200).json({
-                    isAdmin: user.isAdmin,
-                    username: user.username,
-                    token: createToken(user)
-                });
-            } else {
-                res.status(400).send({
-                    message: 'Password is incorrect.'
-                });
-            }
+        res.status(200).json({
+            isAdmin: user.isAdmin,
+            username: user.username,
+            token: createToken(user)
         });
     });
-};
+}
+
+export function logoutUser(req, res, next) {
+    validateToken(req.body.token, res, decoded => {
+        UserRegistry.logout(decoded.data.client_id, err => {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send();
+        });
+    });
+}
 
 export function displayUsers(req, res) {
     validateToken(req.body.token, res, decoded => {
-        if (!decoded.data.isAdmin){
+        if (!decoded.data.isAdmin) {
             res.status(403).send({
                 message: 'Only administrator can view all users',
                 isAdmin: decoded.data.isAdmin
@@ -54,7 +45,7 @@ export function displayUsers(req, res) {
             });
         }
     });
-};
+}
 
 export function validateUser(req, res) {
     // Validates jwt and sends user information
@@ -65,7 +56,7 @@ export function validateUser(req, res) {
             isAdmin: decoded.data.isAdmin
         });
     });
-};
+}
 
 export function createUser(req, res) {
     validateToken(req.body.token, res, decoded => {
@@ -94,4 +85,4 @@ export function createUser(req, res) {
             });
         }
     });
-};
+}
