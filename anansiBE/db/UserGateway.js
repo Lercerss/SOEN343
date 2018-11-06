@@ -10,18 +10,20 @@ export class UserGateway {
             callback(err, rows);
         });
     }
-    static login(user) {
+    static login(user, callback) {
         const SQLQuery = db.format(
-            'UPDATE users SET timestamp = ?, loggedIn = 1 WHERE username = ?',
-            [moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'), user.username]
+            'UPDATE users SET timestamp = CURRENT_TIMESTAMP, loggedIn = 1 WHERE username = ?',
+            [user.username]
         );
 
-        db.query(SQLQuery);
+        db.query(SQLQuery, (err, rows, fields) => {
+            callback(err);
+        });
     }
     static logout(id, callback) {
         const SQLQuery = db.format('UPDATE users SET loggedIn = 0 WHERE client_id = ?', [id]);
         db.query(SQLQuery, (err, rows, fields) => {
-            callback(err, rows);
+            callback(err);
         });
     }
 

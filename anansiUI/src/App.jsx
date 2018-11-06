@@ -75,7 +75,7 @@ class App extends React.Component {
             })
             .catch(err => {
                 Modal.error({
-                    title: "Failed to sign out"
+                    title: "Failed to sign out",
                     content: err.response.data ? err.response.data.message : "Connection error"
                 });
             });

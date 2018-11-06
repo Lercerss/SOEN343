@@ -82,8 +82,13 @@ export class UserRegistry {
                                 return callback(err, null);
                             }
                         }
-                        UserGateway.login(user);
-                        callback(null, user);
+                        UserGateway.login(user, err => {
+                            if (err) {
+                                err.httpStatusCode = 500;
+                                return callback(err, null);
+                            }
+                            return callback(null, user);
+                        });
                     } else {
                         let err = new Error('Password is incorrect');
                         err.httpStatusCode = 401;
@@ -94,7 +99,7 @@ export class UserRegistry {
         });
     }
     static logout(id, callback) {
-        UserGateway.logout(id, (err, rows) => {
+        UserGateway.logout(id, err => {
             if (err) {
                 err.httpStatusCode = 500;
                 return callback(err);
