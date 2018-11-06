@@ -4,6 +4,8 @@ import { Movie } from './Movie';
 import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
 
+const pageSize = 15;
+
 export class Catalog {
     static addItem(type, fields, callback) {
         MediaGateway.findMedia(type, fields, (err, rows) => {
@@ -52,7 +54,7 @@ export class Catalog {
         });
     }
 
-    static viewItems(filters, ordering, callback) {
+    static viewItems(nPage, filters, ordering, callback) {
         var mediaArray = [];
         var jsonArray = [];
         MediaGateway.getItems(filters, ordering, function(err, media) {
@@ -61,14 +63,11 @@ export class Catalog {
                 return;
             }
             jsonArray = media;
-            mediaArray = Catalog.jsonToMedia(jsonArray);
-            callback(mediaArray);
-        });
-    }
 
-    static searchItem(type, fields, callback) {
-        MediaGateway.findMedia(type, fields, function(type, err, jsonArray) {
-            this.jsonToMedia(type, err, jsonArray);
+            mediaArray = Catalog.jsonToMedia(jsonArray);
+            let size = mediaArray.length;
+            mediaArray.slice(nPage * (pageSize - 1), nPage * pageSize);
+            callback(mediaArray, size);
         });
     }
 
