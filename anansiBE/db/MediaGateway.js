@@ -398,7 +398,6 @@ export class MediaGateway {
             });
         } else {
             const mediaTable = 'a';
-            const mediaCopyTable = 'b';
             var table, copyTable, type;
             switch (filters.mediaType) {
             case 'Book':
