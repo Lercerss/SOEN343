@@ -55,22 +55,22 @@ describe('routes: login', () => {
         username: 'admintester',
         password: 'testl'
     };
-    test('Invalid login expects status 400', done => {
+    test('Invalid login expects status 401', done => {
         request(app)
             .post('/user/login/')
             .send(invalidUser)
             .then(response => {
-                expect(response.statusCode).toBe(400);
+                expect(response.statusCode).toBe(401);
                 expect(response.body).toHaveProperty('message');
                 done();
             });
     });
-    test('Incorrect password expects status 400', done => {
+    test('Incorrect password expects status 401', done => {
         request(app)
             .post('/user/login/')
             .send(invalidPass)
             .then(response => {
-                expect(response.statusCode).toBe(400);
+                expect(response.statusCode).toBe(401);
                 expect(response.body).toHaveProperty('message');
                 done();
             });

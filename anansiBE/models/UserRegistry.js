@@ -63,7 +63,7 @@ export class UserRegistry {
                 }
                 if (userArray.length === 0) {
                     let err = new Error('Username does not exist');
-                    err.httpStatusCode = 400;
+                    err.httpStatusCode = 401;
                     return callback(err, null);
                 }
 
@@ -86,7 +86,7 @@ export class UserRegistry {
                         callback(null, user);
                     } else {
                         let err = new Error('Password is incorrect');
-                        err.httpStatusCode = 400;
+                        err.httpStatusCode = 401;
                         return callback(err, null);
                     }
                 });
