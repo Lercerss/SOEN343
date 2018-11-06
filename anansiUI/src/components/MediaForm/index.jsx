@@ -10,15 +10,14 @@ export default class MediaForm extends React.Component {
     handleSubmit = (e, form) => {
         e.preventDefault();
         form.validateFieldsAndScroll((err, values) => {
+            console.log('Received values of form: ', values);
             if (err) {
-                console.log(err);
                 return;
             }
             const { token, handleClose, item, action } = this.props;
             if (item) {
                 values.id = item.id;
             }
-            console.log('Received values of form: ', values);
             const request = action == 'insert' ? addNewItem : action == 'update' ? editItem : null;
             if (request) {
                 request(this.props.type, values, token)
@@ -30,9 +29,9 @@ export default class MediaForm extends React.Component {
                         if (handleClose) {
                             handleClose(values);
                         }
+                        form.resetFields();
                     })
                     .catch(err => {
-                        // TODO: Handle error when submitting form to backend
                         if (err.response.status !== 401) {
                             Modal.error({
                                 title: 'Failed to create a new user',
@@ -45,7 +44,6 @@ export default class MediaForm extends React.Component {
                     });
             }
         });
-        form.resetFields();
     };
     render() {
         const { type, ...props } = this.props;

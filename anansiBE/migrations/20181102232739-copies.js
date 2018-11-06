@@ -35,7 +35,8 @@ function createCopiesTable(db, tableSingular, callback) {
                     },
                     mapping: 'id'
                 }
-            }
+            },
+            name: 'string'
         },
         err => {
             if (err) throw err;
