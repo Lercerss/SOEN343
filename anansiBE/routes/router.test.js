@@ -190,13 +190,39 @@ describe('routes: retrieve catalog elements', () => {
                         mediaType: null,
                         fields: {}
                     },
-                    sorting: {},
+                    ordering: {},
                     nPage: 1
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
                     expect(response.body.catalog[0].itemInfo.title).toBe(
                         mediaData.initial[0].title
+                    );
+                    done();
+                });
+        });
+    });
+    test('It should respond with an array of catalog elements according to filters', done => {
+        var tokens = [adminToken, clientToken];
+        tokens.forEach(token => {
+            request(app)
+                .post('/item/display/')
+                .send({
+                    token: token,
+                    filters: {
+                        mediaType: 'Magazine',
+                        fields: {
+                            title: 'tim'
+                        }
+                    },
+                    ordering: {},
+                    nPage: 1
+                })
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    expect(response.body.size).toBe(1);
+                    expect(response.body.catalog[0].itemInfo.title).toBe(
+                        mediaData.initial[1].title
                     );
                     done();
                 });
