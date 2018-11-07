@@ -32,7 +32,7 @@ function parseNewCopies(newCopies, oldCopies) {
 export default class MediaForm extends React.Component {
     handleSubmit = (e, form, deleted) => {
         e.preventDefault();
-        form.validateFieldsAndScroll((err, values) => {
+        form.validateFieldsAndScroll(undefined, {force: true}, (err, values) => {
             console.log('Received values of form: ', values);
             if (err) {
                 return;

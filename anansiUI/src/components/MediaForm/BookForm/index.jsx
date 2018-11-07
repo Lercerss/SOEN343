@@ -19,15 +19,25 @@ class BookForm extends React.Component {
     handleDelete = copy => {
         const { form } = this.props;
         const copyIds = form.getFieldValue('copyIds');
-        const {[copy]:_, ...copies} = form.getFieldValue('copies')
+        const { [copy]: _, ...copies } = form.getFieldValue('copies');
         if (copy >= 0) {
             this.deleted.push(copy);
             console.log(this.deleted);
         }
         form.setFieldsValue({
             copyIds: copyIds.filter(el => el !== copy),
-            ['copies['+ copy +']']: undefined
+            ['copies[' + copy + ']']: undefined
         });
+    };
+    validateCopyName = (_, value, callback) => {
+        const copyNames = Object.entries(this.props.form.getFieldValue('copies'))
+            .filter(pair => pair[0])
+            .map(pair => pair[1]);
+        let err = undefined;
+        if (copyNames.filter(name => name === value).length > 1) {
+            err = new Error('Duplicate copy name');
+        }
+        callback(err);
     };
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -195,8 +205,12 @@ class BookForm extends React.Component {
                                             required: true,
                                             whitespace: true,
                                             message: 'Input a non-empty identifier or delete this copy'
+                                        },
+                                        {
+                                            validator: this.validateCopyName
                                         }
                                     ],
+                                    validateTrigger: ['onBlur'],
                                     initialValue: item.copies && item.copies[copy]
                                 })(<Input placeholder="Copy identifier" style={{ width: '80%', marginRight: 8 }} />)}
                                 <Button type="default" onClick={() => this.handleDelete(copy)}>

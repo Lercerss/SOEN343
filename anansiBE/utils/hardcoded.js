@@ -13,7 +13,8 @@ export const mediaData = {
         publicationDate: date,
         language: 'English',
         isbn10: '1524796972',
-        isbn13: '978-1524796976'
+        isbn13: '978-1524796976',
+        copies: []
     }, {
         mediaType: 'Magazine',
         title: 'TIME',
@@ -21,7 +22,8 @@ export const mediaData = {
         publicationDate: date,
         language: 'English',
         isbn10: '1603200185',
-        isbn13: '978-1603200189'
+        isbn13: '978-1603200189',
+        copies: []
     }, {
         mediaType: 'Movie',
         title: 'Until the End of the World',
@@ -32,14 +34,16 @@ export const mediaData = {
         subtitles: 'English',
         dubbed: 'English, French',
         releaseDate: date,
-        runtime: 127
+        runtime: 127,
+        copies: []
     }, {
         mediaType: 'Music',
         title: 'Anastasis',
         artist: 'Dead Can Dance',
         label: 'Sony Music',
         releaseDate: date,
-        asin: 'B008FOB124'
+        asin: 'B008FOB124',
+        copies: []
     }],
     addAndEdit: [{
         mediaType: 'Book',
@@ -51,7 +55,8 @@ export const mediaData = {
         publicationDate: date,
         language: 'English',
         isbn10: '5478558965',
-        isbn13: '548-1234567890'
+        isbn13: '548-1234567890',
+        copies: []
     }, {
         mediaType: 'Magazine',
         title: 'SOEN 343',
@@ -59,7 +64,8 @@ export const mediaData = {
         publicationDate: date,
         language: 'English',
         isbn10: '7894561234',
-        isbn13: '987-9876543215'
+        isbn13: '987-9876543215',
+        copies: []
     }, {
         mediaType: 'Movie',
         title: 'Into darkness',
@@ -70,7 +76,8 @@ export const mediaData = {
         subtitles: 'English',
         dubbed: 'English, French',
         releaseDate: date,
-        runtime: 145
+        runtime: 145,
+        copies: []
     }, {
         mediaType: 'Music',
         title: 'WYD',
@@ -78,7 +85,8 @@ export const mediaData = {
         label: 'Das Ma Jam',
         releaseDate: date,
         type: 'CD',
-        asin: 'E238G6Q654'
+        asin: 'E238G6Q654',
+        copies: []
     }]
 };
 
