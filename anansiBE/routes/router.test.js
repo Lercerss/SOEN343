@@ -11,14 +11,29 @@ var adminToken = '';
 
 function buildCatalogRequest(arr, token) {
     let builtArr = [];
-
-    for (let i = 0; i < arr.length; i++) {
+    let mediaCount = [1, 1, 1, 1];
+    arr.forEach(el => {
         let m = {};
-        m['type'] = arr[i].mediaType;
-        m['itemInfo'] = arr[i];
+        let type = el.mediaType;
+        m['type'] = type;
+        m['itemInfo'] = el;
         m['token'] = token;
         builtArr.push(m);
-    }
+
+        if (type === 'Book'){
+            m['itemInfo']['id'] = mediaCount[0];
+            mediaCount[0]++;
+        } else if (type === 'Magazine') {
+            m['itemInfo']['id'] = mediaCount[1];
+            mediaCount[1]++;
+        } else if (type === 'Music'){
+            m['itemInfo']['id'] = mediaCount[2];
+            mediaCount[2]++;
+        } else if (type === 'Movie') {
+            m['itemInfo']['id'] = mediaCount[3];
+            mediaCount[3]++;
+        }
+    });
     return builtArr;
 }
 
@@ -233,15 +248,15 @@ describe('routes: retrieve catalog elements', () => {
 describe('routes: addition of a media item', () => {
     test(`It should respond to adding an item with 200`, done => {
         let media = buildCatalogRequest(mediaData.addAndEdit, adminToken);
-        for (let i = 0; i < media.length; i++) {
+        media.forEach(el => {
             request(app)
                 .post('/item/add/')
-                .send(media[i])
+                .send(el)
                 .then(response => {
                     expect(response.statusCode).toBe(200);
                     done();
                 });
-        }
+        });
     });
 
     test(`It should respond to adding already existing ${
@@ -261,33 +276,33 @@ describe('routes: addition of a media item', () => {
 describe('routes: editing and deleting of a media item in the catalog', () => {
     test(`It should respond to editing an item with 200`, done => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
-        for (let i = 0; i < media.length; i++) {
-            media[i]['itemInfo']['id'] = 1;
-            media[i].itemInfo.title += 'o';
+        media.forEach(el => {
+            el.itemInfo.title += 'o';
             request(app)
                 .post('/item/edit/')
-                .send(media[i])
+                .send(el)
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    media[i].itemInfo.title.slice(0, -1);
+                    el.itemInfo.title.slice(0, -1);
                     done();
                 });
-        }
+        });
     });
 
     test(`It should respond to deleting of an existing ${
         mediaData.initial[0].mediaType
     } item with 200`, done => {
         let media = buildCatalogRequest(mediaData.initial, adminToken);
-        media[0]['itemInfo']['id'] = 1;
-        request(app)
-            .del('/item/delete/')
-            .send(media[0])
-            .then(response => {
-                expect(response.statusCode).toBe(200);
-                expect(response.body.message).toEqual('Item was deleted');
-                done();
-            });
+        media.forEach(el => {
+            request(app)
+                .del('/item/delete/')
+                .send(el)
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    expect(response.body.message).toEqual('Item was deleted');
+                    done();
+                });
+        });
     });
 });
 
