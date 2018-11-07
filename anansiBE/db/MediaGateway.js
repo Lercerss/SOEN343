@@ -258,7 +258,21 @@ export class MediaGateway {
                 });
             });
         } else {
-            var query = 'SELECT * FROM ' + filters.mediaType;
+            var table;
+            switch (filters.mediaType) {
+            case 'Book':
+                table = 'books';
+                break;
+            case 'Magazine':
+                table = 'magazines';
+                break;
+            case 'Movie':
+                table = 'movies';
+                break;
+            case 'Music':
+                table = 'music';
+            }
+            var query = 'SELECT * FROM ' + table;
             if (Object.keys(filters.fields).length !== 0) {
                 query = query + ' WHERE ';
                 var fieldArray = [];
@@ -275,6 +289,7 @@ export class MediaGateway {
                 });
                 query = query + fieldArray.join(', ');
             }
+            console.log(query);
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     throw new Error('Error querying database.');
