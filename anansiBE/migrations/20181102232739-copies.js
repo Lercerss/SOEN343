@@ -40,10 +40,6 @@ function createCopiesTable(db, tableSingular, callback) {
         },
         err => {
             if (err) throw err;
-            // Populate with default of 1 copy per row in description table
-            db.runSql(`INSERT INTO ${tableSingular}_copies (${tableSingular}_id) SELECT id FROM ${tableName};`, err => {
-                callback(err);
-            });
         }
     );
 }

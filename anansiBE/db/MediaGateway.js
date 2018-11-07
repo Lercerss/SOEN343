@@ -4,69 +4,129 @@ import moment from 'moment';
 const db = DatabaseManager.getConnection();
 
 export class MediaGateway {
+    static _upsertCopies(copiesTable, copies, copiesFK, itemId, callback) {
+        const copiesQuery = db.format(
+            `INSERT INTO ?? VALUES ? 
+            ON DUPLICATE KEY UPDATE 
+                id=VALUES(id),
+                name=VALUES(name);`,
+            [
+                copiesTable,
+                copies && copies.map(copy => [(copy.id >= 0 ? copy.id : null), itemId, copy.name]),
+            ]
+        );
+        db.query(copiesQuery, err => {
+            if (err) {
+                callback(err);
+                return;
+            }
+            db.query(`SELECT id, name FROM ${copiesTable} WHERE ${copiesFK}=${itemId}`, (err, rows) => {
+                callback(err, rows);
+            });
+        });
+    }
+
     static saveMedia(type, fields, callback) {
-        var query;
+        var query, copiesTable, copiesFK;
         if (type === 'Book') {
             query = db.format('INSERT INTO books(title, author, format, pages, publisher, publicationDate, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [fields['title'], fields['author'], fields['format'], fields['pages'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'),
                     fields['language'], fields['isbn10'], fields['isbn13']]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
+            copiesTable = 'book_copies';
+            copiesFK = 'book_id';
         } else if (type === 'Magazine') {
             query = db.format('INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?)',
                 [fields['title'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'), fields['language'], fields['isbn10'], fields['isbn13']]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
+            copiesTable = 'magazine_copies';
+            copiesFK = 'magazine_id';
         } else if (type === 'Music') {
             query = db.format('INSERT INTO music(type, title, artist, label, releaseDate, asin) VALUES (?, ?, ?, ?, ?, ?)',
                 [fields['type'], fields['title'], fields['artist'], fields['label'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['asin']]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
+            copiesTable = 'music_copies';
+            copiesFK = 'music_id';
         } else if (type === 'Movie') {
             query = db.format('INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 [fields['title'], fields['director'], fields['producers'], fields['actors'], fields['language'],
                     fields['subtitles'], fields['dubbed'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['runtime']]);
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
+            copiesTable = 'movie_copies';
+            copiesFK = 'movie_id';
+        } else {
+            callback(new Error('Invalid Type'));
+            return;
         }
+        db.query(query, (err, rows) => {
+            if (err || !fields.copies.length) {
+                callback(err);
+                return;
+            }
+            this._upsertCopies(copiesTable, fields.copies, copiesFK, rows.insertId, callback);
+        });
     }
 
     static editMedia(type, id, fields, callback) {
-        var query;
+        var query, copiesTable, copiesFK;
         if (type === 'Book') {
             query = db.format('UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
                 'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['author'], fields['format'], fields['pages'], id]);
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
+            copiesTable = 'book_copies';
+            copiesFK = 'book_id';
         } else if (type === 'Magazine') {
             query = db.format('UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
                 'publisher = ?, publicationDate = ? WHERE id = ?', [fields['title'], fields['language'],
                 fields['isbn10'], fields['isbn13'], fields['publisher'], moment(fields['publicationDate']).format('YYYY-MM-DD HH:mm:ss'), id]);
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
+            copiesTable = 'magazine_copies';
+            copiesFK = 'magazine_id';
         } else if (type === 'Music') {
             query = db.format('UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE id = ?',
                 [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'), fields['type'], fields['artist'], fields['label'], fields['asin'], id]);
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
+            copiesTable = 'music_copies';
+            copiesFK = 'music_id';
         } else if (type === 'Movie') {
             query = db.format('UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
                 'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?', [fields['title'], moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
                 fields['director'], fields['producers'], fields['actors'], fields['language'],
                 fields['subtitles'], fields['dubbed'], fields['runtime'], id]);
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
+            copiesTable = 'movie_copies';
+            copiesFK = 'movie_id';
+        } else {
+            callback(new Error('Invalid Type'));
+            return;
         }
+        db.query(query, err => {
+            if (err) {
+                callback(err);
+                return;
+            }
+            const copies = fields.copies.filter(copy => copy.name);
+            const deletedCopyIds = fields.copies.filter(copy => !copy.name).map(copy => copy.id);
+            if (deletedCopyIds && deletedCopyIds.length) {
+                const deleteCopiesQuery = db.format(
+                    'DELETE FROM ?? WHERE id IN (?) AND ??=?',
+                    [
+                        copiesTable,
+                        deletedCopyIds,
+                        copiesFK,
+                        id
+                    ]);
+                db.query(deleteCopiesQuery, err => {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    if (copies && copies.length) {
+                        this._upsertCopies(copiesTable, copies, copiesFK, id, callback);
+                    } else {
+                        callback(err);
+                    }
+                });
+            } else if (copies && copies.length) {
+                this._upsertCopies(copiesTable, copies, copiesFK, id, callback);
+            } else {
+                callback(err);
+            }
+        });
     }
 
     static findMediaById(type, id, callback) {
@@ -143,7 +203,7 @@ export class MediaGateway {
                                 '}'
                             ) as copies
                         FROM books AS a
-                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        LEFT JOIN book_copies AS b ON a.id = b.book_id
                         GROUP BY a.id;`;
         var queryMagazine = `SELECT a.*,
                                 CONCAT(
@@ -161,7 +221,7 @@ export class MediaGateway {
                                 '}'
                             ) as copies
                         FROM music AS a
-                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        LEFT JOIN music_copies AS b ON a.id = b.music_id
                         GROUP BY a.id;`;
         var queryMovie = `SELECT a.*,
                             CONCAT(
@@ -170,7 +230,7 @@ export class MediaGateway {
                                 '}'
                             ) as copies
                         FROM movies AS a
-                        LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
+                        LEFT JOIN movie_copies AS b ON a.id = b.movie_id
                         GROUP BY a.id;`;
 
         var books = [];

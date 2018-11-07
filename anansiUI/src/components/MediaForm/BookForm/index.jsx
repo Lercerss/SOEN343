@@ -7,6 +7,7 @@ const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
 
 class BookForm extends React.Component {
+    deleted = [];
     handleAdd = () => {
         const { form } = this.props;
         const copyIds = form.getFieldValue('copyIds') || [];
@@ -18,8 +19,14 @@ class BookForm extends React.Component {
     handleDelete = copy => {
         const { form } = this.props;
         const copyIds = form.getFieldValue('copyIds');
+        const {[copy]:_, ...copies} = form.getFieldValue('copies')
+        if (copy >= 0) {
+            this.deleted.push(copy);
+            console.log(this.deleted);
+        }
         form.setFieldsValue({
-            copyIds: copyIds.filter(el => el !== copy)
+            copyIds: copyIds.filter(el => el !== copy),
+            ['copies['+ copy +']']: undefined
         });
     };
     render() {
@@ -52,7 +59,7 @@ class BookForm extends React.Component {
             initialValue: (item.copies && Object.keys(item.copies).map(e => parseInt(e))) || []
         });
         return (
-            <Form onSubmit={e => this.props.handleSubmit(e, this.props.form)} className="Form">
+            <Form onSubmit={e => this.props.handleSubmit(e, this.props.form, this.deleted)} className="Form">
                 <FormItem {...formItemLayout} label="Title">
                     {getFieldDecorator('title', {
                         rules: [
