@@ -289,7 +289,6 @@ export class MediaGateway {
                 });
                 query = query + fieldArray.join(', ');
             }
-            console.log(query);
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     throw new Error('Error querying database.');

@@ -40,6 +40,17 @@ export const mediaData = {
         label: 'Sony Music',
         releaseDate: date,
         asin: 'B008FOB124'
+    }, {
+        mediaType: 'Book',
+        title: 'The Hundred-Year-Old Man Who Climbed Out the Window and Disappeared',
+        author: 'Jonas Jonasson',
+        format: 'Paperback',
+        pages: 400,
+        publisher: 'HarperCollins; (Aug. 28 2012)',
+        publicationDate: date,
+        language: 'English',
+        isbn10: '1443419109',
+        isbn13: '978-1443419109'
     }],
     addAndEdit: [{
         mediaType: 'Book',
