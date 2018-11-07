@@ -243,6 +243,37 @@ describe('routes: retrieve catalog elements', () => {
                 });
         });
     });
+    test('It should respond with an array of catalog elements according to filters and ordering', done => {
+        var tokens = [adminToken, clientToken];
+        tokens.forEach(token => {
+            request(app)
+                .post('/item/display/')
+                .send({
+                    token: token,
+                    filters: {
+                        mediaType: 'Book',
+                        fields: {
+                            format: 'paperback'
+                        }
+                    },
+                    ordering: {
+                        author: 'asc'
+                    },
+                    nPage: 1
+                })
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    expect(response.body.size).toBe(2);
+                    expect(response.body.catalog[0].itemInfo.title).toBe(
+                        mediaData.initial[4].title
+                    );
+                    expect(response.body.catalog[1].itemInfo.title).toBe(
+                        mediaData.initial[0].title
+                    );
+                    done();
+                });
+        });
+    });
 });
 
 describe('routes: addition of a media item', () => {
