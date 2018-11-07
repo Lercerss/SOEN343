@@ -21,12 +21,15 @@ export default class ItemsList extends React.Component {
     componentDidMount() {
         viewItems(this.props.token)
             .then(response => {
+                const b = response.data.hasOwnProperty("message");
                 this.setState({
-                    itemList: response.data
+                    itemList: b ? []:response.data
                 });
             })
             .catch(reason => {
-                alert(reason);
+                console.debug(reason);
+                //workaround not the best way.
+                this.setState({ itemList: [] });
             });
     }
     handleEdit = item => {
@@ -35,7 +38,7 @@ export default class ItemsList extends React.Component {
             editFormMediaType: item.type,
             itemInfo: item.itemInfo
         });
-    };
+    }
     handleDelete = item => {
         deleteItem(item.type, item.itemInfo, this.props.token)
             .then(response => {
@@ -47,7 +50,7 @@ export default class ItemsList extends React.Component {
                 // TODO: Handle error when deleting item in backend
                 console.log(err);
             });
-    };
+    }
     handleClose = item => {
         if (!item) {
             this.setState({
@@ -64,7 +67,7 @@ export default class ItemsList extends React.Component {
             itemsList: items
         });
         console.log(items);
-    };
+    }
     handleView = e => {
         const mediaData = {
             common: ['id', 'title'],
@@ -98,6 +101,13 @@ export default class ItemsList extends React.Component {
     }
     // TODO: needs to implement search list later in handlefilter
     handleFilter = () => {
+        if (this.state.itemList.length === 0) {
+            return this.state.itemList;
+        }
+        /*Mila-TODO: sort
+            Array.sort(fn comparer)
+
+        */
         //could do a length check on searchList
         //if searchlist.length > 0  => use the search list
         //else => use the itemList
@@ -107,7 +117,7 @@ export default class ItemsList extends React.Component {
                 if (this.state.filterType === "All") return true;
                 return item.type === this.state.filterType;
             });
-    };
+    }
     handleSearch = searchText => {
         // 1-get the selected value of the dropdown 
         const selectedDropdown = this.state.searchBy;
@@ -138,18 +148,19 @@ export default class ItemsList extends React.Component {
         console.log(criteria);
         // to implement later when sort is implemented, this is the POST to BE
         // getItems(criteria)
-            // .then(response => {
-            //     this.setState({
-            //         searchList: response.data
-            //     });
-            // })
-            // .catch(reason => {
-            //     alert(reason);
-            // });
-    };
+        // .then(response => {
+        //     this.setState({
+        //         searchList: response.data
+        //     });
+        // })
+        // .catch(reason => {
+        //     alert(reason);
+        // });
+    }
     handleOption = value => {
         this.setState({ searchBy: value });
     }
+
     render() {
         const { token } = this.props;
         const { itemInfo, itemList, dropdownOptions } = this.state;
@@ -184,9 +195,11 @@ export default class ItemsList extends React.Component {
                             {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
                         </Select>
                         {/* to implement later for multiple search criteria??? */}
-                        {/* <Input.Search type="text" onSearch={this.handleSearch} placeholder="Search..." />
-                            <Input.Search type="text" onSearch={this.handleSearch} placeholder="Search..." /> */}
-                        <Input.Search type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                    </Form.Item>
+                    <Form.Item>
+                        <Select ></Select>
                     </Form.Item>
                 </Form>
                 <List
@@ -233,5 +246,5 @@ export default class ItemsList extends React.Component {
                 </Modal>
             </Card>
         );
-    }
+    };
 }
