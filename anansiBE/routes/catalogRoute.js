@@ -49,7 +49,6 @@ export function addItem(req, res) {
                     });
                     return;
                 }
-
                 res.status(200).send({
                     copies: result
                 });

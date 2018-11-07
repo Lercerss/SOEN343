@@ -56,7 +56,7 @@ export const mediaData = {
         language: 'English',
         isbn10: '5478558965',
         isbn13: '548-1234567890',
-        copies: []
+        copies: [{ id: -1, name: 'Copy 1' }, { id: -2, name: 'Copy 2' }]
     }, {
         mediaType: 'Magazine',
         title: 'SOEN 343',
@@ -65,7 +65,7 @@ export const mediaData = {
         language: 'English',
         isbn10: '7894561234',
         isbn13: '987-9876543215',
-        copies: []
+        copies: [{ id: -1, name: 'Copy 1' }, { id: -2, name: 'Copy 2' }]
     }, {
         mediaType: 'Movie',
         title: 'Into darkness',
@@ -77,7 +77,7 @@ export const mediaData = {
         dubbed: 'English, French',
         releaseDate: date,
         runtime: 145,
-        copies: []
+        copies: [{ id: -1, name: 'Copy 1' }, { id: -2, name: 'Copy 2' }]
     }, {
         mediaType: 'Music',
         title: 'WYD',
@@ -86,7 +86,7 @@ export const mediaData = {
         releaseDate: date,
         type: 'CD',
         asin: 'E238G6Q654',
-        copies: []
+        copies: [{ id: -1, name: 'Copy 1' }, { id: -2, name: 'Copy 2' }]
     }]
 };
 
