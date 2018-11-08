@@ -1,5 +1,6 @@
 import React from 'react';
-import { List, Button, Card, Modal, Form, Radio, Select, Input } from 'antd';
+import ReactDOM from 'react-dom';
+import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon } from 'antd';
 import MediaForm from '../MediaForm';
 //import MediaFilter from './MediaFilter';   to be modularized into later on
 import { deleteItem, viewItems } from '../../utils/httpUtils';
@@ -16,6 +17,7 @@ export default class ItemsList extends React.Component {
         filterType: "",
         dropdownOptions: [],
         searchBy: "",
+        visible: false,
     };
 
     componentDidMount() {
@@ -23,7 +25,7 @@ export default class ItemsList extends React.Component {
             .then(response => {
                 const b = response.data.hasOwnProperty("message");
                 this.setState({
-                    itemList: b ? []:response.data
+                    itemList: b ? [] : response.data
                 });
             })
             .catch(reason => {
@@ -105,30 +107,32 @@ export default class ItemsList extends React.Component {
             return this.state.itemList;
         }
 
-    // Sorting Implementation
-    const sortAscending = (a, b) => {
-        return a - b;
-    }
-    const sortDescending = (a, b) => {
-        return b - a;
-    }
-    //Sort modifies array, creating a copy
+        // Sorting 
 
-    function sortData() {
-        if(this.state.sortDirection ==='descending') {
-            this.setState({ 
-                sortDirection: 'ascending',
-                data: this.props.itemList.slice().sort(sortAscending)
-            });
-        } else {
-            this.setState({ 
-                sortDirection: 'descending',
-                data: this.props.itemList.slice().sort(sortDescending)
-            });
+        const sortAscending = (a, b) => {
+            return a - b;
         }
-    };
+        const sortDescending = (a, b) => {
+            return b - a;
+        }
 
-///////
+        //Sort modifies array, creating a shallow copy
+
+        function sortData() {
+            if (this.state.sortDirection === 'descending') {
+                this.setState({
+                    sortDirection: 'ascending',
+                    data: this.props.itemList.slice().sort(sortAscending)
+                });
+            } else {
+                this.setState({
+                    sortDirection: 'descending',
+                    data: this.props.itemList.slice().sort(sortDescending)
+                });
+            }
+        };
+
+        ///////
 
         //could do a length check on searchList
         //if searchlist.length > 0  => use the search list
@@ -183,7 +187,25 @@ export default class ItemsList extends React.Component {
         this.setState({ searchBy: value });
     }
 
+    // Dropdown menu for Sorting
+
+    handleMenuClick = (e) => {
+        if (e.key === '3') {
+            this.setState({ visible: false });
+        }
+    }
+
+    handleVisibleChange = (flag) => {
+        this.setState({ visible: flag });
+    }
+
     render() {
+        const menu = (
+            <Menu onClick={this.handleMenuClick}>
+                <Menu.Item key="1">Ascending Order (A-Z)</Menu.Item>
+                <Menu.Item key="2">Descending Order (Z-A)</Menu.Item>
+            </Menu>
+        );
         const { token } = this.props;
         const { itemInfo, itemList, dropdownOptions } = this.state;
         const formItemLayout = {
@@ -202,71 +224,83 @@ export default class ItemsList extends React.Component {
         }
         return (
             <Card>
-                <Form>
-                    <Form.Item {...formItemLayout} label="Pick a media type:">
-                        <Radio.Group buttonStyle="solid" onChange={this.handleView}>
-                            <Radio.Button value="All">All</Radio.Button>
-                            <Radio.Button value="Book">Book</Radio.Button>
-                            <Radio.Button value="Magazine">Magazine</Radio.Button>
-                            <Radio.Button value="Movie">Movie</Radio.Button>
-                            <Radio.Button value="Music">Music</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item {...formItemLayout} label="Search:">
-                        <Select placeholder="Please select" onChange={this.handleOption} >
-                            {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
-                        </Select>
-                        {/* to implement later for multiple search criteria??? */}
-                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
-                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
-                    </Form.Item>
-                    <Form.Item>
-                        <Select ></Select>
-                    </Form.Item>
-                </Form>
-                <List
-                    itemLayout="horizontal"
-                    size="small"
-                    pagination={{
-                        pageSize: 50
-                    }}
-                    // TODO: dataSource will need to changed to handleList later when implementing clear search criteria
-                    dataSource={this.handleFilter()}
-                    renderItem={item => (
-                        <List.Item
-                            key={`${item.itemInfo.title}`}
-                            actions={[
-                                <Button onClick={e => this.handleEdit(item)} type="primary">
-                                    Edit
+                <div align="right"><Dropdown overlay={menu}
+                onVisibleChange={this.handleVisibleChange}
+                visible={this.state.visible}
+                >
+                <a className="ant-dropdown-link" href="#">
+                    Filter Results by: <Icon type="down" />
+                </a>
+                </Dropdown></div>
+            <Form>
+                <Form.Item {...formItemLayout} label="Pick a media type:">
+                    <Radio.Group buttonStyle="solid" onChange={this.handleView}>
+                        <Radio.Button value="All">All</Radio.Button>
+                        <Radio.Button value="Book">Book</Radio.Button>
+                        <Radio.Button value="Magazine">Magazine</Radio.Button>
+                        <Radio.Button value="Movie">Movie</Radio.Button>
+                        <Radio.Button value="Music">Music</Radio.Button>
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item {...formItemLayout} label="Search:">
+                    <Select placeholder="Please select" onChange={this.handleOption} >
+                        {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
+                    </Select>
+                    {/* to implement later for multiple search criteria??? */}
+                    <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                    <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                </Form.Item>
+                <Form.Item>
+                </Form.Item>
+            </Form>
+            <List
+                itemLayout="horizontal"
+                size="small"
+                pagination={{
+                    pageSize: 50
+                }}
+                // TODO: dataSource will need to changed to handleList later when implementing clear search criteria
+                dataSource={this.handleFilter()}
+                renderItem={item => (
+                    <List.Item
+                        key={`${item.itemInfo.title}`}
+                        actions={[
+                            <Button onClick={e => this.handleEdit(item)} type="primary">
+                                Edit
                                 </Button>,
-                                <Button onClick={e => this.handleDelete(item)} type="primary">
-                                    Delete
+                            <Button onClick={e => this.handleDelete(item)} type="primary">
+                                Delete
                                 </Button>
-                            ]}>
-                            <List.Item.Meta
-                                title={`${item.itemInfo.title}`}
-                                description={<div>{item.type}</div>}
-                            />
-                        </List.Item>
-                    )}
-                />
-                <Modal
-                    visible={this.state.isEditFormShown}
-                    title="Edit Item"
-                    onCancel={e => this.handleClose(null)}
-                    // Removes default footer
-                    footer={null}>
-                    <div className="MetaForm">
-                        <MediaForm
-                            type={this.state.editFormMediaType}
-                            action="update"
-                            token={token}
-                            item={itemInfo}
-                            handleClose={this.handleClose}
+                        ]}>
+                        <List.Item.Meta
+                            title={`${item.itemInfo.title}`}
+                            description={<div>{item.type}</div>}
                         />
-                    </div>
-                </Modal>
-            </Card>
+                    </List.Item>
+                )}
+            />
+            <Modal
+                visible={this.state.isEditFormShown}
+                title="Edit Item"
+                onCancel={e => this.handleClose(null)}
+                // Removes default footer
+                footer={null}>
+                <div className="MetaForm">
+                    <MediaForm
+                        type={this.state.editFormMediaType}
+                        action="update"
+                        token={token}
+                        item={itemInfo}
+                        handleClose={this.handleClose}
+                    />
+                </div>
+            </Modal>
+            </Card >
+        
         );
+
+
+
     };
 }
+
