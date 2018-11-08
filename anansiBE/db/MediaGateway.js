@@ -389,7 +389,6 @@ export class MediaGateway {
                             });
 
                             media = [].concat(books, magazines, music, movies);
-                                                                                        
                             media.sort((a, b) => {
                                 var titleA = a.title.toUpperCase();
                                 var titleB = b.title.toUpperCase();
@@ -469,7 +468,14 @@ export class MediaGateway {
                 if (err) {
                     throw new Error('Error querying database.');
                 }
-                callback(err, rows);
+
+                let mediaRows = rows.map(function(el) {
+                    var o = Object.assign({}, el);
+                    o.mediaType = filters.mediaType;
+                    return o;
+                });
+
+                callback(err, mediaRows);
             });
         }
     }
