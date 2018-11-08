@@ -205,13 +205,15 @@ describe('routes: retrieve catalog elements', () => {
                         mediaType: null,
                         fields: {}
                     },
-                    ordering: {},
+                    ordering: {
+                        title: 'DESC'
+                    },
                     nPage: 1
                 })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
                     expect(response.body.catalog[0].itemInfo.title).toBe(
-                        mediaData.initial[0].title
+                        mediaData.initial[2].title
                     );
                     done();
                 });
@@ -253,11 +255,11 @@ describe('routes: retrieve catalog elements', () => {
                     filters: {
                         mediaType: 'Book',
                         fields: {
-                            format: 'paperback'
+                            format: 'Paperback'
                         }
                     },
                     ordering: {
-                        author: 'asc'
+                        author: 'ASC'
                     },
                     nPage: 1
                 })
