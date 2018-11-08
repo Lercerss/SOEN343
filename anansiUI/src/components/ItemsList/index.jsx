@@ -1,5 +1,6 @@
 import React from 'react';
-import { List, Button, Card, Modal, Form, Radio, Select, Input, Icon } from 'antd';
+import ReactDOM from 'react-dom';
+import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon } from 'antd';
 import MediaForm from '../MediaForm';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
 
@@ -15,6 +16,7 @@ class ItemsList extends React.Component {
         filterType: "",
         dropdownOptions: [],
         searchBy: "",
+        visible: false,
     };
 
     componentDidMount() {
@@ -22,7 +24,7 @@ class ItemsList extends React.Component {
             .then(response => {
                 const b = response.data.hasOwnProperty("message");
                 this.setState({
-                    itemList: b ? []:response.data
+                    itemList: b ? [] : response.data
                 });
             })
             .catch(reason => {
@@ -104,30 +106,32 @@ class ItemsList extends React.Component {
             return this.state.itemList;
         }
 
-    // Sorting Implementation
-    const sortAscending = (a, b) => {
-        return a - b;
-    }
-    const sortDescending = (a, b) => {
-        return b - a;
-    }
-    //Sort modifies array, creating a copy
+        // Sorting 
 
-    function sortData() {
-        if(this.state.sortDirection ==='descending') {
-            this.setState({ 
-                sortDirection: 'ascending',
-                data: this.props.itemList.slice().sort(sortAscending)
-            });
-        } else {
-            this.setState({ 
-                sortDirection: 'descending',
-                data: this.props.itemList.slice().sort(sortDescending)
-            });
+        const sortAscending = (a, b) => {
+            return a - b;
         }
-    };
+        const sortDescending = (a, b) => {
+            return b - a;
+        }
 
-///////
+        //Sort modifies array, creating a shallow copy
+
+        function sortData() {
+            if (this.state.sortDirection === 'descending') {
+                this.setState({
+                    sortDirection: 'ascending',
+                    data: this.props.itemList.slice().sort(sortAscending)
+                });
+            } else {
+                this.setState({
+                    sortDirection: 'descending',
+                    data: this.props.itemList.slice().sort(sortDescending)
+                });
+            }
+        };
+
+        ///////
 
         //could do a length check on searchList
         //if searchlist.length > 0  => use the search list
@@ -208,9 +212,26 @@ class ItemsList extends React.Component {
           keys: nextKeys,
         });
       }
+        
+    // Dropdown menu for Sorting
+
+    handleMenuClick = (e) => {
+        if (e.key === '3') {
+            this.setState({ visible: false });
+        }
+    }
+
+    handleVisibleChange = (flag) => {
+        this.setState({ visible: flag });
+    }
 
     render() {
-        
+        const menu = (
+            <Menu onClick={this.handleMenuClick}>
+                <Menu.Item key="1">Ascending Order (A-Z)</Menu.Item>
+                <Menu.Item key="2">Descending Order (Z-A)</Menu.Item>
+            </Menu>
+        );
         const { token } = this.props;
         const { itemInfo, itemList, dropdownOptions } = this.state;
         const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -253,6 +274,14 @@ class ItemsList extends React.Component {
         }
         return (
             <Card>
+                <div align="right"><Dropdown overlay={menu}
+                onVisibleChange={this.handleVisibleChange}
+                visible={this.state.visible}
+                >
+                <a className="ant-dropdown-link" href="#">
+                    Filter Results by: <Icon type="down" />
+                </a>
+                </Dropdown></div>
                 <Form>
                     <Form.Item {...formItemLayout} label="Pick a media type:">
                         <Radio.Group buttonStyle="solid" onChange={this.handleView}>
@@ -294,35 +323,39 @@ class ItemsList extends React.Component {
                                 <Button onClick={e => this.handleEdit(item)} type="primary">
                                     Edit
                                 </Button>,
-                                <Button onClick={e => this.handleDelete(item)} type="primary">
-                                    Delete
+                            <Button onClick={e => this.handleDelete(item)} type="primary">
+                                Delete
                                 </Button>
-                            ]}>
-                            <List.Item.Meta
-                                title={`${item.itemInfo.title}`}
-                                description={<div>{item.type}</div>}
-                            />
-                        </List.Item>
-                    )}
-                />
-                <Modal
-                    visible={this.state.isEditFormShown}
-                    title="Edit Item"
-                    onCancel={e => this.handleClose(null)}
-                    // Removes default footer
-                    footer={null}>
-                    <div className="MetaForm">
-                        <MediaForm
-                            type={this.state.editFormMediaType}
-                            action="update"
-                            token={token}
-                            item={itemInfo}
-                            handleClose={this.handleClose}
+                        ]}>
+                        <List.Item.Meta
+                            title={`${item.itemInfo.title}`}
+                            description={<div>{item.type}</div>}
                         />
-                    </div>
-                </Modal>
-            </Card>
+                    </List.Item>
+                )}
+            />
+            <Modal
+                visible={this.state.isEditFormShown}
+                title="Edit Item"
+                onCancel={e => this.handleClose(null)}
+                // Removes default footer
+                footer={null}>
+                <div className="MetaForm">
+                    <MediaForm
+                        type={this.state.editFormMediaType}
+                        action="update"
+                        token={token}
+                        item={itemInfo}
+                        handleClose={this.handleClose}
+                    />
+                </div>
+            </Modal>
+            </Card >
+        
         );
+
+
+
     };
 }
 const WrappedItemsList = Form.create()(ItemsList);
