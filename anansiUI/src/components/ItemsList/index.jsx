@@ -1,12 +1,11 @@
 import React from 'react';
-import { List, Button, Card, Modal, Form, Radio, Select, Input } from 'antd';
+import { List, Button, Card, Modal, Form, Radio, Select, Input, Icon } from 'antd';
 import MediaForm from '../MediaForm';
-//import MediaFilter from './MediaFilter';   to be modularized into later on
 import { deleteItem, viewItems } from '../../utils/httpUtils';
 
 
 
-export default class ItemsList extends React.Component {
+class ItemsList extends React.Component {
     state = {
         itemList: [],
         searchList: [],
@@ -183,9 +182,38 @@ export default class ItemsList extends React.Component {
         this.setState({ searchBy: value });
     }
 
+    handleRemove = (k) => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        // We need at least one passenger
+        if (keys.length === 0) {
+          return;
+        }
+    
+        // can use data-binding to set
+        form.setFieldsValue({
+          keys: keys.filter(key => key !== k),
+        });
+      }
+    
+      handleAdd = () => {
+        const { form } = this.props;
+        // can use data-binding to get
+        const keys = form.getFieldValue('keys');
+        const nextKeys = keys.concat(keys.length);
+        // can use data-binding to set
+        // important! notify form to detect changes
+        form.setFieldsValue({
+          keys: nextKeys,
+        });
+      }
+
     render() {
+        
         const { token } = this.props;
         const { itemInfo, itemList, dropdownOptions } = this.state;
+        const { getFieldDecorator, getFieldValue } = this.props.form;
         const formItemLayout = {
             // from mediaForm  
             labelCol: {
@@ -197,6 +225,29 @@ export default class ItemsList extends React.Component {
                 sm: { span: 16 }
             }
         };
+        getFieldDecorator('keys', { initialValue: [] });
+    const keys = getFieldValue('keys');
+    const formItems = keys.map((k, index) => {
+      return (
+        <Form.Item
+          label={'Field'}
+          required={false}
+          key={k}
+        >
+        <Select placeholder="Please select" onChange={this.handleOption} >
+            {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
+        </Select>
+            <Input placeholder="Search..." />
+            <Icon
+              className="dynamic-delete-button"
+              type="minus-circle-o"
+              onClick={() => this.handleRemove(k)}
+            />
+         
+        </Form.Item>
+      );
+    });
+
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
@@ -217,8 +268,12 @@ export default class ItemsList extends React.Component {
                             {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
                         </Select>
                         {/* to implement later for multiple search criteria??? */}
-                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
-                        <Input type="text" onSearch={this.handleSearch} placeholder="Search..." />
+                        <Input type="text" placeholder="Search Fields" />
+                        {formItems}
+
+                        <Button type="dashed" onClick={this.handleAdd} style={{ width: '60%'}}>
+                            <Icon type="plus" /> Add Field
+                        </Button>
                     </Form.Item>
                     <Form.Item>
                         <Select ></Select>
@@ -270,3 +325,5 @@ export default class ItemsList extends React.Component {
         );
     };
 }
+const WrappedItemsList = Form.create()(ItemsList);
+export default WrappedItemsList;
