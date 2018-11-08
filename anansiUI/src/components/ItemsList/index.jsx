@@ -1,22 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {
-    List,
-    Button,
-    Card,
-    Modal,
-    Form,
-    Radio,
-    Select,
-    Input,
-    Menu,
-    Dropdown,
-    Icon,
-    Divider
-} from 'antd';
-import MediaForm from '../MediaForm';
+import React from "react";
+import { List, Button, Card, Modal } from "antd";
+import MediaForm from "../MediaForm";
 import Criteria from './Criteria';
-import { deleteItem, viewItems } from '../../utils/httpUtils';
+import { deleteItem, viewItems } from "../../utils/httpUtils";
+import MediaDetails from "../MediaDetails";
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -65,7 +52,7 @@ export default class ItemsList extends React.Component {
     handleEdit = item => {
         this.setState({
             isEditFormShown: true,
-            editFormMediaType: item.type,
+            formMediaType: item.type,
             itemInfo: item.itemInfo
         });
     };
@@ -87,7 +74,7 @@ export default class ItemsList extends React.Component {
         if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
-                editFormMediaType: ''
+                formMediaType: ""
             });
             return;
         }
@@ -99,7 +86,7 @@ export default class ItemsList extends React.Component {
         ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
-            editFormMediaType: '',
+            formMediaType: "",
             itemsList: items
         });
         console.log(items);
@@ -164,6 +151,9 @@ export default class ItemsList extends React.Component {
                                 title={`${item.itemInfo.title}`}
                                 description={<div>{item.type}</div>}
                             />
+                            <MediaDetails
+                                item={item}
+                            />
                         </List.Item>
                     )}
                 />
@@ -176,7 +166,7 @@ export default class ItemsList extends React.Component {
                 >
                     <div className="MetaForm">
                         <MediaForm
-                            type={this.state.editFormMediaType}
+                            type={this.state.formMediaType}
                             action="update"
                             item={itemInfo}
                             handleClose={this.handleClose}
