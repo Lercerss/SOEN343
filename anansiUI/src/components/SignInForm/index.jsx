@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Input, Button } from 'antd';
+import { Form, Icon, Input, Button, Modal } from 'antd';
 import { userLogin } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;

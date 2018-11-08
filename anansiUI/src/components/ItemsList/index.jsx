@@ -52,7 +52,7 @@ export default class ItemsList extends React.Component {
     handleEdit = item => {
         this.setState({
             isEditFormShown: true,
-            formMediaType: item.type,
+            editeditFormMediaType: item.type,
             itemInfo: item.itemInfo
         });
     };
@@ -74,7 +74,7 @@ export default class ItemsList extends React.Component {
         if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
-                formMediaType: ""
+                editeditFormMediaType: ""
             });
             return;
         }
@@ -86,7 +86,7 @@ export default class ItemsList extends React.Component {
         ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
-            formMediaType: "",
+            editeditFormMediaType: "",
             itemsList: items
         });
         console.log(items);
@@ -166,7 +166,7 @@ export default class ItemsList extends React.Component {
                 >
                     <div className="MetaForm">
                         <MediaForm
-                            type={this.state.formMediaType}
+                            type={this.state.editFormMediaType}
                             action="update"
                             item={itemInfo}
                             handleClose={this.handleClose}
