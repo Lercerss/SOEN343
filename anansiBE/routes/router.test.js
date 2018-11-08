@@ -206,7 +206,7 @@ describe('routes: retrieve catalog elements', () => {
                         fields: {}
                     },
                     ordering: {
-                        title: 'DESC'
+                        title: 'DESC',
                     },
                     nPage: 1
                 })
