@@ -103,6 +103,7 @@ class SignInForm extends React.Component {
                 <FormItem>
                     <Button
                         disabled={this.state.sent}
+                        loading={this.state.sent}
                         type="primary"
                         htmlType="submit"
                         style={styles.Submit}
