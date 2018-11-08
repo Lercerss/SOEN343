@@ -104,10 +104,32 @@ export default class ItemsList extends React.Component {
         if (this.state.itemList.length === 0) {
             return this.state.itemList;
         }
-        /*Mila-TODO: sort
-            Array.sort(fn comparer)
 
-        */
+    // Sorting Implementation
+    const sortAscending = (a, b) => {
+        return a - b;
+    }
+    const sortDescending = (a, b) => {
+        return b - a;
+    }
+    //Sort modifies array, creating a copy
+
+    function sortData() {
+        if(this.state.sortDirection ==='descending') {
+            this.setState({ 
+                sortDirection: 'ascending',
+                data: this.props.itemList.slice().sort(sortAscending)
+            });
+        } else {
+            this.setState({ 
+                sortDirection: 'descending',
+                data: this.props.itemList.slice().sort(sortDescending)
+            });
+        }
+    };
+
+///////
+
         //could do a length check on searchList
         //if searchlist.length > 0  => use the search list
         //else => use the itemList
