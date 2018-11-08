@@ -304,9 +304,6 @@ class ItemsList extends React.Component {
                             <Icon type="plus" /> Add Field
                         </Button>
                     </Form.Item>
-                    <Form.Item>
-                        <Select ></Select>
-                    </Form.Item>
                 </Form>
                 <List
                     itemLayout="horizontal"
