@@ -212,7 +212,7 @@ export class MediaGateway {
 
     static getItems(filters, ordering, callback) {
         if (!filters.mediaType) {
-            var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';
+            var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';            
             var queryBook = 'SELECT * FROM books' + title;
             var queryMagazine = 'SELECT * FROM magazines' + title;
             var queryMusic = 'SELECT * FROM music' + title;
@@ -228,30 +228,64 @@ export class MediaGateway {
                 if (err) {
                     throw new Error('Error querying database.');
                 }
-                books = rows;
+                var rawBooks = rows;
+                books = rawBooks.map(function(el) {
+                    var o = Object.assign({}, el);
+                    o.mediaType = 'Book';
+                    return o;
+                });
 
                 db.query(queryMagazine, function(err, rows, fields) {
                     if (err) {
                         throw new Error('Error querying database.');
                     }
-                    magazines = rows;
+                    var rawMagazines = rows;
+                    magazines = rawMagazines.map(function(el) {
+                        var o = Object.assign({}, el);
+                        o.mediaType = 'Magazine';
+                        return o;
+                    });
 
                     db.query(queryMusic, function(err, rows, fields) {
                         if (err) {
                             throw new Error('Error querying database.');
                         }
-                        music = rows;
+                        var rawMusic = rows;
+                        music = rawMusic.map(function(el) {
+                            var o = Object.assign({}, el);
+                            o.mediaType = 'Music';
+                            return o;
+                        });
 
                         db.query(queryMovie, function(err, rows, fields) {
                             if (err) {
                                 throw new Error('Error querying database.');
                             }
-                            movies = rows;
+                            var rawMovies = rows;
+                            movies = rawMovies.map(function(el) {
+                                var o = Object.assign({}, el);
+                                o.mediaType = 'Movie';
+                                return o;
+                            });
 
-                            media.push(books);
-                            media.push(magazines);
-                            media.push(music);
-                            media.push(movies);
+                            media = [].concat(books, magazines, music, movies);
+                                                                                        
+                            media.sort((a, b) => {
+                                var titleA = a.title.toUpperCase();
+                                var titleB = b.title.toUpperCase();
+
+                                let compare = 0;
+                                if (titleA > titleB){
+                                    if (ordering.title === 'ASC'){
+                                        compare = 1;
+                                    } else compare = -1;
+                                } else if (titleA < titleB){
+                                    if (ordering.title === 'ASC'){
+                                        compare = -1;
+                                    } else compare = 1;
+                                }
+                                return compare;
+                            });
                             callback(err, media);
                         });
                     });
@@ -293,7 +327,7 @@ export class MediaGateway {
                 if (err) {
                     throw new Error('Error querying database.');
                 }
-                callback(err, [rows]);
+                callback(err, rows);
             });
         }
     }
