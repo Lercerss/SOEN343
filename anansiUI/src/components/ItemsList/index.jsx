@@ -28,7 +28,7 @@ export default class ItemsList extends React.Component {
             });
     }
     fetchPage = (page, pageSize) => {
-        viewItems(this.props.token, page, 1, { mediaType: null, fields: {} }, {})
+        viewItems(this.props.token, page, { mediaType: null, fields: {} }, {})
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
