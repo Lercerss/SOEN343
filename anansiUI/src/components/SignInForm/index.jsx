@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Input, Button, message } from 'antd';
+import { Form, Icon, Input, Button, Modal } from 'antd';
 import { Cookies } from 'react-cookie';
 import { userLogin } from '../../utils/httpUtils';
 
@@ -25,6 +25,9 @@ const styles = {
     }
 };
 class SignInForm extends React.Component {
+    state = {
+        sent: false
+    };
     handleSubmit = e => {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
@@ -32,15 +35,18 @@ class SignInForm extends React.Component {
                 console.log(values);
                 const { userName, password } = values;
                 const { handleLogin, handleCloseButton } = this.props;
+                this.setState({ sent: true });
                 userLogin(userName, password)
                     .then(response => {
                         const { username, isAdmin, token } = response.data;
 
                         handleLogin(username, isAdmin, token);
+                        this.setState({ sent: false });
                         handleCloseButton();
                     })
                     .catch(err => {
-                        alert(err.response.data.message);
+                        Modal.error({ content: err.response.data.message });
+                        this.setState({ sent: false });
                     });
             }
         });
@@ -95,7 +101,13 @@ class SignInForm extends React.Component {
                     )}
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" htmlType="submit" style={styles.Submit}>
+                    <Button
+                        disabled={this.state.sent}
+                        loading={this.state.sent}
+                        type="primary"
+                        htmlType="submit"
+                        style={styles.Submit}
+                    >
                         Sign In
                     </Button>
                 </FormItem>

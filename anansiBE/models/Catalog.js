@@ -98,6 +98,7 @@ export class Catalog {
             } else if (el.mediaType === 'Music'){
                 media = new Music(el);
             }
+            media.copies = JSON.parse(el.copies);
             mediaArray.push(media);
         });
         return mediaArray;

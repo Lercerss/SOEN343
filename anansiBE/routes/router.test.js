@@ -70,6 +70,26 @@ describe('routes: login', () => {
         username: 'admintester',
         password: 'testl'
     };
+    test('Invalid login expects status 401', done => {
+        request(app)
+            .post('/user/login/')
+            .send(invalidUser)
+            .then(response => {
+                expect(response.statusCode).toBe(401);
+                expect(response.body).toHaveProperty('message');
+                done();
+            });
+    });
+    test('Incorrect password expects status 401', done => {
+        request(app)
+            .post('/user/login/')
+            .send(invalidPass)
+            .then(response => {
+                expect(response.statusCode).toBe(401);
+                expect(response.body).toHaveProperty('message');
+                done();
+            });
+    });
     test('Valid login expects status 200', done => {
         request(app)
             .post('/user/login/')
@@ -77,26 +97,6 @@ describe('routes: login', () => {
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body).toHaveProperty('token');
-                done();
-            });
-    });
-    test('Invalid login expects status 400', done => {
-        request(app)
-            .post('/user/login/')
-            .send(invalidUser)
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body).toHaveProperty('message');
-                done();
-            });
-    });
-    test('Incorrect password expects status 400', done => {
-        request(app)
-            .post('/user/login/')
-            .send(invalidPass)
-            .then(response => {
-                expect(response.statusCode).toBe(400);
-                expect(response.body).toHaveProperty('message');
                 done();
             });
     });
@@ -312,7 +312,10 @@ describe('routes: addition of a media item', () => {
                 .post('/item/add/')
                 .send(el)
                 .then(response => {
+                    console.log(response.body);
                     expect(response.statusCode).toBe(200);
+                    expect(response.body.copies.map(copy => copy.name)).toEqual(el.itemInfo.copies.map(copy => copy.name));
+                    expect(response.body.copies.map(copy => copy.id).filter(id => id < 0)).toEqual([]);
                     done();
                 });
         });

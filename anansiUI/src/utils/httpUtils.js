@@ -25,6 +25,11 @@ export function userLogin(username, password) {
         password: password
     });
 }
+export function userLogout(token) {
+    return axios.post(`${backendURL}user/logout/`, {
+        token: token
+    });
+}
 
 export function getTokenInfo(jwt) {
     return axios.post(`${backendURL}user/validate/`, {

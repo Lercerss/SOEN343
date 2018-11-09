@@ -5,7 +5,11 @@ import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
 
-class ItemsList extends React.Component {
+function compareMediaItems(item, type, other, otherType) {
+    return item.id === other.id && type === otherType;
+}
+
+export default class ItemsList extends React.Component {
     state = {
         itemList: [],
         isEditFormShown: false,
@@ -21,7 +25,7 @@ class ItemsList extends React.Component {
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
-                    catalogSize: response.data.size,
+                    catalogSize: response.data.size
                 });
             })
             .catch(reason => {
@@ -31,7 +35,7 @@ class ItemsList extends React.Component {
             });
     }
     fetchPage = page => {
-        viewItems(this.props.token, page, this.state.filters, order)
+        viewItems(this.props.token, page, this.state.filters, this.state.order)
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -48,21 +52,23 @@ class ItemsList extends React.Component {
             editFormMediaType: item.type,
             itemInfo: item.itemInfo
         });
-    }
+    };
     handleDelete = item => {
         deleteItem(item.type, item.itemInfo, this.props.token)
             .then(response => {
                 this.setState({
-                    itemList: this.state.itemList.filter(el => el.itemInfo.id !== item.itemInfo.id)
+                    itemList: this.state.itemList.filter(
+                        el => !compareMediaItems(item.itemInfo, item.type, el.itemInfo, el.type)
+                    )
                 });
             })
             .catch(err => {
                 // TODO: Handle error when deleting item in backend
                 console.log(err);
             });
-    }
-    handleClose = item => {
-        if (!item) {
+    };
+    handleClose = itemInfo => {
+        if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
                 editFormMediaType: ''
@@ -71,31 +77,30 @@ class ItemsList extends React.Component {
         }
         const items = this.state.itemList;
         items[
-            items.findIndex(
-                el => el.itemInfo.id === item.id && el.type == this.state.editFormMediaType
-            )
-        ].itemInfo = item;
+            items.findIndex(el => compareMediaItems(itemInfo, this.state.editFormMediaType, el.itemInfo, el.type))
+        ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
             editFormMediaType: '',
             itemsList: items
         });
         console.log(items);
-    }
+    };
     handleFilters = filters => {
         console.log(filters);
+        filters.mediaType = filters.mediaType ? filters.mediaType : null;
         this.setState({
             filters: filters
         });
         this.fetchPage(1);
-    }
+    };
     handleOrder = order => {
         console.log(order);
         this.setState({
             order: order
         });
         this.fetchPage(1);
-    }
+    };
     render() {
         const { token } = this.props;
         const { itemInfo, itemList } = this.state;
@@ -104,7 +109,7 @@ class ItemsList extends React.Component {
         }
         return (
             <Card>
-                <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder}/>
+                <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder} />
                 <List
                     itemLayout="horizontal"
                     size="small"
@@ -124,11 +129,9 @@ class ItemsList extends React.Component {
                                 <Button onClick={e => this.handleDelete(item)} type="primary">
                                     Delete
                                 </Button>
-                            ]}>
-                            <List.Item.Meta
-                                title={`${item.itemInfo.title}`}
-                                description={<div>{item.type}</div>}
-                            />
+                            ]}
+                        >
+                            <List.Item.Meta title={`${item.itemInfo.title}`} description={<div>{item.type}</div>} />
                         </List.Item>
                     )}
                 />
@@ -137,7 +140,8 @@ class ItemsList extends React.Component {
                     title="Edit Item"
                     onCancel={e => this.handleClose(null)}
                     // Removes default footer
-                    footer={null}>
+                    footer={null}
+                >
                     <div className="MetaForm">
                         <MediaForm
                             type={this.state.editFormMediaType}
@@ -148,10 +152,7 @@ class ItemsList extends React.Component {
                         />
                     </div>
                 </Modal>
-            </Card >
-
+            </Card>
         );
-    };
+    }
 }
-const WrappedItemsList = Form.create()(ItemsList);
-export default WrappedItemsList;

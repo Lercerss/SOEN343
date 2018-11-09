@@ -110,9 +110,10 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your username! Must be at least 4 characters long',
+                                    message: 'Please input a correct username, it must be at least 4 characters long with no whitespaces!',
                                     whitespace: true,
-                                    min: 4
+                                    min: 4,
+                                    pattern: /^\S*$/
                                 }
                             ]
                         })(<Input placeholder="PatTheSwedishCow" />)}
@@ -122,7 +123,7 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your password! Must be at least 4 characters long',
+                                    message: 'Please input your password, it must be at least 4 characters long',
                                     min: 4
                                 }
                             ]
@@ -134,7 +135,7 @@ class RegisterForm extends React.Component {
                                 {
                                     required: true,
                                     message: 'Please input your first name!',
-                                    pattern: /^(\w+-?\s?)+$/
+                                    pattern: /^(?! )(\w+-?\s?)+(?<! )$/
                                 }
                             ]
                         })(<Input placeholder="Pat" />)}
@@ -145,8 +146,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your last name',
-                                    pattern: /^(\w+-?\s?)+$/
+                                    message: 'Please input your last name!',
+                                    pattern: /^(?! )(\w+-?\s?)+(?<! )$/
                                 }
                             ]
                         })(<Input placeholder="Ko" />)}

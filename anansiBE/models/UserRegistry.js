@@ -55,4 +55,56 @@ export class UserRegistry {
             });
         });
     }
-};
+    static login(username, password, callback) {
+        UserGateway.findUser(username, (err, rows) => {
+            this.jsonToUser(err, rows, (err, userArray) => {
+                if (err) {
+                    return callback(err, null);
+                }
+                if (userArray.length === 0) {
+                    let err = new Error('Username does not exist');
+                    err.httpStatusCode = 401;
+                    return callback(err, null);
+                }
+
+                let user = userArray[0];
+
+                // Checking to see if account is logged in anywhere else
+
+                user.authenticate(password, valid => {
+                    if (valid) {
+                        if (user.loggedIn) {
+                            let timeDelta = (Date.now() - user.timestamp) / (1000 * 60 * 60);
+
+                            if (timeDelta < 1) {
+                                let err = new Error('This account is logged in elsewhere');
+                                err.httpStatusCode = 401;
+                                return callback(err, null);
+                            }
+                        }
+                        UserGateway.login(user, err => {
+                            if (err) {
+                                err.httpStatusCode = 500;
+                                return callback(err, null);
+                            }
+                            return callback(null, user);
+                        });
+                    } else {
+                        let err = new Error('Password is incorrect');
+                        err.httpStatusCode = 401;
+                        return callback(err, null);
+                    }
+                });
+            });
+        });
+    }
+    static logout(id, callback) {
+        UserGateway.logout(id, err => {
+            if (err) {
+                err.httpStatusCode = 500;
+                return callback(err);
+            }
+            callback(null);
+        });
+    }
+}

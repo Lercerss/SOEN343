@@ -37,7 +37,8 @@ export function globalSetUp() {
                         '401 Test Av.',
                         '514-135-5869',
                         1,
-                        moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                        moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+                        0
                     ],
                     [
                         2,
@@ -49,7 +50,8 @@ export function globalSetUp() {
                         '401 Test Av.',
                         '514-135-5869',
                         0,
-                        moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+                        moment(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+                        0
                     ]
                 ];
 
@@ -64,15 +66,15 @@ export function globalSetUp() {
                 Object.keys(mediaTables).forEach(key => {
                     const values = catalogQueryBuilder(key);
                     const clearTable = db.format(
-                        'TRUNCATE TABLE ??', // truncate to reset primary keys
+                        'DELETE FROM ??',
                         [mediaTables[key]]
                     );
-                    const catalogQuery = db.format(
-                        'INSERT INTO ?? VALUES ?',
-                        [mediaTables[key], values]
-                    );
+                    const catalogQuery = db.format('INSERT INTO ?? VALUES ?', [
+                        mediaTables[key],
+                        values
+                    ]);
                     db.query(clearTable, (err, rows, fields) => {
-                        if (err){
+                        if (err) {
                             throw err;
                         }
                         db.query(catalogQuery, (err, rows, fields) => {
