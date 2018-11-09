@@ -279,7 +279,7 @@ class ItemsList extends React.Component {
                 visible={this.state.visible}
                 >
                 <a className="ant-dropdown-link" href="#">
-                    Filter Results by: <Icon type="down" />
+                    Sort Results by: <Icon type="down" />
                 </a>
                 </Dropdown></div>
                 <Form>
