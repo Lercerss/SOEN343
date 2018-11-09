@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon } from 'antd';
+import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon, Divider } from 'antd';
 import MediaForm from '../MediaForm';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
-
-
 
 class ItemsList extends React.Component {
     state = {
@@ -26,7 +24,8 @@ class ItemsList extends React.Component {
                 const b = response.data.hasOwnProperty("message");
                 this.setState({
                     itemList: response.data.catalog,
-                    catalogSize: response.data.size
+                    catalogSize: response.data.size,
+                    searchList: response.data
                 });
             })
             .catch(reason => {
@@ -161,9 +160,12 @@ class ItemsList extends React.Component {
                 return item.type === this.state.filterType;
             });
     }
-    handleSearch = searchText => {
+    handleSearch = e => {
+        e.preventDefault();
+        const { form } = this.props;
+        form.getFieldsValue();
+        console.log(form.getFieldsValue());
         // 1-get the selected value of the dropdown 
-        const selectedDropdown = this.state.searchBy;
         // 2-get this input value  which is parameter searchText
         // 3-wrap in object , where does the order go?  --> sort
         /* suggestion 1: Default ASC, and create checkbox for Desc 
@@ -181,45 +183,45 @@ class ItemsList extends React.Component {
             writable: false, 
             value: null
         }*/
-        descriptor.value = searchText;
+        descriptor.value = form.getFieldsValue().inputs;
         // the key pair here is { selectedDropdown : searchText}
         // define property for fields dynamically
-        Object.defineProperty(criteria.fields, selectedDropdown, descriptor);
+        Object.defineProperty(criteria.fields,form.getFieldsValue().fields, descriptor);
         // 4-POST to backend
         //TODO: more search? only 1 atm.
         //suggestion?: have multiple search inputs (idk up to 3?) 
         console.log(criteria);
         // to implement later when sort is implemented, this is the POST to BE
-        // getItems(criteria)
-        // .then(response => {
-        //     this.setState({
-        //         searchList: response.data
-        //     });
-        // })
-        // .catch(reason => {
-        //     alert(reason);
-        // });
-    }
-    handleOption = value => {
-        this.setState({ searchBy: value });
+    //     getItems(criteria)
+    //     .then(response => {
+    //         this.setState({
+    //             searchList: response.data
+    //         });
+    //     })
+    //     .catch(reason => {
+    //         alert(reason);
+    //     });
+    // }
+    // handleOption = value => {
+    //     this.setState({ searchBy: value });
+    // }
+
+    // handleRemove = (k) => {
+    //     const { form } = this.props;
+    //     // can use data-binding to get
+    //     const keys = form.getFieldValue('keys');
+    //     // We need at least one passenger
+    //     if (keys.length === 0) {
+    //         return;
+    //     }
+
+    //     // can use data-binding to set
+    //     form.setFieldsValue({
+    //         keys: keys.filter(key => key !== k),
+    //     });
     }
 
-    handleRemove = (k) => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        // We need at least one passenger
-        if (keys.length === 0) {
-          return;
-        }
-    
-        // can use data-binding to set
-        form.setFieldsValue({
-          keys: keys.filter(key => key !== k),
-        });
-      }
-    
-      handleAdd = () => {
+    handleAdd = () => {
         const { form } = this.props;
         // can use data-binding to get
         const keys = form.getFieldValue('keys');
@@ -227,10 +229,10 @@ class ItemsList extends React.Component {
         // can use data-binding to set
         // important! notify form to detect changes
         form.setFieldsValue({
-          keys: nextKeys,
+            keys: nextKeys,
         });
-      }
-        
+    }
+
     // Dropdown menu for Sorting
 
     handleMenuClick = (e) => {
@@ -265,27 +267,51 @@ class ItemsList extends React.Component {
             }
         };
         getFieldDecorator('keys', { initialValue: [] });
-    const keys = getFieldValue('keys');
-    const formItems = keys.map((k, index) => {
-      return (
-        <Form.Item
-          label={'Field'}
-          required={false}
-          key={k}
-        >
-        <Select placeholder="Please select" onChange={this.handleOption} >
-            {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
-        </Select>
-            <Input placeholder="Search..." />
-            <Icon
-              className="dynamic-delete-button"
-              type="minus-circle-o"
-              onClick={() => this.handleRemove(k)}
-            />
-         
-        </Form.Item>
-      );
-    });
+        const keys = getFieldValue('keys');
+        const formItems = keys.map((k, index) => {
+            return (
+                <div key={`search${index}`}>
+                    <Form.Item
+                        label={'Field'}
+                        required={false}
+                        key={`fields${k}`}>
+                        {getFieldDecorator(`fields[${(2*k)}]`, {
+                            validateTrigger: ['onChange', 'onBlur'],
+                            rules: [{
+                                required: true,
+                                whitespace: true,
+                                message: "Please input or delete this field.",
+                            }],
+                        })(
+                            <Select placeholder="Please select">
+                                {dropdownOptions.map(mediaData =>
+                                    <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>
+                                )}
+                            </Select>
+                        )}
+                    </Form.Item>
+                    <Form.Item required={false}
+                        key={`inputs${k}`}>
+                        {getFieldDecorator(`inputs[${(2*k+1)}]`, {
+                            validateTrigger: ['onChange', 'onBlur'],
+                            rules: [{
+                                required: true,
+                                whitespace: true,
+                                message: "Please input or delete this field.",
+                            }],
+                        })(
+                            <Input placeholder="Search..." />
+                        )}
+
+                        <Icon
+                            className="dynamic-delete-button"
+                            type="minus-circle-o"
+                            onClick={() => this.handleRemove(k)}
+                        />
+                    </Form.Item>
+                </div>
+            );
+        });
 
         if (!itemList) {
             return <h2>Loading...</h2>;
@@ -293,35 +319,39 @@ class ItemsList extends React.Component {
         return (
             <Card>
                 <div align="right"><Dropdown overlay={menu}
-                onVisibleChange={this.handleVisibleChange}
-                visible={this.state.visible}
+                    onVisibleChange={this.handleVisibleChange}
+                    visible={this.state.visible}
                 >
-                <a className="ant-dropdown-link" href="#">
-                    Sort Results by: <Icon type="down" />
-                </a>
+                    <a className="ant-dropdown-link" href="#">
+                        Sort Results by: <Icon type="down" />
+                    </a>
                 </Dropdown></div>
-                <Form>
-                    <Form.Item {...formItemLayout} label="Pick a media type:">
-                        <Radio.Group buttonStyle="solid" onChange={this.handleView}>
-                            <Radio.Button value="All">All</Radio.Button>
-                            <Radio.Button value="Book">Book</Radio.Button>
-                            <Radio.Button value="Magazine">Magazine</Radio.Button>
-                            <Radio.Button value="Movie">Movie</Radio.Button>
-                            <Radio.Button value="Music">Music</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item {...formItemLayout} label="Search:">
-                        <Select placeholder="Please select" onChange={this.handleOption} >
+                <div>  <b>Pick a media type : </b> 
+                <Radio.Group {...formItemLayout} buttonStyle="solid" onChange={this.handleView}>
+                    <Radio.Button value="All">All</Radio.Button>
+                    <Radio.Button value="Book">Book</Radio.Button>
+                    <Radio.Button value="Magazine">Magazine</Radio.Button>
+                    <Radio.Button value="Movie">Movie</Radio.Button>
+                    <Radio.Button value="Music">Music</Radio.Button>
+                </Radio.Group>
+                <Divider />
+                </div>
+                <Form onSubmit={this.handleSearch}>
+                    <Form.Item {...formItemLayout} label="Search:" key="0">
+                        <Select placeholder="Please select">
                             {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
                         </Select>
                         {/* to implement later for multiple search criteria??? */}
                         <Input type="text" placeholder="Search Fields" />
-                        {formItems}
-
-                        <Button type="dashed" onClick={this.handleAdd} style={{ width: '60%'}}>
+                    </Form.Item>
+                    {formItems}
+                    <Form.Item {...formItemLayout} key="util">
+                        <Button type="dashed" onClick={this.handleAdd} style={{ width: '60%' }}>
                             <Icon type="plus" /> Add Field
                         </Button>
+                        <Button type="primary" htmlType="submit">Submit</Button>
                     </Form.Item>
+
                 </Form>
                 <List
                     itemLayout="horizontal"
@@ -340,39 +370,36 @@ class ItemsList extends React.Component {
                                 <Button onClick={e => this.handleEdit(item)} type="primary">
                                     Edit
                                 </Button>,
-                            <Button onClick={e => this.handleDelete(item)} type="primary">
-                                Delete
+                                <Button onClick={e => this.handleDelete(item)} type="primary">
+                                    Delete
                                 </Button>
-                        ]}>
-                        <List.Item.Meta
-                            title={`${item.itemInfo.title}`}
-                            description={<div>{item.type}</div>}
+                            ]}>
+                            <List.Item.Meta
+                                title={`${item.itemInfo.title}`}
+                                description={<div>{item.type}</div>}
+                            />
+                        </List.Item>
+                    )}
+                />
+                <Modal
+                    visible={this.state.isEditFormShown}
+                    title="Edit Item"
+                    onCancel={e => this.handleClose(null)}
+                    // Removes default footer
+                    footer={null}>
+                    <div className="MetaForm">
+                        <MediaForm
+                            type={this.state.editFormMediaType}
+                            action="update"
+                            token={token}
+                            item={itemInfo}
+                            handleClose={this.handleClose}
                         />
-                    </List.Item>
-                )}
-            />
-            <Modal
-                visible={this.state.isEditFormShown}
-                title="Edit Item"
-                onCancel={e => this.handleClose(null)}
-                // Removes default footer
-                footer={null}>
-                <div className="MetaForm">
-                    <MediaForm
-                        type={this.state.editFormMediaType}
-                        action="update"
-                        token={token}
-                        item={itemInfo}
-                        handleClose={this.handleClose}
-                    />
-                </div>
-            </Modal>
+                    </div>
+                </Modal>
             </Card >
-        
+
         );
-
-
-
     };
 }
 const WrappedItemsList = Form.create()(ItemsList);
