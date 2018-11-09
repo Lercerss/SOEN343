@@ -12,19 +12,33 @@ export default class ItemsList extends React.Component {
         itemList: [],
         isEditFormShown: false,
         editFormMediaType: '',
-        itemInfo: undefined
+        itemInfo: undefined,
+        catalogSize: 0
     };
     componentDidMount() {
-        viewItems(this.props.token)
+        viewItems(this.props.token, 1, { mediaType: null, fields: {} }, {})
             .then(response => {
                 this.setState({
-                    itemList: response.data
+                    itemList: response.data.catalog,
+                    catalogSize: response.data.size
                 });
             })
             .catch(reason => {
                 alert(reason);
             });
     }
+    fetchPage = (page, pageSize) => {
+        viewItems(this.props.token, page, { mediaType: null, fields: {} }, {})
+            .then(response => {
+                this.setState({
+                    itemList: response.data.catalog,
+                    catalogSize: response.data.size
+                });
+            })
+            .catch(reason => {
+                alert(reason);
+            });
+    };
     handleEdit = item => {
         this.setState({
             isEditFormShown: true,
@@ -72,7 +86,9 @@ export default class ItemsList extends React.Component {
                     itemLayout="horizontal"
                     size="small"
                     pagination={{
-                        pageSize: 50
+                        pageSize: 15,
+                        onChange: this.fetchPage,
+                        total: this.state.catalogSize
                     }}
                     dataSource={itemList}
                     renderItem={item => (
