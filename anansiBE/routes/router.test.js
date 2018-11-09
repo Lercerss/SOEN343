@@ -312,8 +312,9 @@ describe('routes: addition of a media item', () => {
                 .post('/item/add/')
                 .send(el)
                 .then(response => {
+                    console.log(response.body);
                     expect(response.statusCode).toBe(200);
-                    expect(response.body.copies.map(copy => copy.name)).toEqual(media[i].itemInfo.copies.map(copy => copy.name));
+                    expect(response.body.copies.map(copy => copy.name)).toEqual(el.itemInfo.copies.map(copy => copy.name));
                     expect(response.body.copies.map(copy => copy.id).filter(id => id < 0)).toEqual([]);
                     done();
                 });

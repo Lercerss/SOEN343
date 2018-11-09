@@ -45,9 +45,6 @@ export class MediaGateway {
             );
             copiesTable = 'book_copies';
             copiesFK = 'book_id';
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
         } else if (type === 'Magazine') {
             query = db.format(
                 'INSERT INTO magazines(title, publisher, publicationDate, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?)',
@@ -62,9 +59,6 @@ export class MediaGateway {
             );
             copiesTable = 'magazine_copies';
             copiesFK = 'magazine_id';
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
         } else if (type === 'Music') {
             query = db.format(
                 'INSERT INTO music(type, title, artist, label, releaseDate, asin) VALUES (?, ?, ?, ?, ?, ?)',
@@ -79,9 +73,6 @@ export class MediaGateway {
             );
             copiesTable = 'music_copies';
             copiesFK = 'music_id';
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
         } else if (type === 'Movie') {
             query = db.format(
                 'INSERT INTO movies(title, director, producers, actors, language, subtitles, dubbed, releaseDate, runtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
@@ -99,13 +90,10 @@ export class MediaGateway {
             );
             copiesTable = 'movie_copies';
             copiesFK = 'movie_id';
-            db.query(query, (err, rows, fields) => {
-                callback(err);
-            });
         } else {
             callback(new Error('Invalid Type'));
             return;
-        } 
+        }
         db.query(query, (err, rows) => {
             if (err || !fields.copies.length) {
                 callback(err);
@@ -136,9 +124,6 @@ export class MediaGateway {
             );
             copiesTable = 'book_copies';
             copiesFK = 'book_id';
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
         } else if (type === 'Magazine') {
             query = db.format(
                 'UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
@@ -155,9 +140,6 @@ export class MediaGateway {
             );
             copiesTable = 'magazine_copies';
             copiesFK = 'magazine_id';
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
         } else if (type === 'Music') {
             query = db.format(
                 'UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE id = ?',
@@ -173,9 +155,6 @@ export class MediaGateway {
             );
             copiesTable = 'music_copies';
             copiesFK = 'music_id';
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
         } else if (type === 'Movie') {
             query = db.format(
                 'UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
@@ -195,9 +174,6 @@ export class MediaGateway {
             );
             copiesTable = 'movie_copies';
             copiesFK = 'movie_id';
-            db.query(query, (err, rows) => {
-                callback(err);
-            });
         } else {
             callback(new Error('Invalid Type'));
             return;
@@ -294,7 +270,7 @@ export class MediaGateway {
         });
     }
 
-    static getItems(filters, ordering, callback) {       
+    static getItems(filters, ordering, callback) {
         if (!filters.mediaType) {
             var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';
             var queryBook = `SELECT a.*,
@@ -394,6 +370,7 @@ export class MediaGateway {
                                 var titleB = b.title.toUpperCase();
 
                                 let compare = 0;
+                                if (Object.keys(ordering).length === 0) return -1;
                                 if (titleA > titleB){
                                     if (ordering.title === 'ASC'){
                                         compare = 1;
@@ -411,6 +388,8 @@ export class MediaGateway {
                 });
             });
         } else {
+            const mediaTable = 'a';
+            const mediaCopyTable = 'b';
             var table, copyTable, type;
             switch (filters.mediaType) {
             case 'Book':
@@ -435,22 +414,25 @@ export class MediaGateway {
                 break;
             }
 
-            var filterClause;
+            var filterClause, orderClause;
             if (Object.keys(filters.fields).length !== 0) {
-                filterClause = ' WHERE ';
                 var fieldArray = [];
                 Object.keys(filters.fields).forEach(function(key) {
-                    fieldArray.push(key + " LIKE '%" + filters.fields[key] + "%'");
+                    fieldArray.push(`${ mediaTable }.` + key + " LIKE '%" + filters.fields[key] + "%'");
                 });
-                filterClause += fieldArray.join(' AND ');
+                filterClause = fieldArray.join(' AND ');
+            } else {
+                filterClause = 'TRUE';
             }
             if (Object.keys(ordering).length !== 0) {
-                filterClause += ' ORDER BY ';
+                orderClause = ' ORDER BY ';
                 fieldArray = [];
                 Object.keys(ordering).forEach(function(key) {
-                    fieldArray.push(key + ' ' + ordering[key]);
+                    fieldArray.push(`${ mediaTable }.` + key + ' ' + ordering[key]);
                 });
-                filterClause += fieldArray.join(', ');
+                orderClause = fieldArray.join(', ');
+            } else {
+                orderClause = ` ${ mediaTable }.id ASC`;
             }
 
             var query = `SELECT a.*,
@@ -461,11 +443,14 @@ export class MediaGateway {
                         ) as copies
                         FROM ${ table } AS a
                         LEFT JOIN ${ copyTable } AS b ON a.id = b.${ type }_id
-                        ${ filterClause }
-                        GROUP BY a.id;`;
+                        WHERE ${ filterClause } 
+                        GROUP BY a.id 
+                        ORDER BY ${ orderClause };`;
 
+            console.log(query);
             db.query(query, function(err, rows, fields) {
                 if (err) {
+                    console.log(err);
                     throw new Error('Error querying database.');
                 }
 

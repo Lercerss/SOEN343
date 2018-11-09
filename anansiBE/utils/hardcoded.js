@@ -42,7 +42,8 @@ export const mediaData = {
         artist: 'Dead Can Dance',
         label: 'Sony Music',
         releaseDate: date,
-        asin: 'B008FOB124'
+        asin: 'B008FOB124',
+        copies: []
     }, {
         mediaType: 'Book',
         title: 'The Hundred-Year-Old Man Who Climbed Out the Window and Disappeared',
