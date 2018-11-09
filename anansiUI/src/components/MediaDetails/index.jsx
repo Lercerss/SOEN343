@@ -8,10 +8,6 @@ import MusicDetails from "./MusicDetails";
 export default class MediaDetails extends React.Component {
     render() {
         const { item } = this.props;
-        const customPanelStyle = {
-            border: 0,
-            overflow: "hidden"
-        };
 
         let detailComponent = '';
         if (item.type == 'Book') detailComponent = <BookDetails item={item} />;

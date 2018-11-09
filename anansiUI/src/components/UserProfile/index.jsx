@@ -94,7 +94,9 @@ export default class UserProfile extends React.Component{
                     itemLayout="horizontal"
                     dataSource={data}
                     renderItem={item => (
-                        <List.Item>
+                        <List.Item
+                            key={`${item.username}`}
+                        >
                             <List.Item.Meta
                             title={ <b>{ item.title }</b>}
                             description={ item.content }

@@ -4,35 +4,39 @@ import { List } from "antd";
 export default class MusicDetails extends React.Component {
     render() {
         const { item } = this.props;
+        const data = [
+            {
+                title: 'Artists:',
+                content: item.itemInfo.artist
+            }, {
+                title: 'Label:',
+                content: item.itemInfo.label
+            }, {
+                title: 'Release Date:',
+                content: item.itemInfo.releaseDate.substring(0,10)
+            }, {
+                title: 'Type:',
+                content: item.itemInfo.type.toUpperCase()
+            }, {
+                title: 'ASIN:',
+                content: item.itemInfo.asin
+            }
+        ];
 
         return (
-            <List>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Artist: ${item.itemInfo.artist}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Label: ${item.itemInfo.label}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Release Date: ${item.itemInfo.releaseDate.substring(0,10)}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Type: ${item.itemInfo.type.toUpperCase()}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`ASIN: ${item.itemInfo.asin}`}
-                    />
-                </List.Item>
-            </List>
+            <List
+                dataSource={data}
+                renderItem={item => (
+                    <List.Item
+                        key={item}
+                    >
+                        <List.Item.Meta 
+                            title={`${item.title}`}
+                            description={`${item.content}`}
+                        />
+                    </List.Item>    
+                )}
+            />
         );
     }
 }

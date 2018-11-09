@@ -4,50 +4,43 @@ import { List } from "antd";
 export default class MovieDetails extends React.Component {
     render() {
         const { item } = this.props;
+        const data = [
+            {
+                title: 'Actors:',
+                content: item.itemInfo.actors
+            }, {
+                title: 'Director:',
+                content: item.itemInfo.director
+            }, {
+                title: 'Producers:',
+                content: item.itemInfo.producers
+            }, {
+                title: 'Release Date:',
+                content: item.itemInfo.releaseDate.substring(0, 10)
+            }, {
+                title: 'Language:',
+                content: item.itemInfo.language
+            }, {
+                title: 'Subtitles:',
+                content: item.itemInfo.subtitles
+            }
+        ];
 
         return (
-            <List>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Actors: ${item.itemInfo.actors}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Director: ${item.itemInfo.director}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Producers: ${item.itemInfo.producers}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Release Date: ${item.itemInfo.releaseDate.substring(0,10)}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Language: ${item.itemInfo.language}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Subtitles: ${item.itemInfo.subtitles}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Dubbed: ${item.itemInfo.dubbed}`}
-                    />
-                </List.Item>
-                <List.Item>
-                    <List.Item.Meta
-                        title={`Run Time: ${item.itemInfo.runtime} minutes`}
-                    />
-                </List.Item>
-            </List>
+            <List
+                dataSource={data}
+                renderItem={item => (
+                    <List.Item
+                        key={item}
+                    >
+                    {item.title}
+                        <List.Item.Meta
+                            title={`${item.title}`}
+                            description={`${item.content}`}
+                        />
+                    </List.Item>
+                )}
+            />
         );
     }
 }

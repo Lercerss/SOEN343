@@ -130,7 +130,7 @@ export default class ItemsList extends React.Component {
                     dataSource={this.state.itemList}
                     renderItem={(item, index) => (
                         <List.Item
-                            key={`${item.itemInfo.title}`}
+                            key={`${item.itemInfo.type}.${item.itemInfo.id}`}
                             actions={
                                 isAdmin
                                     ? [
