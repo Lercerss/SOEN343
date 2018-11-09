@@ -27,6 +27,9 @@ class MagazineForm extends React.Component {
         });
     };
     validateCopyName = (_, value, callback) => {
+        if (!value) {
+            return callback();
+        }
         const copyNames = Object.entries(this.props.form.getFieldValue('copies'))
             .filter(pair => pair[0])
             .map(pair => pair[1]);
