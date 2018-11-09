@@ -3,26 +3,30 @@ import { validateToken } from './router';
 
 export function displayItems(req, res) {
     validateToken(req.body.token, res, decoded => {
-        if (!decoded.data.client_id){
+        if (!decoded.data.client_id) {
             return;
         }
-        Catalog.viewItems(catalog => {
+        Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (catalog, size) => {
             if (catalog.length === 0) {
                 res.send({
                     message: 'Catalog is empty'
                 });
             } else {
-                var typedCatalog = catalog.map(val => {
+                let typedCatalog = catalog.map(val => {
                     return {
                         itemInfo: val,
                         type: val.constructor.name
                     };
                 });
-                res.send(typedCatalog);
+                let response = {
+                    catalog: typedCatalog,
+                    size: size
+                };
+                res.send(response);
             }
         });
     });
-};
+}
 
 export function addItem(req, res) {
     validateToken(req.body.token, res, decoded => {
@@ -54,7 +58,7 @@ export function addItem(req, res) {
             });
         }
     });
-};
+}
 
 export function editItem(req, res) {
     validateToken(req.body.token, res, decoded => {
@@ -85,7 +89,7 @@ export function editItem(req, res) {
             });
         }
     });
-};
+}
 
 export function deleteItem(req, res) {
     validateToken(req.body.token, res, decoded => {
@@ -105,9 +109,9 @@ export function deleteItem(req, res) {
                     return;
                 }
                 res.status(200).send({
-                    message: 'Item was deleted',
+                    message: 'Item was deleted'
                 });
             });
         }
     });
-};
+}

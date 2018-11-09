@@ -40,6 +40,17 @@ export const mediaData = {
         label: 'Sony Music',
         releaseDate: date,
         asin: 'B008FOB124'
+    }, {
+        mediaType: 'Book',
+        title: 'The Hundred-Year-Old Man Who Climbed Out the Window and Disappeared',
+        author: 'Jonas Jonasson',
+        format: 'Paperback',
+        pages: 400,
+        publisher: 'HarperCollins; (Aug. 28 2012)',
+        publicationDate: date,
+        language: 'English',
+        isbn10: '1443419109',
+        isbn13: '978-1443419109'
     }],
     addAndEdit: [{
         mediaType: 'Book',
@@ -84,64 +95,82 @@ export const mediaData = {
 
 export function catalogQueryBuilder(type){
     var values = [];
+    var countMedia = 1;
+    const arr = mediaData.initial;
 
-    if (type === 'Book'){
-        let dict = mediaData.initial[0];
-        let valuesArr = [
-            1,
-            dict.title,
-            dict.language,
-            dict.isbn10,
-            dict.isbn13,
-            dict.publisher,
-            dict.publicationDate,
-            dict.author,
-            dict.format,
-            dict.pages
-        ];
-        values.push(valuesArr);
+    if (type === 'Book') {
+        arr.forEach(el => {
+            if (el.mediaType === type){
+                let valuesArr = [
+                    countMedia,
+                    el.title,
+                    el.language,
+                    el.isbn10,
+                    el.isbn13,
+                    el.publisher,
+                    el.publicationDate,
+                    el.author,
+                    el.format,
+                    el.pages
+                ];
+                values.push(valuesArr);
+                countMedia++;
+            }
+        });
         return values;
     } else if (type === 'Magazine'){
-        let dict = mediaData.initial[1];
-        let valuesArr = [
-            1,
-            dict.title,
-            dict.language,
-            dict.isbn10,
-            dict.isbn13,
-            dict.publisher,
-            dict.publicationDate,
-        ];
-        values.push(valuesArr);
+        arr.forEach(el => {
+            if (el.mediaType === type){
+                let valuesArr = [
+                    countMedia,
+                    el.title,
+                    el.language,
+                    el.isbn10,
+                    el.isbn13,
+                    el.publisher,
+                    el.publicationDate,
+                ];
+                values.push(valuesArr);
+                countMedia++;
+            }
+        });
         return values;
     } else if (type === 'Music'){
-        let dict = mediaData.initial[3];
-        let valuesArr = [
-            1,
-            dict.title,
-            dict.releaseDate,
-            dict.type,
-            dict.artist,
-            dict.label,
-            dict.asin
-        ];
-        values.push(valuesArr);
+        arr.forEach(el => {
+            if (el.mediaType === type){
+                let valuesArr = [
+                    countMedia,
+                    el.title,
+                    el.releaseDate,
+                    el.type,
+                    el.artist,
+                    el.label,
+                    el.asin
+                ];
+                values.push(valuesArr);
+                countMedia++;
+            }
+        });
         return values;
     } else if (type === 'Movie'){
-        let dict = mediaData.initial[2];
-        let valuesArr = [
-            1,
-            dict.title,
-            dict.releaseDate,
-            dict.director,
-            dict.producers,
-            dict.actors,
-            dict.language,
-            dict.subtitles,
-            dict.dubbed,
-            dict.runTime
-        ];
-        values.push(valuesArr);
+        arr.forEach(el => {
+            if (el.mediaType === type){
+                let valuesArr = [
+                    countMedia,
+                    el.title,
+                    el.releaseDate,
+                    el.director,
+                    el.producers,
+                    el.actors,
+                    el.language,
+                    el.subtitles,
+                    el.dubbed,
+                    el.runTime
+                ];
+                values.push(valuesArr);
+                countMedia++;
+            }
+        });
         return values;
     }
 }

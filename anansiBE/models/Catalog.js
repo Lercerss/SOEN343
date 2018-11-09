@@ -4,6 +4,8 @@ import { Movie } from './Movie';
 import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
 
+const pageSize = 15;
+
 export class Catalog {
     static addItem(type, fields, callback) {
         MediaGateway.findMedia(type, fields, (err, rows) => {
@@ -52,17 +54,20 @@ export class Catalog {
         });
     }
 
-    static viewItems(callback) {
+    static viewItems(nPage, filters, ordering, callback) {
         var mediaArray = [];
         var jsonArray = [];
-        MediaGateway.getAll(function(err, media) {
+        MediaGateway.getItems(filters, ordering, function(err, media) {
             if (err) {
                 callback(new Error('Error retrieving media items'));
                 return;
             }
             jsonArray = media;
+
             mediaArray = Catalog.jsonToMedia(jsonArray);
-            callback(mediaArray);
+            let size = mediaArray.length;
+            mediaArray.slice(nPage * (pageSize - 1), nPage * pageSize);
+            callback(mediaArray, size);
         });
     }
 
@@ -82,25 +87,19 @@ export class Catalog {
     static jsonToMedia(jsonArray) {
         var mediaArray = [];
 
-        for (var i = 0; i < jsonArray.length; i++) {
-            for (var mediaJson of jsonArray[i]) {
-                var media;
-                if (i === 0) {
-                    // book type
-                    media = new Book(mediaJson);
-                } else if (i === 1) {
-                    // magazine type
-                    media = new Magazine(mediaJson);
-                } else if (i === 2) {
-                    // movie type
-                    media = new Music(mediaJson);
-                } else if (i === 3) {
-                    // music type
-                    media = new Movie(mediaJson);
-                }
-                mediaArray.push(media);
+        jsonArray.forEach(el => {
+            var media;
+            if (el.mediaType === 'Book'){
+                media = new Book(el);
+            } else if (el.mediaType === 'Magazine'){
+                media = new Magazine(el);
+            } else if (el.mediaType === 'Movie'){
+                media = new Movie(el);
+            } else if (el.mediaType === 'Music'){
+                media = new Music(el);
             }
-        }
+            mediaArray.push(media);
+        });
         return mediaArray;
     }
 }

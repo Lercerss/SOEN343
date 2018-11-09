@@ -17,14 +17,16 @@ class ItemsList extends React.Component {
         dropdownOptions: [],
         searchBy: "",
         visible: false,
+        catalogSize: 0
     };
 
     componentDidMount() {
-        viewItems(this.props.token)
+        viewItems(this.props.token, 1, { mediaType: null, fields: {} }, {})
             .then(response => {
                 const b = response.data.hasOwnProperty("message");
                 this.setState({
-                    itemList: b ? [] : response.data
+                    itemList: response.data.catalog,
+                    catalogSize: response.data.size
                 });
             })
             .catch(reason => {
@@ -33,6 +35,18 @@ class ItemsList extends React.Component {
                 this.setState({ itemList: [] });
             });
     }
+    fetchPage = (page, pageSize) => {
+        viewItems(this.props.token, page, 1, { mediaType: null, fields: {} }, {})
+            .then(response => {
+                this.setState({
+                    itemList: response.data.catalog,
+                    catalogSize: response.data.size
+                });
+            })
+            .catch(reason => {
+                alert(reason);
+            });
+    };
     handleEdit = item => {
         this.setState({
             isEditFormShown: true,
@@ -61,7 +75,11 @@ class ItemsList extends React.Component {
             return;
         }
         const items = this.state.itemList;
-        items[items.findIndex(el => el.itemInfo.id === item.id && el.type == this.state.editFormMediaType)].itemInfo = item;
+        items[
+            items.findIndex(
+                el => el.itemInfo.id === item.id && el.type == this.state.editFormMediaType
+            )
+        ].itemInfo = item;
         this.setState({
             isEditFormShown: false,
             editFormMediaType: '',
@@ -309,7 +327,9 @@ class ItemsList extends React.Component {
                     itemLayout="horizontal"
                     size="small"
                     pagination={{
-                        pageSize: 50
+                        pageSize: 15,
+                        onChange: this.fetchPage,
+                        total: this.state.catalogSize
                     }}
                     // TODO: dataSource will need to changed to handleList later when implementing clear search criteria
                     dataSource={this.handleFilter()}
