@@ -13,11 +13,9 @@ export default class ItemsList extends React.Component {
     state = {
         itemList: [],
         isEditFormShown: false,
-        editFormMediaType: '',
+        editFormMediaType: "",
         itemInfo: undefined,
-        catalogSize: 0,
-        filters: {},
-        order: {}
+        detailsIndex: -1
     };
 
     componentDidMount() {
@@ -106,6 +104,11 @@ export default class ItemsList extends React.Component {
         });
         this.fetchPage(1);
     };
+    handleDetails = index => {
+        this.setState({
+            detailsIndex: this.state.detailsIndex === index ? -1 : index
+        });
+    }
     render() {
         const { isAdmin } = this.props;
         const { itemInfo, itemList } = this.state;
@@ -117,7 +120,7 @@ export default class ItemsList extends React.Component {
             <Card>
                 <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder} />
                 <List
-                    itemLayout="horizontal"
+                    itemLayout="vertical"
                     size="small"
                     pagination={{
                         pageSize: 15,
@@ -125,27 +128,35 @@ export default class ItemsList extends React.Component {
                         total: this.state.catalogSize
                     }}
                     dataSource={this.state.itemList}
-                    renderItem={item => (
+                    renderItem={(item, index) => (
                         <List.Item
                             key={`${item.itemInfo.title}`}
                             actions={
                                 isAdmin
                                     ? [
-                                          <Button
-                                              onClick={e => this.handleEdit(item)}
-                                              type="primary"
-                                          >
-                                              Edit
-                                          </Button>,
-                                          <Button
-                                              onClick={e => this.handleDelete(item)}
-                                              type="primary"
-                                          >
-                                              Delete
-                                          </Button>
-                                      ]
+                                        <Button
+                                            onClick={e => this.handleEdit(item)}
+                                            type="primary"
+                                        >
+                                            Edit
+                                        </Button>,
+                                        <Button
+                                            onClick={e => this.handleDelete(item)}
+                                            type="danger"
+                                        >
+                                            Delete
+                                        </Button>
+                                    ]
                                     : []
                             }
+                            extra={[
+                                <Button 
+                                    onClick={e => this.handleDetails(index)}
+                                    type="default"
+                                >
+                                    Details
+                                </Button>
+                            ]}
                         >
                             <List.Item.Meta
                                 title={`${item.itemInfo.title}`}
@@ -153,6 +164,7 @@ export default class ItemsList extends React.Component {
                             />
                             <MediaDetails
                                 item={item}
+                                visible={this.state.detailsIndex === index}
                             />
                         </List.Item>
                     )}

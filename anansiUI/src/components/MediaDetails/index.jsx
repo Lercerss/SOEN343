@@ -19,17 +19,6 @@ export default class MediaDetails extends React.Component {
         else if (item.type == 'Movie') detailComponent = <MovieDetails item={item} />;
         else if (item.type == 'Music') detailComponent = <MusicDetails item={item} />;
         
-        return (
-            <Collapse bordered={false}>
-                <Collapse.Panel
-                    header={'Details'}
-                    key={`${item.itemInfo.title}`}
-                    style={customPanelStyle}
-                >
-                {detailComponent}
-                </Collapse.Panel>
-            </Collapse>
-        );
-
+        return this.props.visible && detailComponent;
     }
 }

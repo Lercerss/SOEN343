@@ -44,7 +44,7 @@ export default class MovieDetails extends React.Component {
                 </List.Item>
                 <List.Item>
                     <List.Item.Meta
-                        title={`Run Time: ${item.itemInfo.runTime} minutes`}
+                        title={`Run Time: ${item.itemInfo.runtime} minutes`}
                     />
                 </List.Item>
             </List>
