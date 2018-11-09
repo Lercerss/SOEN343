@@ -7,23 +7,17 @@ export function displayItems(req, res) {
             return;
         }
         Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (catalog, size) => {
-            if (catalog.length === 0) {
-                res.send({
-                    message: 'Catalog is empty'
-                });
-            } else {
-                let typedCatalog = catalog.map(val => {
-                    return {
-                        itemInfo: val,
-                        type: val.constructor.name
-                    };
-                });
-                let response = {
-                    catalog: typedCatalog,
-                    size: size
+            let typedCatalog = catalog.map(val => {
+                return {
+                    itemInfo: val,
+                    type: val.constructor.name
                 };
-                res.send(response);
-            }
+            });
+            let response = {
+                catalog: typedCatalog,
+                size: size
+            };
+            res.send(response);
         });
     });
 }
