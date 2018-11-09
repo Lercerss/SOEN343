@@ -110,7 +110,7 @@ export default class ItemsList extends React.Component {
         });
     }
     render() {
-        const { isAdmin } = this.props;
+        const { isAdmin, ...props } = this.props;
         const { itemInfo, itemList } = this.state;
 
         if (!itemList) {
@@ -165,6 +165,7 @@ export default class ItemsList extends React.Component {
                             <MediaDetails
                                 item={item}
                                 visible={this.state.detailsIndex === index}
+                                {...props}
                             />
                         </List.Item>
                     )}
