@@ -205,6 +205,8 @@ describe('routes: addition of a media item', () => {
                 .send(media[i])
                 .then(response => {
                     expect(response.statusCode).toBe(200);
+                    expect(response.body.copies.map(copy => copy.name)).toEqual(media[i].itemInfo.copies.map(copy => copy.name));
+                    expect(response.body.copies.map(copy => copy.id).filter(id => id < 0)).toEqual([]);
                     done();
                 });
         }

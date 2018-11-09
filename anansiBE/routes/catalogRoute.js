@@ -32,9 +32,9 @@ export function addItem(req, res) {
                 message: 'Only administrators can add media items'
             });
         } else {
-            Catalog.addItem(req.body.type, req.body.itemInfo, (err, item) => {
-                if (item) {
-                    console.log(item);
+            Catalog.addItem(req.body.type, req.body.itemInfo, (err, result) => {
+                if (err && result) {
+                    console.log(result);
                     res.status(400).send({
                         message: 'Item already exists',
                         error: err
@@ -49,8 +49,9 @@ export function addItem(req, res) {
                     });
                     return;
                 }
-
-                res.status(200).send();
+                res.status(200).send({
+                    copies: result
+                });
             });
         }
     });
@@ -64,8 +65,8 @@ export function editItem(req, res) {
                 message: 'Only administrators can edit media items'
             });
         } else {
-            Catalog.editItem(req.body.type, req.body.itemInfo, (err, item) => {
-                if (err && !item) {
+            Catalog.editItem(req.body.type, req.body.itemInfo, (err, result) => {
+                if (err && !result) {
                     console.log(err);
                     res.status(500).send({
                         message: 'Could not edit item',
@@ -73,7 +74,7 @@ export function editItem(req, res) {
                     });
                     return;
                 }
-                if (err && item) {
+                if (err && result) {
                     console.log(err);
                     res.status(400).send({
                         message: err.message,
@@ -81,7 +82,9 @@ export function editItem(req, res) {
                     });
                     return;
                 }
-                res.status(200).send();
+                res.status(200).send({
+                    copies: result
+                });
             });
         }
     });
