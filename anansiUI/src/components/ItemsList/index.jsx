@@ -2,30 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon, Divider } from 'antd';
 import MediaForm from '../MediaForm';
+import Criteria from './Criteria';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
 
 class ItemsList extends React.Component {
     state = {
         itemList: [],
-        searchList: [],
         isEditFormShown: false,
         editFormMediaType: '',
         itemInfo: undefined,
-        filterType: "",
-        dropdownOptions: [],
-        searchBy: "",
-        visible: false,
-        catalogSize: 0
+        catalogSize: 0,
+        filters: {},
+        order: {}
     };
 
     componentDidMount() {
         viewItems(this.props.token, 1, { mediaType: null, fields: {} }, {})
             .then(response => {
-                const b = response.data.hasOwnProperty("message");
                 this.setState({
                     itemList: response.data.catalog,
                     catalogSize: response.data.size,
-                    searchList: response.data
                 });
             })
             .catch(reason => {
@@ -34,8 +30,8 @@ class ItemsList extends React.Component {
                 this.setState({ itemList: [] });
             });
     }
-    fetchPage = (page, pageSize) => {
-        viewItems(this.props.token, page, 1, { mediaType: null, fields: {} }, {})
+    fetchPage = page => {
+        viewItems(this.props.token, page, this.state.filters, order)
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -86,273 +82,29 @@ class ItemsList extends React.Component {
         });
         console.log(items);
     }
-    handleView = e => {
-        const mediaData = {
-            common: ['id', 'title'],
-            book: ['author', 'format', 'pages', 'publisher', 'isbn10', 'isbn13', 'publicationDate', 'language'],
-            magazine: ['publisher', 'language', 'isbn10', 'isbn13', 'publicationDate'],
-            movie: ['director', 'producers', 'actors', 'language', 'subtitles', 'dubbed', 'runTime', 'releaseDate'],
-            music: ['type', 'artist', 'label', 'asin', 'releaseDate']
-        };
-        let options = [];
-        // set the state to filter type
-        this.setState({ filterType: e.target.value });
-        // dropdownOptions populate
-        if (e.target.value !== "All") {
-            const descriptor = Object.getOwnPropertyDescriptor(mediaData, e.target.value.toLocaleLowerCase());
-            options = descriptor.value.concat(mediaData.common);
-            console.log(options);
-            this.setState({ dropdownOptions: options.sort() });
-        }
-        else {
-            // reduce mediaData object to array containing unique strings
-            options = Object.values(mediaData)
-                .reduce((accumulator, currentValue) => {
-                    currentValue.forEach(el => {
-                        if (!accumulator.includes(el)) accumulator.push(el);
-                    });
-                    return accumulator;
-                }, mediaData.common);
-            console.log(options);
-            this.setState({ dropdownOptions: options.sort() })
-        }
-    }
-    // TODO: needs to implement search list later in handlefilter
-    handleFilter = () => {
-        if (this.state.itemList.length === 0) {
-            return this.state.itemList;
-        }
-
-        // Sorting 
-
-        const sortAscending = (a, b) => {
-            return a - b;
-        }
-        const sortDescending = (a, b) => {
-            return b - a;
-        }
-
-        //Sort modifies array, creating a shallow copy
-
-        function sortData() {
-            if (this.state.sortDirection === 'descending') {
-                this.setState({
-                    sortDirection: 'ascending',
-                    data: this.props.itemList.slice().sort(sortAscending)
-                });
-            } else {
-                this.setState({
-                    sortDirection: 'descending',
-                    data: this.props.itemList.slice().sort(sortDescending)
-                });
-            }
-        };
-
-        ///////
-
-        //could do a length check on searchList
-        //if searchlist.length > 0  => use the search list
-        //else => use the itemList
-        //could use ternary operator? ( expression with condition ? true case : false case)
-        return this.state.itemList
-            .filter(item => {
-                if (this.state.filterType === "All") return true;
-                return item.type === this.state.filterType;
-            });
-    }
-    handleSearch = e => {
-        e.preventDefault();
-        const { form } = this.props;
-        form.getFieldsValue();
-        console.log(form.getFieldsValue());
-        // 1-get the selected value of the dropdown 
-        // 2-get this input value  which is parameter searchText
-        // 3-wrap in object , where does the order go?  --> sort
-        /* suggestion 1: Default ASC, and create checkbox for Desc 
-            suggestion 2: dropdown with ASC, DESC, NO ORDER (default)
-        */
-        let criteria = {
-            mediaType: this.state.filterType,
-            fields: {}
-        }
-        // 3.5-define property for each field object 
-        const descriptor = Object.create(null);
-        /* this creates an object {   
-            enumerable: false,
-            configurable: false,
-            writable: false, 
-            value: null
-        }*/
-        descriptor.value = form.getFieldsValue().inputs;
-        // the key pair here is { selectedDropdown : searchText}
-        // define property for fields dynamically
-        Object.defineProperty(criteria.fields,form.getFieldsValue().fields, descriptor);
-        // 4-POST to backend
-        //TODO: more search? only 1 atm.
-        //suggestion?: have multiple search inputs (idk up to 3?) 
-        console.log(criteria);
-        // to implement later when sort is implemented, this is the POST to BE
-    //     getItems(criteria)
-    //     .then(response => {
-    //         this.setState({
-    //             searchList: response.data
-    //         });
-    //     })
-    //     .catch(reason => {
-    //         alert(reason);
-    //     });
-    // }
-    // handleOption = value => {
-    //     this.setState({ searchBy: value });
-    // }
-
-    // handleRemove = (k) => {
-    //     const { form } = this.props;
-    //     // can use data-binding to get
-    //     const keys = form.getFieldValue('keys');
-    //     // We need at least one passenger
-    //     if (keys.length === 0) {
-    //         return;
-    //     }
-
-    //     // can use data-binding to set
-    //     form.setFieldsValue({
-    //         keys: keys.filter(key => key !== k),
-    //     });
-    }
-
-    handleAdd = () => {
-        const { form } = this.props;
-        // can use data-binding to get
-        const keys = form.getFieldValue('keys');
-        const nextKeys = keys.concat(keys.length);
-        // can use data-binding to set
-        // important! notify form to detect changes
-        form.setFieldsValue({
-            keys: nextKeys,
+    handleFilters = filters => {
+        console.log(filters);
+        this.setState({
+            filters: filters
         });
+        this.fetchPage(1);
     }
-
-    // Dropdown menu for Sorting
-
-    handleMenuClick = (e) => {
-        if (e.key === '3') {
-            this.setState({ visible: false });
-        }
+    handleOrder = order => {
+        console.log(order);
+        this.setState({
+            order: order
+        });
+        this.fetchPage(1);
     }
-
-    handleVisibleChange = (flag) => {
-        this.setState({ visible: flag });
-    }
-
     render() {
-        const menu = (
-            <Menu onClick={this.handleMenuClick}>
-                <Menu.Item key="1">Ascending Order (A-Z)</Menu.Item>
-                <Menu.Item key="2">Descending Order (Z-A)</Menu.Item>
-            </Menu>
-        );
         const { token } = this.props;
-        const { itemInfo, itemList, dropdownOptions } = this.state;
-        const { getFieldDecorator, getFieldValue } = this.props.form;
-        const formItemLayout = {
-            // from mediaForm  
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 8 }
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 16 }
-            }
-        };
-        getFieldDecorator('keys', { initialValue: [] });
-        const keys = getFieldValue('keys');
-        const formItems = keys.map((k, index) => {
-            return (
-                <div key={`search${index}`}>
-                    <Form.Item
-                        label={'Field'}
-                        required={false}
-                        key={`fields${k}`}>
-                        {getFieldDecorator(`fields[${(2*k)}]`, {
-                            validateTrigger: ['onChange', 'onBlur'],
-                            rules: [{
-                                required: true,
-                                whitespace: true,
-                                message: "Please input or delete this field.",
-                            }],
-                        })(
-                            <Select placeholder="Please select">
-                                {dropdownOptions.map(mediaData =>
-                                    <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>
-                                )}
-                            </Select>
-                        )}
-                    </Form.Item>
-                    <Form.Item required={false}
-                        key={`inputs${k}`}>
-                        {getFieldDecorator(`inputs[${(2*k+1)}]`, {
-                            validateTrigger: ['onChange', 'onBlur'],
-                            rules: [{
-                                required: true,
-                                whitespace: true,
-                                message: "Please input or delete this field.",
-                            }],
-                        })(
-                            <Input placeholder="Search..." />
-                        )}
-
-                        <Icon
-                            className="dynamic-delete-button"
-                            type="minus-circle-o"
-                            onClick={() => this.handleRemove(k)}
-                        />
-                    </Form.Item>
-                </div>
-            );
-        });
-
+        const { itemInfo, itemList } = this.state;
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
         return (
             <Card>
-                <div align="right"><Dropdown overlay={menu}
-                    onVisibleChange={this.handleVisibleChange}
-                    visible={this.state.visible}
-                >
-                    <a className="ant-dropdown-link" href="#">
-                        Sort Results by: <Icon type="down" />
-                    </a>
-                </Dropdown></div>
-                <div>  <b>Pick a media type : </b> 
-                <Radio.Group {...formItemLayout} buttonStyle="solid" onChange={this.handleView}>
-                    <Radio.Button value="All">All</Radio.Button>
-                    <Radio.Button value="Book">Book</Radio.Button>
-                    <Radio.Button value="Magazine">Magazine</Radio.Button>
-                    <Radio.Button value="Movie">Movie</Radio.Button>
-                    <Radio.Button value="Music">Music</Radio.Button>
-                </Radio.Group>
-                <Divider />
-                </div>
-                <Form onSubmit={this.handleSearch}>
-                    <Form.Item {...formItemLayout} label="Search:" key="0">
-                        <Select placeholder="Please select">
-                            {dropdownOptions.map(mediaData => <Select.Option value={mediaData} key={mediaData}>{mediaData}</Select.Option>)}
-                        </Select>
-                        {/* to implement later for multiple search criteria??? */}
-                        <Input type="text" placeholder="Search Fields" />
-                    </Form.Item>
-                    {formItems}
-                    <Form.Item {...formItemLayout} key="util">
-                        <Button type="dashed" onClick={this.handleAdd} style={{ width: '60%' }}>
-                            <Icon type="plus" /> Add Field
-                        </Button>
-                        <Button type="primary" htmlType="submit">Submit</Button>
-                    </Form.Item>
-
-                </Form>
+                <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder}/>
                 <List
                     itemLayout="horizontal"
                     size="small"
@@ -361,8 +113,7 @@ class ItemsList extends React.Component {
                         onChange: this.fetchPage,
                         total: this.state.catalogSize
                     }}
-                    // TODO: dataSource will need to changed to handleList later when implementing clear search criteria
-                    dataSource={this.handleFilter()}
+                    dataSource={this.state.itemList}
                     renderItem={item => (
                         <List.Item
                             key={`${item.itemInfo.title}`}
