@@ -40,6 +40,7 @@ module.exports = {
         extensions: ['*', '.js', '.jsx']
     },
     watchOptions: {
+        aggregateTimeout: 1500,
         poll: true
     },
     devServer: {
