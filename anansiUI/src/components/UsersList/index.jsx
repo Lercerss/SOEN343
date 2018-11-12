@@ -66,7 +66,7 @@ export default class UsersList extends React.Component {
                             buttonStyle="solid"
                             onChange={this.handleView}
                         >
-                            <Radio.Button defaultChecked="true" value="All">
+                            <Radio.Button defaultChecked value="All">
                                 All
                             </Radio.Button>
                             <Radio.Button value="loggedIn">Logged In</Radio.Button>

@@ -43,7 +43,10 @@ export default class ItemsList extends React.Component {
                 });
             })
             .catch(reason => {
-                alert(reason);
+                Modal.error({
+                    title: "Error fetching catalog items",
+                    content: reason.message
+                });
             });
     };
     handleEdit = item => {
