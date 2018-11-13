@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal } from 'antd';
 import { withCookies, Cookies } from 'react-cookie';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
@@ -108,6 +108,11 @@ class App extends React.Component {
     };
     render() {
         const token = this.props.cookies.get('jwt');
+
+        if (!this.state.isAdmin && this.state.loggedIn && this.props.location.pathname === '/') {
+            return <Redirect to="/media" />;
+        }
+
         return (
             <main>
                 <Layout style={styles.Layout}>
@@ -120,9 +125,6 @@ class App extends React.Component {
                     <Layout>
                         {this.state.isAdmin && <AdminSider />}
                         <Content style={styles.Content}>
-                            {!this.state.isAdmin && this.state.loggedIn && (
-                                <ItemsList token={token} isAdmin={this.state.isAdmin} />
-                            )}
                             <Switch>
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm token={token} />
@@ -142,7 +144,7 @@ class App extends React.Component {
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
                                     <AddMediaForm token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute exact path="/media" condition={this.state.isAdmin}>
+                                <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
                                     <ItemsList token={token} isAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                             </Switch>
@@ -154,4 +156,4 @@ class App extends React.Component {
         );
     }
 }
-export default withCookies(App);
+export default withRouter(withCookies(App));
