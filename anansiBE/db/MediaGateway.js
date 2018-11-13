@@ -12,7 +12,7 @@ export class MediaGateway {
                 name=VALUES(name);`,
             [
                 copiesTable,
-                copies && copies.map(copy => [(copy.id >= 0 ? copy.id : null), itemId, copy.name]),
+                copies && copies.map(copy => [(copy.id >= 0 ? copy.id : null), itemId, copy.name, true]),
             ]
         );
         db.query(copiesQuery, err => {
