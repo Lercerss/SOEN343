@@ -56,13 +56,13 @@ class App extends React.Component {
         }
     }
     handleLogin = (username, isAdmin, token) => {
+        this.props.cookies.set('jwt', token);
         this.setState({
             username: username,
             isAdmin: isAdmin,
             loggedIn: true,
             showingProfile: false
         });
-        this.props.cookies.set('jwt', token);
     };
     handleLogout = () => {
         let token = this.props.cookies.get('jwt');
