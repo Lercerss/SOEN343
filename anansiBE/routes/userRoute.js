@@ -86,3 +86,20 @@ export function createUser(req, res) {
         }
     });
 }
+
+export function displayUserProfile(req, res){
+    validateToken(req.params.token, res, decoded => {
+        UserRegistry.getUser(req.params.username, (err, users) => {
+            if (err || users.length !== 1){
+                res.status(500).send({
+                    message: 'There was an error obtaining a specific user',
+                    error: err,
+                });
+                return;
+            }
+            res.status(200).send({
+                user: users[0]
+            });
+        });
+    });
+}

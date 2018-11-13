@@ -10,7 +10,7 @@ import RegisterForm from './components/RegisterForm';
 import ItemsList from './components/ItemsList';
 import AddMediaForm from './components/AddMediaForm';
 import PrivateRoute from './components/PrivateRoute';
-import UserProfile from './components/UsersList/UserProfile';
+import UserProfile from './components/UserProfile';
 import './index.css';
 
 const { Header, Sider, Content, Footer } = Layout;
@@ -30,7 +30,6 @@ class App extends React.Component {
         loggedIn: false,
         username: '',
         isAdmin: false,
-        showingProfile: false
     };
 
     componentDidMount() {
@@ -61,7 +60,6 @@ class App extends React.Component {
             username: username,
             isAdmin: isAdmin,
             loggedIn: true,
-            showingProfile: false
         });
     };
     handleLogout = () => {
@@ -73,7 +71,6 @@ class App extends React.Component {
                     loggedIn: false,
                     username: '',
                     isAdmin: false,
-                    showingProfile: false
                 });
                 this.props.cookies.remove('jwt');
             })
@@ -101,12 +98,7 @@ class App extends React.Component {
         });
         this.props.cookies.remove('jwt');
     };
-    handleProfileViewing = view => {
-        this.setState({
-            showingProfile: view
-        });
-    };
-    render() {
+    render() { 
         const token = this.props.cookies.get('jwt');
 
         if (!this.state.isAdmin && this.state.loggedIn && this.props.location.pathname === '/') {
@@ -120,6 +112,8 @@ class App extends React.Component {
                         handleLogin={this.handleLogin}
                         handleLogout={this.handleLogout}
                         loggedIn={this.state.loggedIn}
+                        isAdmin={this.state.isAdmin}
+                        username={this.state.username}
                     />
 
                     <Layout>
@@ -129,17 +123,11 @@ class App extends React.Component {
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute
-                                    path="/users/:username"
-                                    condition={this.state.isAdmin && this.state.showingProfile}
-                                >
-                                    <UserProfile />
+                                <PrivateRoute path="/users/:username" condition={this.state.loggedIn}>
+                                    <UserProfile token={token} isCurrentUserAdmin={this.state.isAdmin}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
-                                    <UsersList
-                                        token={token}
-                                        handleProfileViewing={this.handleProfileViewing}
-                                    />
+                                    <UsersList token={token} />
                                 </PrivateRoute>
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
                                     <AddMediaForm token={token} />

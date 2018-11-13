@@ -17,7 +17,6 @@ export default class UsersList extends React.Component {
 
     constructor(props){ 
         super(props)
-        this.handleProfileViewing = this.props.handleProfileViewing.bind(this);
     }
     
     state = {
@@ -84,14 +83,7 @@ export default class UsersList extends React.Component {
                         <List.Item
                             key={`${item.firstName} ${item.lastName}`}
                             actions={[
-                                <Link
-                                    to={{
-                                        pathname: `/users/${item.username}/`,
-                                        user: item,
-                                        handleProfileViewing: this.handleProfileViewing
-                                    }}
-                                    onClick={e => this.handleProfileViewing(true)}
-                                >
+                                <Link to={`/users/${item.username}/`}>
                                     <Button
                                         type="primary"
                                     >

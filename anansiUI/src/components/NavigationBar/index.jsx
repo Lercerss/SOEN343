@@ -16,7 +16,7 @@ export default class NavigationBar extends React.Component {
     };
     render() {
         const { openSignin, openSignup } = this.state;
-        const { handleLogin, handleLogout, loggedIn } = this.props;
+        const { handleLogin, handleLogout, loggedIn, isAdmin, username } = this.props;
         let modal;
         if (openSignin) {
             modal = (
@@ -38,6 +38,15 @@ export default class NavigationBar extends React.Component {
                     </div>
                     <div className="navbar_links" />
                     <div className="navbar_auth">
+                        {!isAdmin && loggedIn &&(
+                            <div className="navbar_button">
+                                <Link to={`/users/${username}`}>
+                                    <button
+                                        className="navbar_button"
+                                    >My Profile</button>
+                                </Link>
+                            </div>
+                        )}
                         {loggedIn && (
                             <button
                                 className="navbar_button"

@@ -43,6 +43,10 @@ export function getAllUsers(jwt) {
     });
 }
 
+export function getUserProfile(username, jwt){
+    return axios.get(`${backendURL}user/profile/${username}/${jwt}`);
+}
+
 export function viewItems(jwt, nPage, filters, ordering) {
     return axios.post(`${backendURL}item/display/`, {
         token: jwt,
