@@ -10,7 +10,7 @@ export default class UserProfile extends React.Component{
     }
 
     componentDidMount(){
-        getUserProfile(this.props.linkProps.computedMatch.params.username, this.props.token)
+        getUserProfile(this.props.linkProps.computedMatch.params.username)
             .then(response => {
                 this.setState({
                     user: response.data.user

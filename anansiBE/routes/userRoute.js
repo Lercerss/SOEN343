@@ -88,7 +88,7 @@ export function createUser(req, res) {
 }
 
 export function displayUserProfile(req, res){
-    validateToken(req.params.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         UserRegistry.getUser(req.params.username, (err, users) => {
             if (err || users.length !== 1){
                 res.status(500).send({

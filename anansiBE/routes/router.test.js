@@ -9,6 +9,17 @@ const db = DatabaseManager.getConnection();
 var clientToken = '';
 var adminToken = '';
 
+const user = {
+    username: 'newuser',
+    password: 'newman',
+    firstName: 'Paul',
+    lastName: 'Newman',
+    email: 'pnewman@gmail.com',
+    address: '300 New Str.',
+    phoneNumber: '514-412-2312',
+    isAdmin: 0
+};
+
 function buildCatalogRequest(arr, token) {
     let builtArr = [];
     let mediaCount = [1, 1, 1, 1];
@@ -103,16 +114,7 @@ describe('routes: login', () => {
 });
 
 describe('routes: create user', () => {
-    const validUser = {
-        username: 'newuser',
-        password: 'newman',
-        firstName: 'Paul',
-        lastName: 'Newman',
-        email: 'pnewman@gmail.com',
-        address: '300 New Str.',
-        phoneNumber: '514-412-2312',
-        isAdmin: 0
-    };
+    const validUser = user;
     test('Correct information expects status 200', done => {
         request(app)
             .post('/user/create/')
@@ -188,6 +190,29 @@ describe('routes: get user list', () => {
             })
             .then(response => {
                 expect(response.statusCode).toBe(403);
+                done();
+            });
+    });
+});
+
+describe('routes: obtaining a user profile', () => {
+    const validUser = user;
+    test('It should respond with user details for the user requested with valid token', done => {
+        request(app)
+            .get(`/user/profile/${ validUser.username }`)
+            .set('Authorization', `Bearer ${ clientToken }`)
+            .then(response => {
+                expect(response.statusCode).toBe(200);
+                expect(response.body.user.username).toBe(validUser.username);
+                done();
+            });
+    });
+    test('It should respond with 401 for the user requested with invalid token', done => {
+        request(app)
+            .get(`/user/profile/${ validUser.username }`)
+            .set('Authorization', `Bearer ${ clientToken }error`)
+            .then(response => {
+                expect(response.statusCode).toBe(401);
                 done();
             });
     });
