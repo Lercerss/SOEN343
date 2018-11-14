@@ -1,6 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { List, Button, Card, Modal, Form, Radio, Select, Input, Menu, Dropdown, Icon, Divider } from 'antd';
+import {
+    List,
+    Button,
+    Card,
+    Modal,
+    Form,
+    Radio,
+    Select,
+    Input,
+    Menu,
+    Dropdown,
+    Icon,
+    Divider
+} from 'antd';
 import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
 import { deleteItem, viewItems } from '../../utils/httpUtils';
@@ -77,7 +90,9 @@ export default class ItemsList extends React.Component {
         }
         const items = this.state.itemList;
         items[
-            items.findIndex(el => compareMediaItems(itemInfo, this.state.editFormMediaType, el.itemInfo, el.type))
+            items.findIndex(el =>
+                compareMediaItems(itemInfo, this.state.editFormMediaType, el.itemInfo, el.type)
+            )
         ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
@@ -102,8 +117,9 @@ export default class ItemsList extends React.Component {
         this.fetchPage(1);
     };
     render() {
-        const { token } = this.props;
+        const { token, isAdmin } = this.props;
         const { itemInfo, itemList } = this.state;
+
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
@@ -122,16 +138,29 @@ export default class ItemsList extends React.Component {
                     renderItem={item => (
                         <List.Item
                             key={`${item.itemInfo.title}`}
-                            actions={[
-                                <Button onClick={e => this.handleEdit(item)} type="primary">
-                                    Edit
-                                </Button>,
-                                <Button onClick={e => this.handleDelete(item)} type="primary">
-                                    Delete
-                                </Button>
-                            ]}
+                            actions={
+                                isAdmin
+                                    ? [
+                                          <Button
+                                              onClick={e => this.handleEdit(item)}
+                                              type="primary"
+                                          >
+                                              Edit
+                                          </Button>,
+                                          <Button
+                                              onClick={e => this.handleDelete(item)}
+                                              type="primary"
+                                          >
+                                              Delete
+                                          </Button>
+                                      ]
+                                    : []
+                            }
                         >
-                            <List.Item.Meta title={`${item.itemInfo.title}`} description={<div>{item.type}</div>} />
+                            <List.Item.Meta
+                                title={`${item.itemInfo.title}`}
+                                description={<div>{item.type}</div>}
+                            />
                         </List.Item>
                     )}
                 />

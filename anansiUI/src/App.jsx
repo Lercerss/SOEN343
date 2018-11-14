@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal } from 'antd';
 import { withCookies, Cookies } from 'react-cookie';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
 import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
@@ -30,7 +30,7 @@ class App extends React.Component {
         loggedIn: false,
         username: '',
         isAdmin: false,
-        showingProfile: false,
+        showingProfile: false
     };
 
     componentDidMount() {
@@ -56,13 +56,13 @@ class App extends React.Component {
         }
     }
     handleLogin = (username, isAdmin, token) => {
+        this.props.cookies.set('jwt', token);
         this.setState({
             username: username,
             isAdmin: isAdmin,
             loggedIn: true,
-            showingProfile: false,
+            showingProfile: false
         });
-        this.props.cookies.set('jwt', token);
     };
     handleLogout = () => {
         let token = this.props.cookies.get('jwt');
@@ -73,14 +73,14 @@ class App extends React.Component {
                     loggedIn: false,
                     username: '',
                     isAdmin: false,
-                    showingProfile: false,
+                    showingProfile: false
                 });
                 this.props.cookies.remove('jwt');
             })
             .catch(err => {
                 Modal.error({
-                    title: "Failed to sign out",
-                    content: err.response.data ? err.response.data.message : "Connection error"
+                    title: 'Failed to sign out',
+                    content: err.response.data ? err.response.data.message : 'Connection error'
                 });
             });
     };
@@ -101,13 +101,18 @@ class App extends React.Component {
         });
         this.props.cookies.remove('jwt');
     };
-    handleProfileViewing = (view) => {
+    handleProfileViewing = view => {
         this.setState({
             showingProfile: view
         });
     };
-    render() { 
+    render() {
         const token = this.props.cookies.get('jwt');
+
+        if (!this.state.isAdmin && this.state.loggedIn && this.props.location.pathname === '/') {
+            return <Redirect to="/media" />;
+        }
+
         return (
             <main>
                 <Layout style={styles.Layout}>
@@ -124,17 +129,23 @@ class App extends React.Component {
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm token={token} />
                                 </PrivateRoute>
-                                <PrivateRoute path="/users/:username" condition={this.state.isAdmin && this.state.showingProfile}>
+                                <PrivateRoute
+                                    path="/users/:username"
+                                    condition={this.state.isAdmin && this.state.showingProfile}
+                                >
                                     <UserProfile />
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
-                                    <UsersList token={token} handleProfileViewing={this.handleProfileViewing}/>
+                                    <UsersList
+                                        token={token}
+                                        handleProfileViewing={this.handleProfileViewing}
+                                    />
                                 </PrivateRoute>
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
                                     <AddMediaForm token={token} />
                                 </PrivateRoute>
                                 <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
-                                    <ItemsList token={token} />
+                                    <ItemsList token={token} isAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                             </Switch>
                         </Content>
@@ -145,4 +156,4 @@ class App extends React.Component {
         );
     }
 }
-export default withCookies(App);
+export default withRouter(withCookies(App));
