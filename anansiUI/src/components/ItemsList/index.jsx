@@ -135,12 +135,14 @@ export default class ItemsList extends React.Component {
                                 isAdmin
                                     ? [
                                         <Button
+                                            key={`Edit.${Math.random()}`}
                                             onClick={e => this.handleEdit(item)}
                                             type="primary"
                                         >
                                             Edit
                                         </Button>,
                                         <Button
+                                            key={`Delete.${Math.random()}`}
                                             onClick={e => this.handleDelete(item)}
                                             type="danger"
                                         >
@@ -150,7 +152,8 @@ export default class ItemsList extends React.Component {
                                     : []
                             }
                             extra={[
-                                <Button 
+                                <Button
+                                    key={`Details.${Math.random()}`}
                                     onClick={e => this.handleDetails(index)}
                                     type="default"
                                 >

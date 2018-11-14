@@ -1,5 +1,5 @@
 import React from "react";
-import { List } from "antd";
+import MediaDetailsList from "../MediaDetailsList";
 
 export default class MusicDetails extends React.Component {
     render() {
@@ -24,19 +24,7 @@ export default class MusicDetails extends React.Component {
         ];
 
         return (
-            <List
-                dataSource={data}
-                renderItem={item => (
-                    <List.Item
-                        key={item}
-                    >
-                        <List.Item.Meta 
-                            title={`${item.title}`}
-                            description={`${item.content}`}
-                        />
-                    </List.Item>    
-                )}
-            />
+            <MediaDetailsList data={data} />
         );
     }
 }
