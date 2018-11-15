@@ -107,4 +107,13 @@ export class UserRegistry {
             callback(null);
         });
     }
+    static getUser(username, callback){
+        UserGateway.findUser(username, (err, rows) => {
+            if (err){
+                callback(err);
+                return;
+            }
+            this.jsonToUser(err, rows, callback);
+        });
+    }
 }

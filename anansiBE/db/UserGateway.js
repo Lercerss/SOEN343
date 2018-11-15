@@ -26,19 +26,11 @@ export class UserGateway {
         });
     }
 
-    static editUser() {
-        // Temporarily left blank
-    }
-
     static findUser(username, callback) {
         const SQLQuery = db.format('SELECT * FROM users WHERE username=?', [username]);
         db.query(SQLQuery, (err, rows, fields) => {
             callback(err, rows);
         });
-    }
-
-    static deleteUser() {
-        // Temporarily left blank
     }
 
     static getAll(callback) {

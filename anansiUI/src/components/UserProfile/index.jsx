@@ -1,8 +1,27 @@
 import React from 'react';
-import { Card, Button, Icon, Avatar, List } from 'antd';
+import { Card, Button, Icon, Avatar, List, Modal } from 'antd';
 import { Link } from 'react-router-dom';
+import { getUserProfile } from '../../utils/httpUtils';
 
 export default class UserProfile extends React.Component{
+    
+    state = {
+        user: {}
+    }
+
+    componentDidMount(){
+        getUserProfile(this.props.linkProps.computedMatch.params.username)
+            .then(response => {
+                this.setState({
+                    user: response.data.user
+                })
+            })
+            .catch(reason => {
+                Modal.error({
+                    title: 'User profile could not be fetched.' 
+                });
+            });
+    }
 
     getInitials = (first, last) => {
         try{
@@ -12,12 +31,11 @@ export default class UserProfile extends React.Component{
         }
         
     }
-    
-    handleBack = () => {
-        this.props.linkProps.location.handleProfileViewing(false);
-    }
-
     render() {
+        if (Object.keys(this.state.user).length === 0) {
+            return <h2>Loading...</h2>;
+        }
+
         const styles = {
             Card: {
                 margin: '10px',
@@ -27,7 +45,8 @@ export default class UserProfile extends React.Component{
                 marginBottom: '10px'
             }
         };
-        const user = this.props.linkProps.location.user;
+        const { user } = this.state;
+        const isCurrentUserAdmin = this.props.isCurrentUserAdmin;
         const initials = this.getInitials(user.firstName, user.lastName);
         const data = [
             {
@@ -53,14 +72,12 @@ export default class UserProfile extends React.Component{
                 content: user.isAdmin ? 'Yes': 'No',
             },
           ];
-
         return (
             <div>
-                <Link to='../'>
+                <Link to={ isCurrentUserAdmin ? '../' : '../../'}>
                     <Button 
                         type="primary"
                         style={styles.Button}
-                        onClick={this.handleBack}
                     >
                         <Icon type="left" />Back
                     </Button>

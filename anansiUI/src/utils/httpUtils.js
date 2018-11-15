@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import Cookies from 'js-cookie';
 const backendURL = 'http://localhost:3000/';
 var appInterceptor;
 
@@ -18,6 +18,20 @@ axios.interceptors.response.use(
 export function setAppInterceptor(interceptor) {
     appInterceptor = interceptor;
 }
+
+const client = (token = null) => {
+    const defaultOptions = {
+        headers: {
+            Authorization: token ? `Bearer ${token}` : '',
+        },
+    };
+    return {
+        get: (url, options = {}) => axios.get(url, { ...defaultOptions, ...options }),
+        post: (url, data, options = {}) => axios.post(url, data, { ...defaultOptions, ...options }),
+        put: (url, data, options = {}) => axios.put(url, data, { ...defaultOptions, ...options }),
+        delete: (url, options = {}) => axios.delete(url, { ...defaultOptions, ...options }),
+    };
+};
 
 export function userLogin(username, password) {
     return axios.post(`${backendURL}user/login/`, {
@@ -41,6 +55,11 @@ export function getAllUsers(jwt) {
     return axios.post(`${backendURL}user/display-all/`, {
         token: jwt
     });
+}
+
+export function getUserProfile(username){
+    var req = client(Cookies.get('jwt'));
+    return req.get(`${backendURL}user/profile/${username}`);
 }
 
 export function viewItems(jwt, nPage, filters, ordering) {

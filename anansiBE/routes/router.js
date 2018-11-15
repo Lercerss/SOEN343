@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginUser, logoutUser, displayUsers, validateUser, createUser } from './userRoute';
+import { loginUser, logoutUser, displayUsers, validateUser, createUser, displayUserProfile } from './userRoute';
 import { displayItems, addItem, editItem, deleteItem } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
@@ -28,6 +28,7 @@ router.route('/user/logout').post(logoutUser);
 router.route('/user/display-all').post(displayUsers);
 router.route('/user/validate').post(validateUser);
 router.route('/user/create').post(createUser);
+router.route('/user/profile/:username').get(displayUserProfile);
 router.route('/item/display').post(displayItems);
 router.route('/item/add').post(addItem);
 router.route('/item/edit').post(editItem);
