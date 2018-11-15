@@ -1,5 +1,5 @@
 import React from "react";
-import MediaDetailsList from "../MediaDetailsList";
+import MediaDetailsList from "../../MediaDetailsList";
 
 export default class MovieDetails extends React.Component {
     render() {
