@@ -271,6 +271,11 @@ export class MediaGateway {
     }
 
     static getItems(filters, ordering, callback) {
+        if (Object.keys(filters).length === 0){
+            callback(new Error('No media type specified for viewing all items'));
+            return;
+        }
+
         if (!filters.mediaType) {
             var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';
             var queryBook = `SELECT a.*,
@@ -322,7 +327,8 @@ export class MediaGateway {
 
             db.query(queryBook, function(err, rows, fields) {
                 if (err) {
-                    throw new Error('Error querying database.');
+                    callback(new Error('Error querying database.'));
+                    return;
                 }
                 var rawBooks = rows;
                 books = rawBooks.map(function(el) {
@@ -333,7 +339,8 @@ export class MediaGateway {
 
                 db.query(queryMagazine, function(err, rows, fields) {
                     if (err) {
-                        throw new Error('Error querying database.');
+                        callback(new Error('Error querying database.'));
+                        return;
                     }
                     var rawMagazines = rows;
                     magazines = rawMagazines.map(function(el) {
@@ -344,7 +351,8 @@ export class MediaGateway {
 
                     db.query(queryMusic, function(err, rows, fields) {
                         if (err) {
-                            throw new Error('Error querying database.');
+                            callback(new Error('Error querying database.'));
+                            return;
                         }
                         var rawMusic = rows;
                         music = rawMusic.map(function(el) {
@@ -355,7 +363,8 @@ export class MediaGateway {
 
                         db.query(queryMovie, function(err, rows, fields) {
                             if (err) {
-                                throw new Error('Error querying database.');
+                                callback(new Error('Error querying database.'));
+                                return;
                             }
                             var rawMovies = rows;
                             movies = rawMovies.map(function(el) {
@@ -447,11 +456,11 @@ export class MediaGateway {
                         GROUP BY a.id 
                         ORDER BY ${ orderClause };`;
 
-            console.log(query);
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     console.log(err);
-                    throw new Error('Error querying database.');
+                    callback(new Error('Error querying database.'));
+                    return;
                 }
 
                 let mediaRows = rows.map(function(el) {

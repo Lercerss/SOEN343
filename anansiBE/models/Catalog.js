@@ -59,7 +59,7 @@ export class Catalog {
         var jsonArray = [];
         MediaGateway.getItems(filters, ordering, function(err, media) {
             if (err) {
-                callback(new Error('Error retrieving media items'));
+                callback(err);
                 return;
             }
             jsonArray = media;
@@ -67,7 +67,7 @@ export class Catalog {
             mediaArray = Catalog.jsonToMedia(jsonArray);
             let size = mediaArray.length;
             mediaArray.slice(nPage * (pageSize - 1), nPage * pageSize);
-            callback(mediaArray, size);
+            callback(err, mediaArray, size);
         });
     }
 
