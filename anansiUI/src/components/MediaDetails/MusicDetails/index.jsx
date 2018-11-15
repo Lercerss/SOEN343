@@ -24,7 +24,10 @@ export default class MusicDetails extends React.Component {
         ];
 
         return (
-            <MediaDetailsList data={data} />
+            <MediaDetailsList 
+                data={data} 
+                copies={item.itemInfo.copies}
+            />
         );
     }
 }

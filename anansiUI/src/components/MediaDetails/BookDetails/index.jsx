@@ -33,7 +33,10 @@ export default class BookDetails extends React.Component {
         ];
 
         return (
-            <MediaDetailsList data={data} />
+            <MediaDetailsList 
+                data={data} 
+                copies={item.itemInfo.copies}
+            />
         );
     }
 }
