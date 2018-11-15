@@ -21,6 +21,15 @@ export default class ItemsList extends React.Component {
         detailsIndex: -1
     };
 
+    listStyle = {
+        controlBtn: {
+            margin: '5px'
+        },
+        rightAlign: {
+            textAlign: 'right'
+        }
+    };
+
     componentDidMount() {
         viewItems(1, { mediaType: null, fields: {} }, {})
             .then(response => {
@@ -112,22 +121,115 @@ export default class ItemsList extends React.Component {
             detailsIndex: this.state.detailsIndex === index ? -1 : index
         });
     };
-    render() {
+
+    renderButtons = item => {
         const { isAdmin, cart, removeItemFromCart, addItemToCart } = this.props;
-        const { itemInfo, itemList } = this.state;
-
-        const listStyle = {
-            controlBtn: {
-                margin: '5px'
-            },
-            rightAlign: {
-                textAlign: 'right'
-            }
-        };
-
         const mappedCart = cart.map(function(e) {
             return e.itemInfo.id + e.type;
         });
+
+        if (isAdmin) {
+            return (<div>
+                <Button
+                    key={`Details.${Math.random()}`}
+                    onClick={e => this.handleDetails(index)}
+                    type="default"
+                    style={this.listStyle.controlBtn}
+                >
+                    <Icon type="ellipsis" />
+                </Button>
+                <Button
+                    key={`Edit.${Math.random()}`}
+                    onClick={e => this.handleEdit(item)}
+                    type="primary"
+                    style={this.listStyle.controlBtn}
+                >
+                    Edit
+                </Button>
+                <Button
+                    key={`Delete.${Math.random()}`}
+                    onClick={e => this.handleDelete(item)}
+                    type="danger"
+                    style={this.listStyle.controlBtn}
+                >
+                    Delete
+                </Button>
+            </div>);
+        } else if (item.type === 'Magazine') {
+            return (
+            <div>
+                <Button
+                    key={`Details.${Math.random()}`}
+                    onClick={e => this.handleDetails(index)}
+                    type="default"
+                    style={this.listStyle.controlBtn}
+                >
+                    <Icon type="ellipsis" />
+                </Button>
+                <Button type="primary" disabled={true}>
+                    Cannot Be Loaned
+                </Button>
+            </div>);
+        } else if (mappedCart.includes(item.itemInfo.id + item.type)) {
+            return (
+                <div>
+                    <Button
+                        key={`Details.${Math.random()}`}
+                        onClick={e => this.handleDetails(index)}
+                        type="default"
+                        style={this.listStyle.controlBtn}
+                    >
+                        <Icon type="ellipsis" />
+                    </Button>
+                    <Button 
+                        onClick={e => removeItemFromCart(item)}
+                        style={this.listStyle.controlBtn}>
+                        Remove From Cart
+                    </Button>
+                </div>);
+        } else if (item.itemInfo.copies) {
+            //Replace with proper available copy check
+            return (
+                <div>
+                    <Button
+                    key={`Details.${Math.random()}`}
+                    onClick={e => this.handleDetails(index)}
+                    type="default"
+                    style={this.listStyle.controlBtn}
+                    >
+                    <Icon type="ellipsis" />
+                    </Button>
+                    <Button 
+                        onClick={e => addItemToCart(item)} 
+                        type="primary"
+                        style={this.listStyle.controlBtn}>
+                        Add To Cart
+                    </Button>
+                </div>);
+        } else {
+            return (
+                <div>
+                    <Button
+                    key={`Details.${Math.random()}`}
+                    onClick={e => this.handleDetails(index)}
+                    type="default"
+                    style={this.listStyle.controlBtn}
+                    >
+                    <Icon type="ellipsis" />
+                    </Button>
+                    <Button 
+                        type="primary" 
+                        disabled={true}
+                        style={this.listStyle.controlBtn}>
+                            No Copies Available
+                    </Button>
+                </div>);
+        }
+    };
+
+    render() {
+        const { isAdmin, cart, removeItemFromCart, addItemToCart } = this.props;
+        const { itemInfo, itemList } = this.state;
 
         if (!itemList) {
             return <h2>Loading...</h2>;
@@ -154,68 +256,8 @@ export default class ItemsList extends React.Component {
                                         description={<div>{item.type}</div>}
                                     />
                                 </Col>
-                                <Col span={12} style={listStyle.rightAlign}>
-                                    {isAdmin ? (
-                                        <div>
-                                            <Button
-                                                key={`Details.${Math.random()}`}
-                                                onClick={e => this.handleDetails(index)}
-                                                type="default"
-                                                style={listStyle.controlBtn}
-                                            >
-                                                <Icon type="ellipsis" />
-                                            </Button>
-                                            <Button
-                                                key={`Edit.${Math.random()}`}
-                                                onClick={e => this.handleEdit(item)}
-                                                type="primary"
-                                                style={listStyle.controlBtn}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                key={`Delete.${Math.random()}`}
-                                                onClick={e => this.handleDelete(item)}
-                                                type="danger"
-                                                style={listStyle.controlBtn}
-                                            >
-                                                Delete
-                                            </Button>
-                                        </div>
-                                    ) : (
-                                        <Button
-                                            key={`Details.${Math.random()}`}
-                                            onClick={e => this.handleDetails(index)}
-                                            type="default"
-                                        >
-                                            <Icon type="ellipsis" />
-                                        </Button>
-                                    )}
-                                    {!isAdmin &&
-                                        (mappedCart.includes(item.itemInfo.id + item.type) ? (
-                                            <Button
-                                                onClick={e => removeItemFromCart(item)}
-                                                style={listStyle.controlBtn}
-                                            >
-                                                Remove From Cart
-                                            </Button>
-                                        ) : item.itemInfo.copies ? (
-                                            <Button
-                                                onClick={e => addItemToCart(item)}
-                                                type="primary"
-                                                style={listStyle.controlBtn}
-                                            >
-                                                Add To Cart
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                type="primary"
-                                                disabled={true}
-                                                style={listStyle.controlBtn}
-                                            >
-                                                No Copies Available
-                                            </Button>
-                                        ))}
+                                <Col span={12} style={this.listStyle.rightAlign}>
+                                    {this.renderButtons(item)}
                                 </Col>
                             </Row>
 
