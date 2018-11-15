@@ -87,26 +87,20 @@ export class Catalog {
     static jsonToMedia(jsonArray) {
         var mediaArray = [];
 
-        for (var i = 0; i < jsonArray.length; i++) {
-            for (var mediaJson of jsonArray[i]) {
-                var media;
-                if (i === 0) {
-                    // book type
-                    media = new Book(mediaJson);
-                } else if (i === 1) {
-                    // magazine type
-                    media = new Magazine(mediaJson);
-                } else if (i === 2) {
-                    // movie type
-                    media = new Music(mediaJson);
-                } else if (i === 3) {
-                    // music type
-                    media = new Movie(mediaJson);
-                }
-                media.copies = JSON.parse(mediaJson.copies);
-                mediaArray.push(media);
+        jsonArray.forEach(el => {
+            var media;
+            if (el.mediaType === 'Book'){
+                media = new Book(el);
+            } else if (el.mediaType === 'Magazine'){
+                media = new Magazine(el);
+            } else if (el.mediaType === 'Movie'){
+                media = new Movie(el);
+            } else if (el.mediaType === 'Music'){
+                media = new Music(el);
             }
-        };
+            media.copies = JSON.parse(el.copies);
+            mediaArray.push(media);
+        });
         return mediaArray;
     }
 }
