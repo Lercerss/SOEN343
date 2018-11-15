@@ -30,6 +30,38 @@ class App extends React.Component {
         loggedIn: false,
         username: '',
         isAdmin: false,
+        cart: []
+    };
+
+    addItemToCart = item => {
+        const cart = this.state.cart;
+        const mappedCart = cart.map(function(e) {
+            return e.itemInfo.id + e.type;
+        });
+        if (!mappedCart.includes(item.itemInfo + item.type)) {
+            cart.push(item);
+            this.setState({ cart: cart });
+        } else {
+            Modal.error({
+                title: 'Item is already in cart.'
+            });
+        }
+    };
+
+    removeItemFromCart = item => {
+        const cart = this.state.cart;
+        const mappedCart = cart.map(function(e) {
+            return e.itemInfo.id + e.type;
+        });
+        const itemIndex = mappedCart.indexOf(item.itemInfo.id + item.type);
+        if (itemIndex !== -1) {
+            cart.splice(itemIndex, 1);
+            this.setState({ cart: cart });
+        } else {
+            Modal.error({
+                title: 'Item cannot be found in cart.'
+            });
+        }
     };
 
     componentDidMount() {
@@ -59,7 +91,7 @@ class App extends React.Component {
         this.setState({
             username: username,
             isAdmin: isAdmin,
-            loggedIn: true,
+            loggedIn: true
         });
     };
     handleLogout = () => {
@@ -71,6 +103,7 @@ class App extends React.Component {
                     loggedIn: false,
                     username: '',
                     isAdmin: false,
+                    cart: []
                 });
                 this.props.cookies.remove('jwt');
             })
@@ -94,11 +127,12 @@ class App extends React.Component {
         this.setState({
             loggedIn: false,
             username: '',
-            isAdmin: false
+            isAdmin: false,
+            cart: []
         });
         this.props.cookies.remove('jwt');
     };
-    render() { 
+    render() {
         const token = this.props.cookies.get('jwt');
 
         if (!this.state.isAdmin && this.state.loggedIn && this.props.location.pathname === '/') {
@@ -114,6 +148,7 @@ class App extends React.Component {
                         loggedIn={this.state.loggedIn}
                         isAdmin={this.state.isAdmin}
                         username={this.state.username}
+                        cart={this.state.cart}
                     />
 
                     <Layout>
@@ -123,8 +158,11 @@ class App extends React.Component {
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm />
                                 </PrivateRoute>
-                                <PrivateRoute path="/users/:username" condition={this.state.loggedIn}>
-                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin}/>
+                                <PrivateRoute
+                                    path="/users/:username"
+                                    condition={this.state.loggedIn}
+                                >
+                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
                                     <UsersList />
@@ -133,7 +171,13 @@ class App extends React.Component {
                                     <AddMediaForm />
                                 </PrivateRoute>
                                 <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
-                                    <ItemsList isAdmin={this.state.isAdmin} />
+                                    <ItemsList
+                                        token={token}
+                                        isAdmin={this.state.isAdmin}
+                                        cart={this.state.cart}
+                                        removeItemFromCart={this.removeItemFromCart}
+                                        addItemToCart={this.addItemToCart}
+                                    />
                                 </PrivateRoute>
                             </Switch>
                         </Content>

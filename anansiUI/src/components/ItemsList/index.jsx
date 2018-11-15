@@ -1,9 +1,9 @@
-import React from "react";
-import { List, Button, Card, Modal, Row, Col, Icon } from "antd";
-import MediaForm from "../MediaForm";
+import React from 'react';
+import { List, Button, Card, Modal, Row, Col, Icon } from 'antd';
+import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
-import { deleteItem, viewItems } from "../../utils/httpUtils";
-import MediaDetails from "../MediaDetails";
+import { deleteItem, viewItems } from '../../utils/httpUtils';
+import MediaDetails from '../MediaDetails';
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -13,7 +13,7 @@ export default class ItemsList extends React.Component {
     state = {
         itemList: [],
         isEditFormShown: false,
-        editFormMediaType: "",
+        editFormMediaType: '',
         itemInfo: undefined,
         catalogSize: 0,
         filters: {},
@@ -45,7 +45,7 @@ export default class ItemsList extends React.Component {
             })
             .catch(reason => {
                 Modal.error({
-                    title: "Error fetching catalog items",
+                    title: 'Error fetching catalog items',
                     content: reason.message
                 });
             });
@@ -75,7 +75,7 @@ export default class ItemsList extends React.Component {
         if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
-                editFormMediaType: ""
+                editFormMediaType: ''
             });
             return;
         }
@@ -87,7 +87,7 @@ export default class ItemsList extends React.Component {
         ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
-            editFormMediaType: "",
+            editFormMediaType: '',
             itemsList: items
         });
         console.log(items);
@@ -111,9 +111,9 @@ export default class ItemsList extends React.Component {
         this.setState({
             detailsIndex: this.state.detailsIndex === index ? -1 : index
         });
-    }
+    };
     render() {
-        const { isAdmin} = this.props;
+        const { isAdmin, cart, removeItemFromCart, addItemToCart } = this.props;
         const { itemInfo, itemList } = this.state;
 
         const listStyle = {
@@ -125,9 +125,14 @@ export default class ItemsList extends React.Component {
             }
         };
 
+        const mappedCart = cart.map(function(e) {
+            return e.itemInfo.id + e.type;
+        });
+
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
+
         return (
             <Card>
                 <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder} />
@@ -141,46 +146,43 @@ export default class ItemsList extends React.Component {
                     }}
                     dataSource={this.state.itemList}
                     renderItem={(item, index) => (
-                        <List.Item
-                            key={`${item.itemInfo.type}.${item.itemInfo.id}`}
-                        >
+                        <List.Item key={`${item.itemInfo.type}.${item.itemInfo.id}`}>
                             <Row gutter={16}>
                                 <Col span={12}>
                                     <List.Item.Meta
-                                    title={`${item.itemInfo.title}`}
-                                    description={<div>{item.type}</div>}
+                                        title={`${item.itemInfo.title}`}
+                                        description={<div>{item.type}</div>}
                                     />
                                 </Col>
-                                <Col span={12} style={ listStyle.rightAlign }>
-                                    {
-                                    isAdmin?
+                                <Col span={12} style={listStyle.rightAlign}>
+                                    {isAdmin ? (
                                         <div>
                                             <Button
                                                 key={`Details.${Math.random()}`}
                                                 onClick={e => this.handleDetails(index)}
                                                 type="default"
-                                                style={ listStyle.controlBtn }
+                                                style={listStyle.controlBtn}
                                             >
-                                                <Icon type="ellipsis"/>
+                                                <Icon type="ellipsis" />
                                             </Button>
                                             <Button
                                                 key={`Edit.${Math.random()}`}
                                                 onClick={e => this.handleEdit(item)}
                                                 type="primary"
-                                                style={listStyle.controlBtn }
+                                                style={listStyle.controlBtn}
                                             >
                                                 Edit
                                             </Button>
-                                            <Button     
+                                            <Button
                                                 key={`Delete.${Math.random()}`}
                                                 onClick={e => this.handleDelete(item)}
                                                 type="danger"
-                                                style={listStyle.controlBtn }
+                                                style={listStyle.controlBtn}
                                             >
                                                 Delete
                                             </Button>
                                         </div>
-                                        :
+                                    ) : (
                                         <Button
                                             key={`Details.${Math.random()}`}
                                             onClick={e => this.handleDetails(index)}
@@ -188,14 +190,36 @@ export default class ItemsList extends React.Component {
                                         >
                                             <Icon type="ellipsis" />
                                         </Button>
-                                        }
+                                    )}
+                                    {!isAdmin &&
+                                        (mappedCart.includes(item.itemInfo.id + item.type) ? (
+                                            <Button
+                                                onClick={e => removeItemFromCart(item)}
+                                                style={listStyle.controlBtn}
+                                            >
+                                                Remove From Cart
+                                            </Button>
+                                        ) : item.itemInfo.copies ? (
+                                            <Button
+                                                onClick={e => addItemToCart(item)}
+                                                type="primary"
+                                                style={listStyle.controlBtn}
+                                            >
+                                                Add To Cart
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="primary"
+                                                disabled={true}
+                                                style={listStyle.controlBtn}
+                                            >
+                                                No Copies Available
+                                            </Button>
+                                        ))}
                                 </Col>
                             </Row>
-                            
-                            <MediaDetails
-                                item={item}
-                                visible={this.state.detailsIndex === index}
-                            />
+
+                            <MediaDetails item={item} visible={this.state.detailsIndex === index} />
                         </List.Item>
                     )}
                 />
