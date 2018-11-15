@@ -121,19 +121,19 @@ class App extends React.Component {
                         <Content style={styles.Content}>
                             <Switch>
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
-                                    <RegisterForm token={token} />
+                                    <RegisterForm />
                                 </PrivateRoute>
                                 <PrivateRoute path="/users/:username" condition={this.state.loggedIn}>
-                                    <UserProfile token={token} isCurrentUserAdmin={this.state.isAdmin}/>
+                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
-                                    <UsersList token={token} />
+                                    <UsersList />
                                 </PrivateRoute>
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
-                                    <AddMediaForm token={token} />
+                                    <AddMediaForm />
                                 </PrivateRoute>
                                 <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
-                                    <ItemsList token={token} isAdmin={this.state.isAdmin} />
+                                    <ItemsList isAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                             </Switch>
                         </Content>

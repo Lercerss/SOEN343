@@ -34,7 +34,7 @@ export default class ItemsList extends React.Component {
     };
 
     componentDidMount() {
-        viewItems(this.props.token, 1, { mediaType: null, fields: {} }, {})
+        viewItems(1, { mediaType: null, fields: {} }, {})
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -48,7 +48,7 @@ export default class ItemsList extends React.Component {
             });
     }
     fetchPage = page => {
-        viewItems(this.props.token, page, this.state.filters, this.state.order)
+        viewItems(page, this.state.filters, this.state.order)
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -70,7 +70,7 @@ export default class ItemsList extends React.Component {
         });
     };
     handleDelete = item => {
-        deleteItem(item.type, item.itemInfo, this.props.token)
+        deleteItem(item.type, item.itemInfo)
             .then(response => {
                 this.setState({
                     itemList: this.state.itemList.filter(
@@ -120,7 +120,7 @@ export default class ItemsList extends React.Component {
         this.fetchPage(1);
     };
     render() {
-        const { token, isAdmin } = this.props;
+        const { isAdmin } = this.props;
         const { itemInfo, itemList } = this.state;
 
         if (!itemList) {
@@ -178,7 +178,6 @@ export default class ItemsList extends React.Component {
                         <MediaForm
                             type={this.state.editFormMediaType}
                             action="update"
-                            token={token}
                             item={itemInfo}
                             handleClose={this.handleClose}
                         />

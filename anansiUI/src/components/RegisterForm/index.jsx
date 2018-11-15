@@ -11,7 +11,6 @@ class RegisterForm extends React.Component {
             if (!err) {
                 console.log('Received values of form: ', values);
                 const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
-                const { token } = this.props;
 
                 createNewUser(
                     firstName,
@@ -20,8 +19,7 @@ class RegisterForm extends React.Component {
                     username,
                     password,
                     phoneNumber,
-                    isAdmin,
-                    token
+                    isAdmin
                 )
                 .then(response => {
                     Modal.success({

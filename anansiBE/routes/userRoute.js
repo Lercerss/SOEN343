@@ -19,7 +19,7 @@ export function loginUser(req, res, next) {
 }
 
 export function logoutUser(req, res, next) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         UserRegistry.logout(decoded.data.client_id, err => {
             if (err) {
                 return next(err);
@@ -30,7 +30,7 @@ export function logoutUser(req, res, next) {
 }
 
 export function displayUsers(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
             res.status(403).send({
                 message: 'Only administrator can view all users',
@@ -50,7 +50,7 @@ export function displayUsers(req, res) {
 export function validateUser(req, res) {
     // Validates jwt and sends user information
     // back to frontend
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         res.status(200).send({
             username: decoded.data.username,
             isAdmin: decoded.data.isAdmin
@@ -59,14 +59,14 @@ export function validateUser(req, res) {
 }
 
 export function createUser(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({
                 message: 'Only administrators can register new users'
             });
         } else {
-            UserRegistry.makeNewUser(req.body.userInfo, err => {
+            UserRegistry.makeNewUser(req.body, err => {
                 if (err) {
                     console.log(err);
                     if (err.reason === 'username') {
@@ -87,13 +87,13 @@ export function createUser(req, res) {
     });
 }
 
-export function displayUserProfile(req, res){
+export function displayUserProfile(req, res) {
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         UserRegistry.getUser(req.params.username, (err, users) => {
-            if (err || users.length !== 1){
+            if (err || users.length !== 1) {
                 res.status(500).send({
                     message: 'There was an error obtaining a specific user',
-                    error: err,
+                    error: err
                 });
                 return;
             }

@@ -36,13 +36,13 @@ export default class MediaForm extends React.Component {
             if (err) {
                 return;
             }
-            const { token, handleClose, item, action } = this.props;
+            const { handleClose, item, action } = this.props;
             const copies = mergeCopies(values.copies, deleted);
             const requestData = { ...values, id: item && item.id, copies: copies };
             console.log('Received values of form: ', requestData);
             const request = action == 'insert' ? addNewItem : action == 'update' ? editItem : null;
             if (request) {
-                request(this.props.type, requestData, token)
+                request(this.props.type, requestData)
                     .then(response => {
                         console.log(response);
                         Modal.success({

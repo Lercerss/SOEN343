@@ -1,5 +1,12 @@
 import express from 'express';
-import { loginUser, logoutUser, displayUsers, validateUser, createUser, displayUserProfile } from './userRoute';
+import {
+    loginUser,
+    logoutUser,
+    displayUsers,
+    validateUser,
+    createUser,
+    displayUserProfile
+} from './userRoute';
 import { displayItems, addItem, editItem, deleteItem } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
@@ -25,8 +32,8 @@ router.get('/', (req, res) => {
 
 router.route('/user/login').post(loginUser);
 router.route('/user/logout').post(logoutUser);
-router.route('/user/display-all').post(displayUsers);
-router.route('/user/validate').post(validateUser);
+router.route('/user/display-all').get(displayUsers);
+router.route('/user/validate').get(validateUser);
 router.route('/user/create').post(createUser);
 router.route('/user/profile/:username').get(displayUserProfile);
 router.route('/item/display').post(displayItems);

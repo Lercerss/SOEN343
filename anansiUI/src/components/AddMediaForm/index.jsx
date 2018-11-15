@@ -22,7 +22,7 @@ export default class AddMediaForm extends React.Component {
                 sm: { span: 16 }
             }
         };
-        const { token, handleClose } = this.props;
+        const { handleClose } = this.props;
 
         return (
             <Card>
@@ -40,7 +40,6 @@ export default class AddMediaForm extends React.Component {
                 <MediaForm
                     type={this.state.mediaType}
                     action="insert"
-                    token={token}
                     handleClose={handleClose}
                 />
             </Card>
