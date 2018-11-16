@@ -22,49 +22,47 @@ export function setAppInterceptor(interceptor) {
 const client = (token = null) => {
     const defaultOptions = {
         headers: {
-            Authorization: token ? `Bearer ${token}` : '',
-        },
+            Authorization: token ? `Bearer ${token}` : ''
+        }
     };
     return {
         get: (url, options = {}) => axios.get(url, { ...defaultOptions, ...options }),
         post: (url, data, options = {}) => axios.post(url, data, { ...defaultOptions, ...options }),
         put: (url, data, options = {}) => axios.put(url, data, { ...defaultOptions, ...options }),
-        delete: (url, options = {}) => axios.delete(url, { ...defaultOptions, ...options }),
+        delete: (url, options = {}) => axios.delete(url, { ...defaultOptions, ...options })
     };
 };
 
 export function userLogin(username, password) {
-    return axios.post(`${backendURL}user/login/`, {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}user/login/`, {
         username: username,
         password: password
     });
 }
 export function userLogout(token) {
-    return axios.post(`${backendURL}user/logout/`, {
-        token: token
-    });
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}user/logout/`);
 }
 
-export function getTokenInfo(jwt) {
-    return axios.post(`${backendURL}user/validate/`, {
-        token: jwt
-    });
+export function getTokenInfo() {
+    let req = client(Cookies.get('jwt'));
+    return req.get(`${backendURL}user/validate/`);
 }
 
-export function getAllUsers(jwt) {
-    return axios.post(`${backendURL}user/display-all/`, {
-        token: jwt
-    });
+export function getAllUsers() {
+    let req = client(Cookies.get('jwt'));
+    return req.get(`${backendURL}user/display-all/`);
 }
 
-export function getUserProfile(username){
-    var req = client(Cookies.get('jwt'));
+export function getUserProfile(username) {
+    let req = client(Cookies.get('jwt'));
     return req.get(`${backendURL}user/profile/${username}`);
 }
 
-export function viewItems(jwt, nPage, filters, ordering) {
-    return axios.post(`${backendURL}item/display/`, {
-        token: jwt,
+export function viewItems(nPage, filters, ordering) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/display/`, {
         nPage: nPage,
         filters: filters,
         ordering: ordering
@@ -78,45 +76,42 @@ export function createNewUser(
     username,
     password,
     phoneNumber,
-    isAdmin,
-    token
+    isAdmin
 ) {
-    return axios.post(`${backendURL}user/create/`, {
-        userInfo: {
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            username: username,
-            password: password,
-            phoneNumber: phoneNumber,
-            isAdmin: isAdmin
-        },
-        token: token
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}user/create/`, {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        username: username,
+        password: password,
+        phoneNumber: phoneNumber,
+        isAdmin: isAdmin
     });
 }
 
-export function addNewItem(type, itemInfo, token) {
-    return axios.post(`${backendURL}item/add/`, {
+export function addNewItem(type, itemInfo) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/add/`, {
         type: type,
-        itemInfo: itemInfo,
-        token: token
+        itemInfo: itemInfo
     });
 }
 
-export function editItem(type, itemInfo, token) {
-    return axios.post(`${backendURL}item/edit/`, {
+export function editItem(type, itemInfo) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/edit/`, {
         type: type,
-        itemInfo: itemInfo,
-        token: token
+        itemInfo: itemInfo
     });
 }
 
-export function deleteItem(type, itemInfo, token) {
-    return axios.delete(`${backendURL}item/delete/`, {
+export function deleteItem(type, itemInfo) {
+    let req = client(Cookies.get('jwt'));
+    return req.delete(`${backendURL}item/delete/`, {
         data: {
             type: type,
-            itemInfo: itemInfo,
-            token: token
+            itemInfo: itemInfo
         }
     });
 }

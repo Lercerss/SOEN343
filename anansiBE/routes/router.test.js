@@ -20,7 +20,7 @@ const user = {
     isAdmin: 0
 };
 
-function buildCatalogRequest(arr, token) {
+function buildCatalogRequest(arr) {
     let builtArr = [];
     let mediaCount = [1, 1, 1, 1];
     arr.forEach(el => {
@@ -28,7 +28,6 @@ function buildCatalogRequest(arr, token) {
         let type = el.mediaType;
         m['type'] = type;
         m['itemInfo'] = el;
-        m['token'] = token;
         builtArr.push(m);
 
         if (type === 'Book'){
@@ -118,10 +117,8 @@ describe('routes: create user', () => {
     test('Correct information expects status 200', done => {
         request(app)
             .post('/user/create/')
-            .send({
-                token: adminToken,
-                userInfo: validUser
-            })
+            .set('Authorization', `Bearer ${ adminToken }`)
+            .send(validUser)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 done();
@@ -130,10 +127,8 @@ describe('routes: create user', () => {
     test('Correct information, but unauthorized expects status 403', done => {
         request(app)
             .post('/user/create/')
-            .send({
-                token: clientToken,
-                userInfo: validUser
-            })
+            .set('Authorization', `Bearer ${ clientToken }`)
+            .send(validUser)
             .then(response => {
                 expect(response.statusCode).toBe(403);
                 done();
@@ -145,10 +140,8 @@ describe('routes: validate token', () => {
     const fakeToken = 'fmdsklfsdjlfnadjkvsdfkjvdf2343212/..a';
     test('Valid token expects status 200', done => {
         request(app)
-            .post('/user/validate/')
-            .send({
-                token: adminToken
-            })
+            .get('/user/validate/')
+            .set('Authorization', `Bearer ${ adminToken }`)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.isAdmin).toBe(1);
@@ -156,12 +149,10 @@ describe('routes: validate token', () => {
                 done();
             });
     });
-    test('Invalid token sent', done => {
+    test('Invalid token expects status 401', done => {
         request(app)
-            .post('/user/create/')
-            .send({
-                token: fakeToken
-            })
+            .get('/user/validate/')
+            .set('Authorization', `Bearer ${ fakeToken }`)
             .then(response => {
                 expect(response.statusCode).toBe(401);
                 done();
@@ -172,10 +163,8 @@ describe('routes: validate token', () => {
 describe('routes: get user list', () => {
     test('Valid token expects status 200 and user list', done => {
         request(app)
-            .post('/user/display-all/')
-            .send({
-                token: adminToken
-            })
+            .get('/user/display-all/')
+            .set('Authorization', `Bearer ${ adminToken }`)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.length).toBeGreaterThanOrEqual(2);
@@ -184,10 +173,8 @@ describe('routes: get user list', () => {
     });
     test('Valid client token, forbidden request expects status 403', done => {
         request(app)
-            .post('/user/display-all/')
-            .send({
-                token: clientToken
-            })
+            .get('/user/display-all/')
+            .set('Authorization', `Bearer ${ clientToken }`)
             .then(response => {
                 expect(response.statusCode).toBe(403);
                 done();
@@ -224,8 +211,8 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
+                .set('Authorization', `Bearer ${ token }`)
                 .send({
-                    token: token,
                     filters: {
                         mediaType: null,
                         fields: {}
@@ -249,8 +236,8 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
+                .set('Authorization', `Bearer ${ token }`)
                 .send({
-                    token: token,
                     filters: {
                         mediaType: 'Magazine',
                         fields: {
@@ -275,8 +262,8 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
+                .set('Authorization', `Bearer ${ token }`)
                 .send({
-                    token: token,
                     filters: {
                         mediaType: null,
                         fields: {},
@@ -301,8 +288,8 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
+                .set('Authorization', `Bearer ${ token }`)
                 .send({
-                    token: token,
                     filters: {
                         mediaType: 'Book',
                         fields: {
@@ -331,10 +318,11 @@ describe('routes: retrieve catalog elements', () => {
 
 describe('routes: addition of a media item', () => {
     test(`It should respond to adding an item with 200`, done => {
-        let media = buildCatalogRequest(mediaData.addAndEdit, adminToken);
+        let media = buildCatalogRequest(mediaData.addAndEdit);
         media.forEach(el => {
             request(app)
                 .post('/item/add/')
+                .set('Authorization', `Bearer ${ adminToken }`)
                 .send(el)
                 .then(response => {
                     console.log(response.body);
@@ -349,9 +337,10 @@ describe('routes: addition of a media item', () => {
     test(`It should respond to adding already existing ${
         mediaData.initial[0].mediaType
     } item with 400`, done => {
-        let existingMedia = buildCatalogRequest(mediaData.initial, adminToken);
+        let existingMedia = buildCatalogRequest(mediaData.initial);
         request(app)
             .post('/item/add/')
+            .set('Authorization', `Bearer ${ adminToken }`)
             .send(existingMedia[0])
             .then(response => {
                 expect(response.statusCode).toBe(400);
@@ -362,11 +351,12 @@ describe('routes: addition of a media item', () => {
 
 describe('routes: editing and deleting of a media item in the catalog', () => {
     test(`It should respond to editing an item with 200`, done => {
-        let media = buildCatalogRequest(mediaData.initial, adminToken);
+        let media = buildCatalogRequest(mediaData.initial);
         media.forEach(el => {
             el.itemInfo.title += 'o';
             request(app)
                 .post('/item/edit/')
+                .set('Authorization', `Bearer ${ adminToken }`)
                 .send(el)
                 .then(response => {
                     expect(response.statusCode).toBe(200);
@@ -379,10 +369,11 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
     test(`It should respond to deleting of an existing ${
         mediaData.initial[0].mediaType
     } item with 200`, done => {
-        let media = buildCatalogRequest(mediaData.initial, adminToken);
+        let media = buildCatalogRequest(mediaData.initial);
         media.forEach(el => {
             request(app)
                 .del('/item/delete/')
+                .set('Authorization', `Bearer ${ adminToken }`)
                 .send(el)
                 .then(response => {
                     expect(response.statusCode).toBe(200);
