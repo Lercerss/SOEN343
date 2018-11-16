@@ -65,7 +65,6 @@ export default class MediaDetailsList extends React.Component {
                                         <List.Item.Meta
                                             style={listItemMetaStyle}
                                             title={<p style={titleStyle}> {item}</p>}
-                                            description={<p style={descriptionTitle}> {item}</p>}
                                         />
                                     </List.Item>
                                 )}
