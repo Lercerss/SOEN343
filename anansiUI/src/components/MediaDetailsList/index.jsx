@@ -36,47 +36,42 @@ export default class MediaDetailsList extends React.Component {
         return (  
             <div>
                 <Row gutter={16}>
-                    <div>
-                        <Col span={4}>
+                    <Col span={14}>
+                        <List
+                            style={listStyle}
+                            dataSource={data}
+                            renderItem={item => (
+                                <List.Item
+                                    key={`${item}.${Math.random()}`}
+                                >
+                                    <List.Item.Meta
+                                        style={listItemMetaStyle}
+                                        title={<p style={titleStyle}> {item.title}</p>}
+                                        description={<p style={descriptionTitle}> {item.content}</p>}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    </Col>
+                    <Col span={10}>
+                        <Card title='Copies' style={cardStyle}>
                             <List
-                                style={listStyle}
-                                dataSource={data}
+                                bordered={true}
+                                dataSource={copyValues}
                                 renderItem={item => (
                                     <List.Item
                                         key={`${item}.${Math.random()}`}
                                     >
                                         <List.Item.Meta
                                             style={listItemMetaStyle}
-                                            title={<p style={titleStyle}> {item.title}</p>}
-                                            description={<p style={descriptionTitle}> {item.content}</p>}
+                                            title={<p style={titleStyle}> {item}</p>}
+                                            description={<p style={descriptionTitle}> {item}</p>}
                                         />
                                     </List.Item>
                                 )}
                             />
-                        </Col>
-                    </div>
-                    <Col span={4}></Col>
-                    <div>
-                        <Col span={4}>
-                            <Card title='Copies' style={cardStyle}>
-                                <List
-                                    bordered={true}
-                                    dataSource={copyValues}
-                                    renderItem={item => (
-                                        <List.Item
-                                            key={`${item}.${Math.random()}`}
-                                        >
-                                            <List.Item.Meta
-                                                style={listItemMetaStyle}
-                                                title={<p style={titleStyle}> {item}</p>}
-                                                description={<p style={descriptionTitle}> {item}</p>}
-                                            />
-                                        </List.Item>
-                                    )}
-                                />
-                            </Card>
-                        </Col>
-                    </div>
+                        </Card>
+                    </Col>
                 </Row>
             </div>
         );

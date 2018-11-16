@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Button, Card, Modal } from "antd";
+import { List, Button, Card, Modal, Row, Col, Icon } from "antd";
 import MediaForm from "../MediaForm";
 import Criteria from './Criteria';
 import { deleteItem, viewItems } from "../../utils/httpUtils";
@@ -116,6 +116,15 @@ export default class ItemsList extends React.Component {
         const { isAdmin, ...props } = this.props;
         const { itemInfo, itemList } = this.state;
 
+        const listStyle = {
+            controlBtn: {
+                margin: '5px'
+            },
+            rightAlign: {
+                textAlign: 'right'
+            }
+        };
+
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
@@ -134,40 +143,55 @@ export default class ItemsList extends React.Component {
                     renderItem={(item, index) => (
                         <List.Item
                             key={`${item.itemInfo.type}.${item.itemInfo.id}`}
-                            actions={
-                                isAdmin
-                                    ? [
-                                        <Button
-                                            key={`Edit.${Math.random()}`}
-                                            onClick={e => this.handleEdit(item)}
-                                            type="primary"
-                                        >
-                                            Edit
-                                        </Button>,
-                                        <Button
-                                            key={`Delete.${Math.random()}`}
-                                            onClick={e => this.handleDelete(item)}
-                                            type="danger"
-                                        >
-                                            Delete
-                                        </Button>
-                                    ]
-                                    : []
-                            }
-                            extra={[
-                                <Button
-                                    key={`Details.${Math.random()}`}
-                                    onClick={e => this.handleDetails(index)}
-                                    type="default"
-                                >
-                                    Details
-                                </Button>
-                            ]}
                         >
-                            <List.Item.Meta
-                                title={`${item.itemInfo.title}`}
-                                description={<div>{item.type}</div>}
-                            />
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <List.Item.Meta
+                                    title={`${item.itemInfo.title}`}
+                                    description={<div>{item.type}</div>}
+                                    />
+                                </Col>
+                                <Col span={12} style={ listStyle.rightAlign }>
+                                    {
+                                    isAdmin?
+                                        <div>
+                                            <Button
+                                                key={`Details.${Math.random()}`}
+                                                onClick={e => this.handleDetails(index)}
+                                                type="default"
+                                                style={ listStyle.controlBtn }
+                                            >
+                                                <Icon type="ellipsis"/>
+                                            </Button>
+                                            <Button
+                                                key={`Edit.${Math.random()}`}
+                                                onClick={e => this.handleEdit(item)}
+                                                type="primary"
+                                                style={listStyle.controlBtn }
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button     
+                                                key={`Delete.${Math.random()}`}
+                                                onClick={e => this.handleDelete(item)}
+                                                type="danger"
+                                                style={listStyle.controlBtn }
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                        :
+                                        <Button
+                                            key={`Details.${Math.random()}`}
+                                            onClick={e => this.handleDetails(index)}
+                                            type="default"
+                                        >
+                                            <Icon type="ellipsis" />
+                                        </Button>
+                                        }
+                                </Col>
+                            </Row>
+                            
                             <MediaDetails
                                 item={item}
                                 visible={this.state.detailsIndex === index}
