@@ -74,7 +74,8 @@ export class UserRegistry {
                 user.authenticate(password, valid => {
                     if (valid) {
                         if (user.loggedIn) {
-                            let timeDelta = (Date.now() - user.timestamp) / (1000 * 60 * 60);
+                            //let timeDelta = (Date.now() - user.timestamp) / (1000 * 60 * 60);
+                            let timeDelta = 2;
 
                             if (timeDelta < 1) {
                                 let err = new Error('This account is logged in elsewhere');

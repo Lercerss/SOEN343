@@ -14,7 +14,7 @@ class Criteria extends React.Component {
         filterType: '',
         dropdownOptions: mediaData.all,
         selectedOptions: [],
-        searchBy: '',
+        searchBy: 'title',
         order: 'asc'
     };
     addInput = key => {
@@ -69,6 +69,7 @@ class Criteria extends React.Component {
     };
     handleOrderMenu = e => {
         const newVal = e.key === "0" ? 'asc' : 'desc';
+        console.log(newVal);
         this.setState({
             order: newVal
         })
