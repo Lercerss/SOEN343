@@ -15,6 +15,9 @@ export default class ItemsList extends React.Component {
         isEditFormShown: false,
         editFormMediaType: "",
         itemInfo: undefined,
+        catalogSize: 0,
+        filters: {},
+        order: {},
         detailsIndex: -1
     };
 
