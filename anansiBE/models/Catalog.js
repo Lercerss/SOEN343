@@ -54,6 +54,12 @@ export class Catalog {
         });
     }
 
+    static getLock(type, id, username, callback) {        
+    }
+
+    static releaseLock(type, id, username, callback) {        
+    }
+
     static viewItems(nPage, filters, ordering, callback) {
         var mediaArray = [];
         var jsonArray = [];

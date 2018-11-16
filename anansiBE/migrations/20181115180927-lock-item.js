@@ -15,43 +15,85 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-    db.addForeignKey('books', 'users', 'locked_by_id', { 'id': 'client_id' }, {
-        onDelete: 'NO ACTION',
-        onUpdate: 'RESTRICT',
-    }
-    );
-    db.addForeignKey('magazines', 'users', 'locked_by_id', { 'id': 'client_id' }, {
-        onDelete: 'NO ACTION',
-        onUpdate: 'RESTRICT',
-    }
-    );
-    db.addForeignKey('movies', 'users', 'locked_by_id', { 'id': 'client_id' }, {
-        onDelete: 'NO ACTION',
-        onUpdate: 'RESTRICT',
-    }
-    );
-    db.addForeignKey('music', 'users', 'locked_by_id', { 'id': 'client_id' }, {
-        onDelete: 'NO ACTION',
-        onUpdate: 'RESTRICT',
-    }
-    );
-    db.addColumn('books', 'locked_at', { type: 'datetime', defaultValue: null });
-    db.addColumn('magazines', 'locked_at', { type: 'datetime', defaultValue: null });
-    db.addColumn('movies', 'locked_at', { type: 'datetime', defaultValue: null });
-    db.addColumn('music', 'locked_at', { type: 'datetime', defaultValue: null });
-    return null;
+    db.addColumn('books', 'locked_by_id', {
+        type: 'int',
+        foreignKey: {
+            name: 'locked_by_id_books_fk',
+            table: 'users',
+            rules: {
+                onDelete: 'NO ACTION'
+            },
+            mapping: 'client_id'
+        },
+    }, err => {
+        if (err) throw err;
+        db.addColumn('books', 'locked_at', { type: 'datetime', defaultValue: null });
+    });
+    db.addColumn('magazines', 'locked_by_id', {
+        type: 'int',
+        foreignKey: {
+            name: 'locked_by_id_magazines_fk',
+            table: 'users',
+            rules: {
+                onDelete: 'NO ACTION'
+            },
+            mapping: 'client_id'
+        },
+    }, err => {
+        if (err) throw err;
+        db.addColumn('magazines', 'locked_at', { type: 'datetime', defaultValue: null });
+    });
+    db.addColumn('movies', 'locked_by_id', {
+        type: 'int',
+        foreignKey: {
+            name: 'locked_by_id_movies_fk',
+            table: 'users',
+            rules: {
+                onDelete: 'NO ACTION'
+            },
+            mapping: 'client_id'
+        },
+    }, err => {
+        if (err) throw err;
+        db.addColumn('movies', 'locked_at', { type: 'datetime', defaultValue: null });
+    });
+    return db.addColumn('music', 'locked_by_id', {
+        type: 'int',
+        foreignKey: {
+            name: 'locked_by_id_music_fk',
+            table: 'users',
+            rules: {
+                onDelete: 'NO ACTION'
+            },
+            mapping: 'client_id'
+        },
+    }, err => {
+        if (err) throw err;
+        db.addColumn('music', 'locked_at', { type: 'datetime', defaultValue: null });
+    });
 };
 
 exports.down = function(db) {
-    db.removeForeignKey('books', 'locked_by_id');
-    db.removeForeignKey('magazines', 'locked_by_id');
-    db.removeForeignKey('movies', 'locked_by_id');
-    db.removeForeignKey('music', 'locked_by_id');
     db.removeColumn('music', 'locked_at');
     db.removeColumn('movies', 'locked_at');
     db.removeColumn('magazines', 'locked_at');
     db.removeColumn('books', 'locked_at');
-    return null;
+    return db.removeForeignKey('books', 'locked_by_id_books_fk', err => {
+        if (err) throw err;
+        db.removeForeignKey('movies', 'locked_by_id_movies_fk', err => {
+            if (err) throw err;
+            db.removeForeignKey('music', 'locked_by_id_music_fk', err => {
+                if (err) throw err;
+                db.removeForeignKey('magazines', 'locked_by_id_magazines_fk', err => {
+                    if (err) throw err;
+                    db.removeColumn('books', 'locked_by_id');
+                    db.removeColumn('magazines', 'locked_by_id');
+                    db.removeColumn('movies', 'locked_by_id');
+                    db.removeColumn('music', 'locked_by_id');
+                });
+            });
+        });
+    });
 };
 
 exports._meta = {
