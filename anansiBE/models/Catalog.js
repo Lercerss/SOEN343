@@ -91,7 +91,7 @@ export class Catalog {
 
     static returnCopies(loans, client_id, callback) {
         loans.forEach(id => {
-            
+
             MediaGateway.updateLoans(id, client_id, (err) => {
 
                 if (err) {
@@ -129,3 +129,4 @@ export class Catalog {
     }
 
 }
+
