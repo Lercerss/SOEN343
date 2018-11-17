@@ -26,6 +26,168 @@ export class MediaGateway {
         });
     }
 
+    static getLoans(user, callback) {
+        // returns number of non-returned loans associated with the user
+        const query = db.format('SELECT * FROM loans WHERE user_id = ? AND return_ts = null',
+            [
+                user.client_id
+            ]
+        );
+
+        db.query(query, (err, rows) => {
+            callback(err, rows);
+        })
+    }
+    
+    static addLoans(items, user, callback) {
+        var mediaItem;
+        
+        for (mediaItem in items) {
+            if (mediaItem instanceof Book) {
+                const query = 'SELECT * FROM books_copies WHERE available = TRUE';
+
+                db.query(query, (err, rows) => {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    if (rows === null || rows.length === 0) {
+                        callback(new Error('No copies available'));
+                        return;
+                    }
+
+                    var bookCopyId = rows[0].id;
+                    const update_query = db.format('UPDATE books_copies SET available = FALSE WHERE id = ?', 
+                        [
+                            bookCopyId
+                        ]
+                    );
+
+                    db.query(update_query, (err, rows) => {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        var now = moment();
+                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                        [
+                            'book',
+                            bookCopyId,
+                            user.client_id,
+                            now.format('YYYY-MM-DD HH:mm:ss'),
+                            null,
+                            now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+                        ]);
+
+                        db.query(loan_query, (err, rows) => {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+                        })
+                    })
+                });
+            } else if (mediaItem instanceof Magazine) {
+                // cannot be loaned
+            } else if (mediaItem instanceof Movie) {
+                const query = 'SELECT * FROM movies_copies WHERE available = TRUE';
+
+                db.query(query, (err, rows) => {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    if (rows === null || rows.length === 0) {
+                        callback(new Error('No copies available'));
+                        return;
+                    }
+
+                    var movieCopyId = rows[0].id;
+                    const update_query = db.format('UPDATE movies_copies SET available = FALSE WHERE id = ?', 
+                        [
+                            movieCopyId
+                        ]
+                    );
+
+                    db.query(update_query, (err, rows) => {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        var now = moment();
+                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                        [
+                            'movie',
+                            movieCopyId,
+                            user.client_id,
+                            now.format('YYYY-MM-DD HH:mm:ss'),
+                            null,
+                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                        ]);
+
+                        db.query(loan_query, (err, rows) => {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+                        })
+                    })
+                });
+            } else if (mediaItem instanceof Music) {
+                const query = 'SELECT * FROM music_copies WHERE available = TRUE';
+
+                db.query(query, (err, rows) => {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+
+                    if (rows === null || rows.length === 0) {
+                        callback(new Error('No copies available'));
+                        return;
+                    }
+
+                    var musicCopyId = rows[0].id;
+                    const update_query = db.format('UPDATE music_copies SET available = FALSE WHERE id = ?', 
+                        [
+                            musicCopyId
+                        ]
+                    );
+
+                    db.query(update_query, (err, rows) => {
+                        if (err) {
+                            callback(err);
+                            return;
+                        }
+                        var now = moment();
+                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                        [
+                            'music',
+                            musicCopyId,
+                            user.client_id,
+                            now.format('YYYY-MM-DD HH:mm:ss'),
+                            null,
+                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                        ]);
+
+                        db.query(loan_query, (err, rows) => {
+                            if (err) {
+                                callback(err);
+                                return;
+                            }
+                        })
+                    })
+                });
+            } else {
+                // something's wrong..
+                callback(new Error('Undefined media type'));
+                return;
+            }
+        }
+    }
+
     static saveMedia(type, fields, callback) {
         var query, copiesTable, copiesFK;
         if (type === 'Book') {

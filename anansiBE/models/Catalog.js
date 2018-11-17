@@ -85,7 +85,7 @@ export class Catalog {
         });
     }
 
-    static loanCopies(copies, user, callback) {
+    static loanCopies(items, user, callback) {
         var loans = [];
         MediaGateway.getLoans(user, (err, rows) => {
             if (err) {
@@ -94,8 +94,8 @@ export class Catalog {
             }
 
             loans = rows;
-            if ((loans.size() + copies.size()) < maxLoans) {
-                MediaGateway.addLoans(copies, user, callback);
+            if ((loans.size() + items.size()) < maxLoans) {
+                MediaGateway.addLoans(items, user, callback);
             } else {
                 callback(new Error('User exceeds maximum allowed number of loans'));
                 return;
