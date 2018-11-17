@@ -3,6 +3,7 @@ import { Magazine } from './Magazine';
 import { Movie } from './Movie';
 import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
+import { Media } from './Media';
 
 const pageSize = 15;
 
@@ -84,6 +85,17 @@ export class Catalog {
         });
     }
 
+    static returnCopies(loans, client_id, callback) {
+        loans.forEach(id => {
+            MediaGateway.updateLoans(id, client_id, (err) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+            });
+        });
+    }
+
     static jsonToMedia(jsonArray) {
         var mediaArray = [];
 
@@ -103,4 +115,5 @@ export class Catalog {
         });
         return mediaArray;
     }
+
 }
