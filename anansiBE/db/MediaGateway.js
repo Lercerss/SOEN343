@@ -66,7 +66,7 @@ export class MediaGateway {
                     }
 
                     var bookCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE books_copies SET available = FALSE WHERE id = ?', 
+                    const update_query = db.format('UPDATE books_copies SET available = FALSE WHERE id = ?',
                         [
                             bookCopyId
                         ]
@@ -113,7 +113,7 @@ export class MediaGateway {
                     }
 
                     var movieCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE movies_copies SET available = FALSE WHERE id = ?', 
+                    const update_query = db.format('UPDATE movies_copies SET available = FALSE WHERE id = ?',
                         [
                             movieCopyId
                         ]
@@ -158,7 +158,7 @@ export class MediaGateway {
                     }
 
                     var musicCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE music_copies SET available = FALSE WHERE id = ?', 
+                    const update_query = db.format('UPDATE music_copies SET available = FALSE WHERE id = ?',
                         [
                             musicCopyId
                         ]

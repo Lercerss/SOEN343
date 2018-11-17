@@ -59,6 +59,28 @@ export function loanCopies(req, res) {
     });
 }
 
+export function loanCopies(req, res) {
+    validateToken(req.body.token, res, decoded => {
+        if (!decoded.data.client_id) {
+            return;
+        }
+
+        Catalog.loanCopies(req.body.items, req.body.user, err => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    message: 'Could not loan item',
+                    error: err
+                });
+                return;
+            }
+            res.status(200).send({
+                message: 'Items were loaned'
+            });
+        });
+    });
+}
+
 export function addItem(req, res) {
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
