@@ -15,10 +15,10 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-    db.addColumn('books', 'locked_by_id', {
+    db.addColumn('books', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
-            name: 'locked_by_id_books_fk',
+            name: 'lockedBy_id_books_fk',
             table: 'users',
             rules: {
                 onDelete: 'NO ACTION'
@@ -27,9 +27,9 @@ exports.up = function(db) {
         },
     }, err => {
         if (err) throw err;
-        db.addColumn('books', 'locked_at', { type: 'datetime', defaultValue: null });
+        db.addColumn('books', 'lockedAt', { type: 'datetime', defaultValue: null });
     });
-    db.addColumn('magazines', 'locked_by_id', {
+    db.addColumn('magazines', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
             name: 'locked_by_id_magazines_fk',
@@ -41,7 +41,7 @@ exports.up = function(db) {
         },
     }, err => {
         if (err) throw err;
-        db.addColumn('magazines', 'locked_at', { type: 'datetime', defaultValue: null });
+        db.addColumn('magazines', 'lockedAt', { type: 'datetime', defaultValue: null });
     });
     db.addColumn('movies', 'locked_by_id', {
         type: 'int',
@@ -55,9 +55,9 @@ exports.up = function(db) {
         },
     }, err => {
         if (err) throw err;
-        db.addColumn('movies', 'locked_at', { type: 'datetime', defaultValue: null });
+        db.addColumn('movies', 'lockedAt', { type: 'datetime', defaultValue: null });
     });
-    return db.addColumn('music', 'locked_by_id', {
+    return db.addColumn('music', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
             name: 'locked_by_id_music_fk',
@@ -69,15 +69,15 @@ exports.up = function(db) {
         },
     }, err => {
         if (err) throw err;
-        db.addColumn('music', 'locked_at', { type: 'datetime', defaultValue: null });
+        db.addColumn('music', 'lockedAt', { type: 'datetime', defaultValue: null });
     });
 };
 
 exports.down = function(db) {
-    db.removeColumn('music', 'locked_at');
-    db.removeColumn('movies', 'locked_at');
-    db.removeColumn('magazines', 'locked_at');
-    db.removeColumn('books', 'locked_at');
+    db.removeColumn('music', 'lockedAt');
+    db.removeColumn('movies', 'lockedAt');
+    db.removeColumn('magazines', 'lockedAt');
+    db.removeColumn('books', 'lockedAt');
     return db.removeForeignKey('books', 'locked_by_id_books_fk', err => {
         if (err) throw err;
         db.removeForeignKey('movies', 'locked_by_id_movies_fk', err => {
@@ -86,10 +86,10 @@ exports.down = function(db) {
                 if (err) throw err;
                 db.removeForeignKey('magazines', 'locked_by_id_magazines_fk', err => {
                     if (err) throw err;
-                    db.removeColumn('books', 'locked_by_id');
-                    db.removeColumn('magazines', 'locked_by_id');
-                    db.removeColumn('movies', 'locked_by_id');
-                    db.removeColumn('music', 'locked_by_id');
+                    db.removeColumn('books', 'lockedBy_id');
+                    db.removeColumn('magazines', 'lockedBy_id');
+                    db.removeColumn('movies', 'lockedBy_id');
+                    db.removeColumn('music', 'lockedBy_id');
                 });
             });
         });
