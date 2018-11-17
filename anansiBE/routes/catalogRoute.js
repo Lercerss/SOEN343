@@ -112,3 +112,21 @@ export function deleteItem(req, res) {
         }
     });
 }
+
+export function returnCopies(req, res) {
+    validateToken(req.body.token, res, decoded => {
+        Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    message: 'Could not return item',
+                    error: err
+                });
+                return;
+            }
+            res.status(200).send({
+                message: 'Item was successfully returned'
+            });
+        });
+    });
+}
