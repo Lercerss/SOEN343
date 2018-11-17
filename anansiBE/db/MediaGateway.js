@@ -3,7 +3,7 @@ import moment from 'moment';
 import Book from '../models/Book';
 import Magazine from '../models/Magazine';
 import Movie from '../models/Movie';
-import Book from '../models/Music';
+import Music from '../models/Music';
 
 const db = DatabaseManager.getConnection();
 
