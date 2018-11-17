@@ -66,35 +66,34 @@ export class MediaGateway {
                     }
 
                     var bookCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE books_copies SET available = FALSE WHERE id = ?',
+                    const updateQuery = db.format('UPDATE books_copies SET available = FALSE WHERE id = ?',
                         [
                             bookCopyId
                         ]
                     );
 
-                    db.query(update_query, (err, rows) => {
+                    db.query(updateQuery, (err, rows) => {
                         if (err) {
                             callback(err);
                             return;
                         }
                         var now = moment();
-                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
-                        [
-                            'book',
-                            bookCopyId,
-                            user.client_id,
-                            now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
-                        ]);
+                        const loanQuery = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                            [
+                                'book',
+                                bookCopyId,
+                                user.client_id,
+                                now.format('YYYY-MM-DD HH:mm:ss'),
+                                null,
+                                now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            ]);
 
-                        db.query(loan_query, (err, rows) => {
+                        db.query(loanQuery, (err, rows) => {
                             if (err) {
                                 callback(err);
-                                return;
                             }
-                        })
-                    })
+                        });
+                    });
                 });
             } else if (mediaItem instanceof Magazine) {
                 // cannot be loaned
@@ -113,35 +112,35 @@ export class MediaGateway {
                     }
 
                     var movieCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE movies_copies SET available = FALSE WHERE id = ?',
+                    const updateQuery = db.format('UPDATE movies_copies SET available = FALSE WHERE id = ?',
                         [
                             movieCopyId
                         ]
                     );
 
-                    db.query(update_query, (err, rows) => {
+                    db.query(updateQuery, (err, rows) => {
                         if (err) {
                             callback(err);
                             return;
                         }
                         var now = moment();
-                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
-                        [
-                            'movie',
-                            movieCopyId,
-                            user.client_id,
-                            now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
-                        ]);
+                        const loanQuery = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                            [
+                                'movie',
+                                movieCopyId,
+                                user.client_id,
+                                now.format('YYYY-MM-DD HH:mm:ss'),
+                                null,
+                                now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            ]);
 
-                        db.query(loan_query, (err, rows) => {
+                        db.query(loanQuery, (err, rows) => {
                             if (err) {
                                 callback(err);
                                 return;
                             }
-                        })
-                    })
+                        });
+                    });
                 });
             } else if (mediaItem instanceof Music) {
                 const query = 'SELECT * FROM music_copies WHERE available = TRUE';
@@ -158,35 +157,35 @@ export class MediaGateway {
                     }
 
                     var musicCopyId = rows[0].id;
-                    const update_query = db.format('UPDATE music_copies SET available = FALSE WHERE id = ?',
+                    const updateQuery = db.format('UPDATE music_copies SET available = FALSE WHERE id = ?',
                         [
                             musicCopyId
                         ]
                     );
 
-                    db.query(update_query, (err, rows) => {
+                    db.query(updateQuery, (err, rows) => {
                         if (err) {
                             callback(err);
                             return;
                         }
                         var now = moment();
-                        const loan_query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
-                        [
-                            'music',
-                            musicCopyId,
-                            user.client_id,
-                            now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
-                        ]);
+                        const loanQuery = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, return_ts, expectedReturn) VALUES(?, ?, ?, ?, ?, ?)',
+                            [
+                                'music',
+                                musicCopyId,
+                                user.client_id,
+                                now.format('YYYY-MM-DD HH:mm:ss'),
+                                null,
+                                now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            ]);
 
-                        db.query(loan_query, (err, rows) => {
+                        db.query(loanQuery, (err, rows) => {
                             if (err) {
                                 callback(err);
                                 return;
                             }
-                        })
-                    })
+                        });
+                    });
                 });
             } else {
                 // something's wrong..
