@@ -44,9 +44,7 @@ export class MediaGateway {
     }
 
     static addLoans(items, user, callback) {
-        var mediaItem;
-
-        for (mediaItem in items) {
+        items.forEach(mediaItem => {
             if (mediaItem instanceof Book) {
                 const query = 'SELECT * FROM books_copies WHERE available = TRUE';
 
@@ -185,7 +183,7 @@ export class MediaGateway {
                 callback(new Error('Undefined media type'));
                 return;
             }
-        }
+        });
     }
 
     static saveMedia(type, fields, callback) {

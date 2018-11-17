@@ -7,7 +7,7 @@ import {
     createUser,
     displayUserProfile
 } from './userRoute';
-import { displayItems, addItem, editItem, deleteItem } from './catalogRoute';
+import { displayItems, addItem, editItem, deleteItem, loanCopies } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
 var router = express.Router();
@@ -36,6 +36,7 @@ router.route('/user/display-all').get(displayUsers);
 router.route('/user/validate').get(validateUser);
 router.route('/user/create').post(createUser);
 router.route('/user/profile/:username').get(displayUserProfile);
+router.route('/item/loan').post(loanCopies);
 router.route('/item/display').post(displayItems);
 router.route('/item/add').post(addItem);
 router.route('/item/edit').post(editItem);
