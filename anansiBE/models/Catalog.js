@@ -5,6 +5,7 @@ import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
 
 const pageSize = 15;
+const maxLoans = 10;
 
 export class Catalog {
     static addItem(type, fields, callback) {
@@ -81,6 +82,24 @@ export class Catalog {
                 return;
             }
             MediaGateway.deleteMedia(type, id, callback);
+        });
+    }
+
+    static loanCopies(copies, user, callback) {
+        var loans = [];
+        MediaGateway.getLoans(user, (err, rows) => {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            loans = rows;
+            if ((loans.size() + copies.size()) < maxLoans) {
+                MediaGateway.addLoans(copies, user, callback);
+            } else {
+                callback(new Error('User exceeds maximum allowed number of loans'));
+                return;
+            }
         });
     }
 
