@@ -76,9 +76,13 @@ export class Catalog {
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
                 callback(err);
+
                 return;
+
             } else if (rows.length === 0) {
+
                 callback(new Error('Media item does not exist in the database'));
+
                 return;
             }
             MediaGateway.deleteMedia(type, id, callback);
@@ -87,9 +91,13 @@ export class Catalog {
 
     static returnCopies(loans, client_id, callback) {
         loans.forEach(id => {
+            
             MediaGateway.updateLoans(id, client_id, (err) => {
+
                 if (err) {
+
                     callback(err);
+
                     return;
                 }
             });
@@ -100,7 +108,9 @@ export class Catalog {
         var mediaArray = [];
 
         jsonArray.forEach(el => {
+
             var media;
+
             if (el.mediaType === 'Book'){
                 media = new Book(el);
             } else if (el.mediaType === 'Magazine'){
@@ -111,8 +121,10 @@ export class Catalog {
                 media = new Music(el);
             }
             media.copies = JSON.parse(el.copies);
+
             mediaArray.push(media);
         });
+
         return mediaArray;
     }
 

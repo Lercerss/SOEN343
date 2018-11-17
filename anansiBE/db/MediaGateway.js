@@ -474,24 +474,30 @@ export class MediaGateway {
     }
 
     static updateLoans(id, client_id, callback) {
-
         var type;
         var copy_id;
         db.query(db.format('SELECT copy_id, user_id, item_type FROM loans WHERE id = ?', id), (err, rows, fields) => {
+            
             //since id is primary key, I should not be expecting more than one results.
+
             //Validate that person borrowing is the person who's returning the item.
+
             if (rows[0].user_id !== client_id) {
+
                 //callback error : user_id associated with the loan is not the same as the client
+
                 callback(new Error('Item must be returned by the person who borrowed it.'));
                 return;
             }
             
             //Record item type and copy id for use in the next section.
+
             copy_id = rows[0].copy_id;
             type = rows[0].item_type;
         });
         
         //validate record of item & copy still exists in database
+
         var table = (type === 'Music') ? type : type + 's';
         var copyTable = type + '_copies';
         var query = db.format('SELECT * FROM ' + copyTable + ', ' + table 
@@ -500,18 +506,23 @@ export class MediaGateway {
                 copy_id);
         db.query(query, (err, rows, fields) => {
             if (rows.length === 0) {
+
                 //callback error : element or the copy no longer exists in database system.
+
                 callback(new Error('Item/Copy no longer exists in the database'));
                 return;
             }
         });
 
         //return copy : set return timestamp to current time
+
         var query = db.format('UPDATE loans SET loans.return_ts = ? WHERE id = ?',
             moment(new Date).format('YYYY-MM-DD HH:mm:ss'), id);
 
         //return copy : set available to 1 (from 0)
+
         //Reference: UPDATE thisTable SET thisColumn1 = thisValue, thisColumn2 = thisValue2 WHERE (This where clause is used to specify which items we want to update)
+
         var query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copy_id);
 
     }
