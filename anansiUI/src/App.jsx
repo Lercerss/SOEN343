@@ -211,7 +211,6 @@ class App extends React.Component {
                                     condition={this.state.loggedIn && !this.state.isAdmin}
                                 >
                                     <Cart
-                                        token={token}
                                         cart={this.state.cart}
                                         removeItemFromCart={this.removeItemFromCart}
                                         emptyCart={this.emptyCart}

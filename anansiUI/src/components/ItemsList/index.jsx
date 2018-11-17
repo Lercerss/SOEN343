@@ -188,7 +188,7 @@ export default class ItemsList extends React.Component {
                     </Button>
                 </div>);
         } else if (item.itemInfo.copies) {
-            //Replace with proper available copy check
+            //Replace with check for available copies
             return (
                 <div>
                     <Button
