@@ -98,7 +98,6 @@ export class Catalog {
                 MediaGateway.addLoans(items, user, callback);
             } else {
                 callback(new Error('User exceeds maximum allowed number of loans'));
-                return;
             }
         });
     }
