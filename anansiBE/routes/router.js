@@ -7,7 +7,7 @@ import {
     createUser,
     displayUserProfile
 } from './userRoute';
-import { displayItems, addItem, editItem, deleteItem, loanCopies } from './catalogRoute';
+import { displayItems, addItem, editItem, deleteItem } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
 var router = express.Router();
