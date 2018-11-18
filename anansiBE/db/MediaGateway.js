@@ -34,7 +34,7 @@ export class MediaGateway {
         // returns number of non-returned loans associated with the user
         const query = db.format('SELECT * FROM loans WHERE user_id = ? AND return_ts = null',
             [
-                user.client_id
+                user
             ]
         );
 
@@ -44,9 +44,13 @@ export class MediaGateway {
     }
 
     static addLoans(items, user, callback) {
-        items.forEach(mediaItem => {
+        for (mediaItem in items) {
             if (mediaItem instanceof Book) {
-                const query = 'SELECT * FROM books_copies WHERE available = TRUE';
+                const query = db.format('SELECT * FROM books_copies WHERE book_id = ? AND available = TRUE',
+                    [
+                        mediaItem.id
+                    ]
+                );
 
                 db.query(query, (err, rows) => {
                     if (err) {
@@ -76,7 +80,7 @@ export class MediaGateway {
                             [
                                 'book',
                                 bookCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
@@ -92,7 +96,11 @@ export class MediaGateway {
             } else if (mediaItem instanceof Magazine) {
                 // cannot be loaned
             } else if (mediaItem instanceof Movie) {
-                const query = 'SELECT * FROM movies_copies WHERE available = TRUE';
+                const query = db.format('SELECT * FROM movies_copies WHERE movie_id = ? AND available = TRUE',
+                    [
+                        mediaItem.id
+                    ]
+                );
 
                 db.query(query, (err, rows) => {
                     if (err) {
@@ -122,7 +130,7 @@ export class MediaGateway {
                             [
                                 'movie',
                                 movieCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
@@ -136,7 +144,11 @@ export class MediaGateway {
                     });
                 });
             } else if (mediaItem instanceof Music) {
-                const query = 'SELECT * FROM music_copies WHERE available = TRUE';
+                const query = db.format('SELECT * FROM music_copies WHERE music_id = ? AND available = TRUE',
+                    [
+                        mediaItem.id
+                    ]
+                );
 
                 db.query(query, (err, rows) => {
                     if (err) {
@@ -166,7 +178,7 @@ export class MediaGateway {
                             [
                                 'music',
                                 musicCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
@@ -183,7 +195,7 @@ export class MediaGateway {
                 callback(new Error('Undefined media type'));
                 return;
             }
-        });
+        }
     }
 
     static saveMedia(type, fields, callback) {

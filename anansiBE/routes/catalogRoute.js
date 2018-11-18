@@ -43,7 +43,7 @@ export function loanCopies(req, res) {
             return;
         }
 
-        Catalog.loanCopies(req.body.items, req.body.user, err => {
+        Catalog.loanCopies(req.body.items, decoded.data.client_id, err => {
             if (err) {
                 console.log(err);
                 res.status(500).send({
