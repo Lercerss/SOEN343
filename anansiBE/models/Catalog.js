@@ -73,6 +73,7 @@ export class Catalog {
     }
 
     static deleteItem(type, id, callback) {
+
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
                 callback(err)
