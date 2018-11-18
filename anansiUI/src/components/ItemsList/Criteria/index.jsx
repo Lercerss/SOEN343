@@ -49,11 +49,6 @@ class Criteria extends React.Component {
             this.forceUpdate();    
         });
     };
-
-    
-
-
-
     handleSearch = e => {
         e.preventDefault();
         const { form } = this.props;
