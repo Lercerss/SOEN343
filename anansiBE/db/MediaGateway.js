@@ -44,6 +44,8 @@ export class MediaGateway {
     }
 
     static addLoans(items, user, callback) {
+        var mediaItem;
+        
         for (mediaItem in items) {
             if (mediaItem instanceof Book) {
                 const query = db.format('SELECT * FROM books_copies WHERE book_id = ? AND available = TRUE',
