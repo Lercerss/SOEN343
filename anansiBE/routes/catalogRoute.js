@@ -137,6 +137,7 @@ export function returnCopies(req, res) {
                     message: 'Could not return item',
                     error: err
                 });
+
                 return;
             }
             res.status(200).send({
@@ -145,4 +146,3 @@ export function returnCopies(req, res) {
         });
     });
 }
-
