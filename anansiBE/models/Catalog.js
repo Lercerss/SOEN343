@@ -3,7 +3,6 @@ import { Magazine } from './Magazine';
 import { Movie } from './Movie';
 import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
-import { Media } from './Media';
 
 const pageSize = 15;
 
@@ -73,28 +72,24 @@ export class Catalog {
     }
 
     static deleteItem(type, id, callback) {
-
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
-                callback(err)
+                callback(err);
                 return;
-
             } else if (rows.length === 0) {
                 callback(new Error('Media item does not exist in the database'));
                 return;
             }
+
             MediaGateway.deleteMedia(type, id, callback);
         });
     }
 
     static returnCopies(loans, clientID, callback) {
         loans.forEach(id => {
-
             MediaGateway.updateLoans(id, clientID, (err) => {
-
                 if (err) {
                     callback(err);
-                    return;
                 }
             });
         });
@@ -104,7 +99,6 @@ export class Catalog {
         var mediaArray = [];
 
         jsonArray.forEach(el => {
-
             var media;
 
             if (el.mediaType === 'Book') {
@@ -123,6 +117,4 @@ export class Catalog {
 
         return mediaArray;
     }
-
 }
-
