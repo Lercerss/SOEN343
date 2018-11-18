@@ -104,7 +104,7 @@ export function editItem(req, res) {
 }
 
 export function getLock(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         console.log(decoded);
         if (!decoded.data.isAdmin) {
             res.status(403).send({
@@ -112,16 +112,18 @@ export function getLock(req, res) {
             });
         } else {
             Catalog.getLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
-                if (err.code === 409) {
-                    res.status(409).send({
-                        message: err.message
-                    });
-                    return;
-                } else if (err.code === 500) {
-                    res.status(500).send({
-                        message: err.message
-                    });
-                    return;
+                if (err){
+                    if (err.code === 409) {
+                        res.status(409).send({
+                            message: err.message
+                        });
+                        return;
+                    } else if (err.code === 500) {
+                        res.status(500).send({
+                            message: err.message
+                        });
+                        return;
+                    }
                 }
                 res.status(200).send();
             });
@@ -130,7 +132,7 @@ export function getLock(req, res) {
 }
 
 export function releaseLock(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         console.log(decoded);
         if (!decoded.data.isAdmin) {
             res.status(403).send({
@@ -138,16 +140,18 @@ export function releaseLock(req, res) {
             });
         } else {
             Catalog.releaseLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
-                if (err.code === 500) {
-                    res.status(500).send({
-                        message: err.message
-                    });
-                    return;
-                } else if (err.code === 403) {
-                    res.status(403).send({
-                        message: err.message
-                    });
-                    return;
+                if (err) {
+                    if (err.code === 500) {
+                        res.status(500).send({
+                            message: err.message
+                        });
+                        return;
+                    } else if (err.code === 403) {
+                        res.status(403).send({
+                            message: err.message
+                        });
+                        return;
+                    }
                 }
                 res.status(200).send();
             });

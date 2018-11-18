@@ -16,9 +16,20 @@ export const mediaTables = {
 
 export function globalSetUp() {
     return new Promise((resolve, reject) => {
+        Object.keys(mediaTables).forEach(key => {
+            db.query(`UPDATE ${mediaTables[key]} SET lockedBy_id = NULL`, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while deleting foreign keys');
+                    process.exit(1);
+                    // throw err;
+                }
+            });
+        });
+
         const deleteUsersQuery = db.format('DELETE FROM ??', usersTable);
         db.query(deleteUsersQuery, (err, rows, fields) => {
             if (err) {
+                console.log(err);
                 process.exit(1);
             }
 

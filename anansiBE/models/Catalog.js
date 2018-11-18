@@ -50,8 +50,6 @@ export class Catalog {
                     return;
                 }
                 var timePassed = Date.now() - rows[0].lockedAt;
-                var unlockTimeInSeconds = rows[0].lockedAt + (10 * 60 * 1000);
-                var unlockTime = new Date(unlockTimeInSeconds).toString();
                 if (rows[0].lockedBy_id === userId && timePassed < (10 * 60 * 1000)){
                     MediaGateway.editMedia(type, id, fields, callback);
                 } else {

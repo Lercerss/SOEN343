@@ -120,7 +120,9 @@ export function catalogQueryBuilder(type){
                     el.publicationDate,
                     el.author,
                     el.format,
-                    el.pages
+                    el.pages,
+                    null,
+                    null
                 ];
                 values.push(valuesArr);
                 countMedia++;
@@ -138,6 +140,8 @@ export function catalogQueryBuilder(type){
                     el.isbn13,
                     el.publisher,
                     el.publicationDate,
+                    null,
+                    null
                 ];
                 values.push(valuesArr);
                 countMedia++;
@@ -154,7 +158,9 @@ export function catalogQueryBuilder(type){
                     el.type,
                     el.artist,
                     el.label,
-                    el.asin
+                    el.asin,
+                    null,
+                    null
                 ];
                 values.push(valuesArr);
                 countMedia++;
@@ -174,7 +180,9 @@ export function catalogQueryBuilder(type){
                     el.language,
                     el.subtitles,
                     el.dubbed,
-                    el.runtime
+                    el.runtime,
+                    null,
+                    null
                 ];
                 values.push(valuesArr);
                 countMedia++;
