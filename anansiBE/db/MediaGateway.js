@@ -108,7 +108,7 @@ export class MediaGateway {
         if (type === 'Book') {
             query = db.format(
                 'UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                    'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE id = ?',
+                'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE id = ?',
                 [
                     fields['title'],
                     fields['language'],
@@ -127,7 +127,7 @@ export class MediaGateway {
         } else if (type === 'Magazine') {
             query = db.format(
                 'UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                    'publisher = ?, publicationDate = ? WHERE id = ?',
+                'publisher = ?, publicationDate = ? WHERE id = ?',
                 [
                     fields['title'],
                     fields['language'],
@@ -158,7 +158,7 @@ export class MediaGateway {
         } else if (type === 'Movie') {
             query = db.format(
                 'UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                    'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?',
+                'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?',
                 [
                     fields['title'],
                     moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
@@ -281,7 +281,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM books AS a
                                 LEFT JOIN book_copies AS b ON a.id = b.book_id
-                                ${ title } 
+                                ${ title} 
                                 GROUP BY a.id;`;
             var queryMagazine = `SELECT a.*,
                                 CONCAT(
@@ -291,7 +291,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM magazines AS a
                                 LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
-                                ${ title } 
+                                ${ title} 
                                 GROUP BY a.id;`;
             var queryMusic = `SELECT a.*,
                                 CONCAT(
@@ -301,7 +301,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM music AS a
                                 LEFT JOIN music_copies AS b ON a.id = b.music_id
-                                ${ title } 
+                                ${ title} 
                                 GROUP BY a.id;`;
             var queryMovie = `SELECT a.*,
                                 CONCAT(
@@ -311,7 +311,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM movies AS a
                                 LEFT JOIN movie_copies AS b ON a.id = b.movie_id
-                                ${ title } 
+                                ${ title} 
                                 GROUP BY a.id;`;
 
             var books = [];
@@ -371,12 +371,12 @@ export class MediaGateway {
 
                                 let compare = 0;
                                 if (Object.keys(ordering).length === 0) return -1;
-                                if (titleA > titleB){
-                                    if (ordering.title === 'ASC'){
+                                if (titleA > titleB) {
+                                    if (ordering.title === 'ASC') {
                                         compare = 1;
                                     } else compare = -1;
-                                } else if (titleA < titleB){
-                                    if (ordering.title === 'ASC'){
+                                } else if (titleA < titleB) {
+                                    if (ordering.title === 'ASC') {
                                         compare = -1;
                                     } else compare = 1;
                                 }
@@ -391,33 +391,33 @@ export class MediaGateway {
             const mediaTable = 'a';
             var table, copyTable, type;
             switch (filters.mediaType) {
-            case 'Book':
-                table = 'books';
-                copyTable = 'book_copies';
-                type = 'book';
-                break;
-            case 'Magazine':
-                table = 'magazines';
-                copyTable = 'magazine_copies';
-                type = 'magazine';
-                break;
-            case 'Movie':
-                table = 'movies';
-                copyTable = 'movie_copies';
-                type = 'movie';
-                break;
-            case 'Music':
-                table = 'music';
-                copyTable = 'music_copies';
-                type = 'music';
-                break;
+                case 'Book':
+                    table = 'books';
+                    copyTable = 'book_copies';
+                    type = 'book';
+                    break;
+                case 'Magazine':
+                    table = 'magazines';
+                    copyTable = 'magazine_copies';
+                    type = 'magazine';
+                    break;
+                case 'Movie':
+                    table = 'movies';
+                    copyTable = 'movie_copies';
+                    type = 'movie';
+                    break;
+                case 'Music':
+                    table = 'music';
+                    copyTable = 'music_copies';
+                    type = 'music';
+                    break;
             }
 
             var filterClause, orderClause;
             if (Object.keys(filters.fields).length !== 0) {
                 var fieldArray = [];
                 Object.keys(filters.fields).forEach(function(key) {
-                    fieldArray.push(`${ mediaTable }.` + key + " LIKE '%" + filters.fields[key] + "%'");
+                    fieldArray.push(`${mediaTable}.` + key + " LIKE '%" + filters.fields[key] + "%'");
                 });
                 filterClause = fieldArray.join(' AND ');
             } else {
@@ -427,11 +427,11 @@ export class MediaGateway {
                 orderClause = ' ORDER BY ';
                 fieldArray = [];
                 Object.keys(ordering).forEach(function(key) {
-                    fieldArray.push(`${ mediaTable }.` + key + ' ' + ordering[key]);
+                    fieldArray.push(`${mediaTable}.` + key + ' ' + ordering[key]);
                 });
                 orderClause = fieldArray.join(', ');
             } else {
-                orderClause = ` ${ mediaTable }.id ASC`;
+                orderClause = ` ${mediaTable}.id ASC`;
             }
 
             var query = `SELECT a.*,
@@ -440,13 +440,14 @@ export class MediaGateway {
                             GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
                             '}'
                         ) as copies
-                        FROM ${ table } AS a
-                        LEFT JOIN ${ copyTable } AS b ON a.id = b.${ type }_id
-                        WHERE ${ filterClause } 
+                        FROM ${ table} AS a
+                        LEFT JOIN ${ copyTable} AS b ON a.id = b.${type}_id
+                        WHERE ${ filterClause} 
                         GROUP BY a.id 
-                        ORDER BY ${ orderClause };`;
+                        ORDER BY ${ orderClause};`;
 
             console.log(query);
+
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     console.log(err);
@@ -464,44 +465,41 @@ export class MediaGateway {
         }
     }
 
-    static updateLoans(id, client_id, callback) {
+    static updateLoans(id, clientID, callback) {
         var type;
-        var copy_id;
+        var copyID;
         db.query(db.format('SELECT copy_id, user_id, item_type FROM loans WHERE id = ?', id), (err, rows, fields) => {
-            
-            //since id is primary key, I should not be expecting more than one results.
 
-            //Validate that person borrowing is the person who's returning the item.
+            /*since id is primary key, I should not be expecting more than one results.
+            Validate that person borrowing is the person who's returning the item.*/
 
-            if (rows[0].user_id !== client_id) {
+            if (rows[0].user_id !== clientID) {
 
                 //callback error : user_id associated with the loan is not the same as the client
 
                 callback(new Error('Item must be returned by the person who borrowed it.'));
                 return;
             }
-            
+
             //Record item type and copy id for use in the next section.
 
-            copy_id = rows[0].copy_id;
+            copyID = rows[0].copyID;
             type = rows[0].item_type;
         });
-        
+
         //validate record of item & copy still exists in database
 
         var table = (type === 'Music') ? type : type + 's';
         var copyTable = type + '_copies';
-        var query = db.format('SELECT * FROM ' + copyTable + ', ' + table 
-                + ' WHERE ' + copyTable + '.id = ?' 
-                + ' AND ' + table + '.id = ' + copyTable + '.' + type + '_id',
-                copy_id);
+        var query = db.format('SELECT * FROM ' + copyTable + ', ' + table + ' WHERE ' + copyTable + '.id = ?' + ' AND ' + table + '.id = ' + copyTable + '.' + type + '_id', copyID);
+
         db.query(query, (err, rows, fields) => {
+
             if (rows.length === 0) {
 
                 //callback error : element or the copy no longer exists in database system.
 
                 callback(new Error('Item/Copy no longer exists in the database'));
-                return;
             }
         });
 
@@ -512,9 +510,8 @@ export class MediaGateway {
 
         //return copy : set available to 1 (from 0)
 
-        //Reference: UPDATE thisTable SET thisColumn1 = thisValue, thisColumn2 = thisValue2 WHERE (This where clause is used to specify which items we want to update)
-
-        var query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copy_id);
+        var query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copyID);
 
     }
 }
+

@@ -75,29 +75,24 @@ export class Catalog {
     static deleteItem(type, id, callback) {
         MediaGateway.findMediaById(type, id, (err, rows) => {
             if (err) {
-                callback(err);
-
+                callback(err)
                 return;
 
             } else if (rows.length === 0) {
-
                 callback(new Error('Media item does not exist in the database'));
-
                 return;
             }
             MediaGateway.deleteMedia(type, id, callback);
         });
     }
 
-    static returnCopies(loans, client_id, callback) {
+    static returnCopies(loans, clientID, callback) {
         loans.forEach(id => {
 
-            MediaGateway.updateLoans(id, client_id, (err) => {
+            MediaGateway.updateLoans(id, clientID, (err) => {
 
                 if (err) {
-
                     callback(err);
-
                     return;
                 }
             });
@@ -111,13 +106,13 @@ export class Catalog {
 
             var media;
 
-            if (el.mediaType === 'Book'){
+            if (el.mediaType === 'Book') {
                 media = new Book(el);
-            } else if (el.mediaType === 'Magazine'){
+            } else if (el.mediaType === 'Magazine') {
                 media = new Magazine(el);
-            } else if (el.mediaType === 'Movie'){
+            } else if (el.mediaType === 'Movie') {
                 media = new Movie(el);
-            } else if (el.mediaType === 'Music'){
+            } else if (el.mediaType === 'Music') {
                 media = new Music(el);
             }
             media.copies = JSON.parse(el.copies);
