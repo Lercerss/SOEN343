@@ -38,7 +38,7 @@ export default class NavigationBar extends React.Component {
                     </div>
                     <div className="navbar_links" />
                     <div className="navbar_auth">
-                        {!isAdmin && loggedIn &&(
+                        {loggedIn &&(
                             <div className="navbar_button">
                                 <Link to={`/users/${username}`}>
                                     <button

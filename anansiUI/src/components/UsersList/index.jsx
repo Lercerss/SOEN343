@@ -39,7 +39,7 @@ export default class UsersList extends React.Component {
         }
     };
     componentDidMount() {
-        getAllUsers(this.props.token)
+        getAllUsers()
             .then(response => {
                 this.setState({
                     users: response.data,

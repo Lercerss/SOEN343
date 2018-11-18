@@ -2,7 +2,7 @@ import { Catalog } from '../models/Catalog';
 import { validateToken } from './router';
 
 export function displayItems(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.client_id) {
             return;
         }
@@ -38,7 +38,7 @@ export function displayItems(req, res) {
 }
 
 export function addItem(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({
@@ -71,7 +71,7 @@ export function addItem(req, res) {
 }
 
 export function editItem(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({
@@ -104,7 +104,7 @@ export function editItem(req, res) {
 }
 
 export function deleteItem(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.isAdmin) {
             console.log(decoded);
             res.status(403).send({

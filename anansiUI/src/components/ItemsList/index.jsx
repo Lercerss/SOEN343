@@ -1,22 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {
-    List,
-    Button,
-    Card,
-    Modal,
-    Form,
-    Radio,
-    Select,
-    Input,
-    Menu,
-    Dropdown,
-    Icon,
-    Divider
-} from 'antd';
-import MediaForm from '../MediaForm';
+import React from "react";
+import { List, Button, Card, Modal, Row, Col, Icon } from "antd";
+import MediaForm from "../MediaForm";
 import Criteria from './Criteria';
-import { deleteItem, viewItems } from '../../utils/httpUtils';
+import { deleteItem, viewItems } from "../../utils/httpUtils";
+import MediaDetails from "../MediaDetails";
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -26,15 +13,16 @@ export default class ItemsList extends React.Component {
     state = {
         itemList: [],
         isEditFormShown: false,
-        editFormMediaType: '',
+        editFormMediaType: "",
         itemInfo: undefined,
         catalogSize: 0,
         filters: {first:0},
-        order: {}
+        order: {},
+        detailsIndex: -1
     };
 
     componentDidMount() {
-        viewItems(this.props.token, 1, { mediaType: null, fields: {} }, {})
+        viewItems(1, { mediaType: null, fields: {} }, {})
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -51,8 +39,8 @@ export default class ItemsList extends React.Component {
         if (this.state.filters.first === 0) {
             this.state.filters = { mediaType: null, fields: {} };
         }
-        
-        viewItems(this.props.token, page, this.state.filters, this.state.order)
+        viewItems(page, this.state.filters, this.state.order)
+
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -74,7 +62,7 @@ export default class ItemsList extends React.Component {
         });
     };
     handleDelete = item => {
-        deleteItem(item.type, item.itemInfo, this.props.token)
+        deleteItem(item.type, item.itemInfo)
             .then(response => {
                 this.setState({
                     itemList: this.state.itemList.filter(
@@ -91,7 +79,7 @@ export default class ItemsList extends React.Component {
         if (!itemInfo) {
             this.setState({
                 isEditFormShown: false,
-                editFormMediaType: ''
+                editFormMediaType: ""
             });
             return;
         }
@@ -103,7 +91,7 @@ export default class ItemsList extends React.Component {
         ].itemInfo = itemInfo;
         this.setState({
             isEditFormShown: false,
-            editFormMediaType: '',
+            editFormMediaType: "",
             itemsList: items
         });
         console.log(items);
@@ -130,9 +118,23 @@ export default class ItemsList extends React.Component {
         this.setState({order: order }, 
             function() { this.fetchPage(1); });
     };
+    handleDetails = index => {
+        this.setState({
+            detailsIndex: this.state.detailsIndex === index ? -1 : index
+        });
+    }
     render() {
-        const { token, isAdmin } = this.props;
+        const { isAdmin} = this.props;
         const { itemInfo, itemList } = this.state;
+
+        const listStyle = {
+            controlBtn: {
+                margin: '5px'
+            },
+            rightAlign: {
+                textAlign: 'right'
+            }
+        };
 
         if (!itemList) {
             return <h2>Loading...</h2>;
@@ -141,7 +143,7 @@ export default class ItemsList extends React.Component {
             <Card>
                 <Criteria onMediaTypeClicked={this.handleType} onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder}/>
                 <List
-                    itemLayout="horizontal"
+                    itemLayout="vertical"
                     size="small"
                     pagination={{
                         pageSize: 15,
@@ -149,31 +151,61 @@ export default class ItemsList extends React.Component {
                         total: this.state.catalogSize
                     }}
                     dataSource={this.state.itemList}
-                    renderItem={item => (
+                    renderItem={(item, index) => (
                         <List.Item
-                            key={`${item.itemInfo.title}`}
-                            actions={
-                                isAdmin
-                                    ? [
-                                          <Button
-                                              onClick={e => this.handleEdit(item)}
-                                              type="primary"
-                                          >
-                                              Edit
-                                          </Button>,
-                                          <Button
-                                              onClick={e => this.handleDelete(item)}
-                                              type="primary"
-                                          >
-                                              Delete
-                                          </Button>
-                                      ]
-                                    : []
-                            }
+                            key={`${item.itemInfo.type}.${item.itemInfo.id}`}
                         >
-                            <List.Item.Meta
-                                title={`${item.itemInfo.title}`}
-                                description={<div>{item.type}</div>}
+                            <Row gutter={16}>
+                                <Col span={12}>
+                                    <List.Item.Meta
+                                    title={`${item.itemInfo.title}`}
+                                    description={<div>{item.type}</div>}
+                                    />
+                                </Col>
+                                <Col span={12} style={ listStyle.rightAlign }>
+                                    {
+                                    isAdmin?
+                                        <div>
+                                            <Button
+                                                key={`Details.${Math.random()}`}
+                                                onClick={e => this.handleDetails(index)}
+                                                type="default"
+                                                style={ listStyle.controlBtn }
+                                            >
+                                                <Icon type="ellipsis"/>
+                                            </Button>
+                                            <Button
+                                                key={`Edit.${Math.random()}`}
+                                                onClick={e => this.handleEdit(item)}
+                                                type="primary"
+                                                style={listStyle.controlBtn }
+                                            >
+                                                Edit
+                                            </Button>
+                                            <Button     
+                                                key={`Delete.${Math.random()}`}
+                                                onClick={e => this.handleDelete(item)}
+                                                type="danger"
+                                                style={listStyle.controlBtn }
+                                            >
+                                                Delete
+                                            </Button>
+                                        </div>
+                                        :
+                                        <Button
+                                            key={`Details.${Math.random()}`}
+                                            onClick={e => this.handleDetails(index)}
+                                            type="default"
+                                        >
+                                            <Icon type="ellipsis" />
+                                        </Button>
+                                        }
+                                </Col>
+                            </Row>
+                            
+                            <MediaDetails
+                                item={item}
+                                visible={this.state.detailsIndex === index}
                             />
                         </List.Item>
                     )}
@@ -189,7 +221,6 @@ export default class ItemsList extends React.Component {
                         <MediaForm
                             type={this.state.editFormMediaType}
                             action="update"
-                            token={token}
                             item={itemInfo}
                             handleClose={this.handleClose}
                         />

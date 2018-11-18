@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Icon, Input, Button, Modal } from 'antd';
-import { Cookies } from 'react-cookie';
 import { userLogin } from '../../utils/httpUtils';
 
 const FormItem = Form.Item;

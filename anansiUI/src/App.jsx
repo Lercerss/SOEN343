@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal } from 'antd';
-import { withCookies, Cookies } from 'react-cookie';
-import { Route, Switch, Redirect, withRouter } from 'react-router-dom';
+import { withCookies } from 'react-cookie';
+import { Switch, Redirect, withRouter } from 'react-router-dom';
 import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
 import NavigationBar from './components/NavigationBar';
 import AdminSider from './components/AdminSider';
@@ -13,7 +13,7 @@ import PrivateRoute from './components/PrivateRoute';
 import UserProfile from './components/UserProfile';
 import './index.css';
 
-const { Header, Sider, Content, Footer } = Layout;
+const { Content, Footer } = Layout;
 const styles = {
     Layout: {
         minHeight: '100vh'
@@ -121,19 +121,19 @@ class App extends React.Component {
                         <Content style={styles.Content}>
                             <Switch>
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
-                                    <RegisterForm token={token} />
+                                    <RegisterForm />
                                 </PrivateRoute>
                                 <PrivateRoute path="/users/:username" condition={this.state.loggedIn}>
-                                    <UserProfile token={token} isCurrentUserAdmin={this.state.isAdmin}/>
+                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
-                                    <UsersList token={token} />
+                                    <UsersList />
                                 </PrivateRoute>
                                 <PrivateRoute path="/media/create" condition={this.state.isAdmin}>
-                                    <AddMediaForm token={token} />
+                                    <AddMediaForm />
                                 </PrivateRoute>
                                 <PrivateRoute exact path="/media" condition={this.state.loggedIn}>
-                                    <ItemsList token={token} isAdmin={this.state.isAdmin} />
+                                    <ItemsList isAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                             </Switch>
                         </Content>
