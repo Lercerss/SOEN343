@@ -458,11 +458,8 @@ export class MediaGateway {
                         GROUP BY a.id 
                         ORDER BY ${ orderClause};`;
 
-<<<<<<< HEAD
-=======
             console.log(query);
 
->>>>>>> Fixed CI Issues #120
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     console.log(err);
