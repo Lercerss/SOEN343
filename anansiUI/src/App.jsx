@@ -39,7 +39,7 @@ class App extends React.Component {
         const mappedCart = cart.map(function(e) {
             return e.itemInfo.id + e.type;
         });
-        const loanedItems = []; // Replace with list of loaned items from backend
+        const loanedItems = []; // TODO: Replace with list of loaned items from backend
         if (loanedItems.length === 10) {
             Modal.error({
                 title: 'Cannot add items to cart',

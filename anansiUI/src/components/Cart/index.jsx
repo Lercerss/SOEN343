@@ -27,7 +27,7 @@ export default class Cart extends React.Component {
 
     handleConfirm = () => {
         this.setState({ checkoutInProgress: true });
-        const success = true; //Replace with actual success boolean
+        const success = true; // TODO: Replace with actual success boolean
         if (success) {
             this.props.emptyCart();
             this.setState({ checkoutVisible: false });
