@@ -45,8 +45,7 @@ export class MediaGateway {
 
     static addLoans(items, user, callback) {
         var mediaItem;
-
-        for(mediaItem in items) {
+        for (mediaItem in items) {
             if (mediaItem instanceof Book) {
                 const query = db.format('SELECT * FROM books_copies WHERE book_id = ? AND available = TRUE',
                     [
@@ -82,7 +81,7 @@ export class MediaGateway {
                             [
                                 'book',
                                 bookCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
@@ -98,7 +97,11 @@ export class MediaGateway {
             } else if (mediaItem instanceof Magazine) {
                 // cannot be loaned
             } else if (mediaItem instanceof Movie) {
-                const query = 'SELECT * FROM movies_copies WHERE available = TRUE';
+                const query = db.format('SELECT * FROM movies_copies WHERE movie_id = ? AND available = TRUE',
+                    [
+                        mediaItem.id
+                    ]
+                );
 
                 db.query(query, (err, rows) => {
                     if (err) {
@@ -128,7 +131,7 @@ export class MediaGateway {
                             [
                                 'movie',
                                 movieCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
@@ -142,7 +145,11 @@ export class MediaGateway {
                     });
                 });
             } else if (mediaItem instanceof Music) {
-                const query = 'SELECT * FROM music_copies WHERE available = TRUE';
+                const query = db.format('SELECT * FROM music_copies WHERE music_id = ? AND available = TRUE',
+                    [
+                        mediaItem.id
+                    ]
+                );
 
                 db.query(query, (err, rows) => {
                     if (err) {
@@ -172,7 +179,7 @@ export class MediaGateway {
                             [
                                 'music',
                                 musicCopyId,
-                                user.client_id,
+                                user,
                                 now.format('YYYY-MM-DD HH:mm:ss'),
                                 null,
                                 now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
