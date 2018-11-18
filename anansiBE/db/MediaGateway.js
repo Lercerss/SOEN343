@@ -1,3 +1,6 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable handle-callback-err */
+/* eslint-disable indent */
 import { DatabaseManager } from './DatabaseManager';
 import moment from 'moment';
 
@@ -281,7 +284,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM books AS a
                                 LEFT JOIN book_copies AS b ON a.id = b.book_id
-                                ${ title} 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMagazine = `SELECT a.*,
                                 CONCAT(
@@ -291,7 +294,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM magazines AS a
                                 LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
-                                ${ title} 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMusic = `SELECT a.*,
                                 CONCAT(
@@ -301,7 +304,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM music AS a
                                 LEFT JOIN music_copies AS b ON a.id = b.music_id
-                                ${ title} 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMovie = `SELECT a.*,
                                 CONCAT(
@@ -311,7 +314,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM movies AS a
                                 LEFT JOIN movie_copies AS b ON a.id = b.movie_id
-                                ${ title} 
+                                ${ title } 
                                 GROUP BY a.id;`;
 
             var books = [];
@@ -410,7 +413,7 @@ export class MediaGateway {
                     table = 'music';
                     copyTable = 'music_copies';
                     type = 'music';
-                    break;
+                break;
             }
 
             var filterClause, orderClause;
@@ -469,49 +472,43 @@ export class MediaGateway {
         var type;
         var copyID;
         db.query(db.format('SELECT copy_id, user_id, item_type FROM loans WHERE id = ?', id), (err, rows, fields) => {
-
-            /*since id is primary key, I should not be expecting more than one results.
-            Validate that person borrowing is the person who's returning the item.*/
+            /* since id is primary key, I should not be expecting more than one results.
+            Validate that person borrowing is the person who's returning the item. */
 
             if (rows[0].user_id !== clientID) {
-
-                //callback error : user_id associated with the loan is not the same as the client
+                // callback error : user_id associated with the loan is not the same as the client
 
                 callback(new Error('Item must be returned by the person who borrowed it.'));
                 return;
             }
 
-            //Record item type and copy id for use in the next section.
+            // Record item type and copy id for use in the next section.
 
             copyID = rows[0].copyID;
             type = rows[0].item_type;
         });
 
-        //validate record of item & copy still exists in database
+        // validate record of item & copy still exists in database
 
         var table = (type === 'Music') ? type : type + 's';
         var copyTable = type + '_copies';
         var query = db.format('SELECT * FROM ' + copyTable + ', ' + table + ' WHERE ' + copyTable + '.id = ?' + ' AND ' + table + '.id = ' + copyTable + '.' + type + '_id', copyID);
 
         db.query(query, (err, rows, fields) => {
-
             if (rows.length === 0) {
-
-                //callback error : element or the copy no longer exists in database system.
-
+                // callback error : element or the copy no longer exists in database system.
                 callback(new Error('Item/Copy no longer exists in the database'));
             }
         });
 
-        //return copy : set return timestamp to current time
+        // return copy : set return timestamp to current time
 
+        // eslint-disable-next-line no-redeclare
         var query = db.format('UPDATE loans SET loans.return_ts = ? WHERE id = ?',
-            moment(new Date).format('YYYY-MM-DD HH:mm:ss'), id);
+            moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), id);
 
-        //return copy : set available to 1 (from 0)
+        // return copy : set available to 1 (from 0)
 
         var query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copyID);
-
-    }
+ }
 }
-
