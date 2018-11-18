@@ -78,7 +78,7 @@ class Criteria extends React.Component {
         this.notifyOrderChanged(newVal, this.state.order);
     };
     handleOrderMenu = e => {
-        const newVal = e.key === "0" ? 'asc' : 'desc';
+        const newVal = e.key === "0" ? 'ASC' : 'DESC';
         console.log(newVal);
         this.setState({
             order: newVal

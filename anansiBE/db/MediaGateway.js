@@ -381,34 +381,12 @@ export class MediaGateway {
                                 let compare = 0;
                                 if (Object.keys(ordering).length === 0) return -1;
 
-                             /*   if (ordering.title === 'ASC'){
-                                    if (titleA < titleB){
-                                        compare = -1;
-                                    }
-                                    if (titleB > titleA){
-                                        compare = 1;
-                                    }
-                                    compare = 0;
-
-                                }
-                                else{
-                                    if (titleA < titleB){
-                                        compare = 1;
-                                    }
-                                    if (titleB > titleA){
-                                        compare = -1;
-                                    }
-                                    compare = 0;
-                                } */
-
-                                //bug is here (desc/asc bug)
                              if (titleA > titleB){
-                                 console.log(ordering);
-                                    if (ordering.title === 'asc'){
+                                    if (ordering.title === 'ASC'){
                                         compare = 1;
                                     } else compare = -1;
                                 } else if (titleA < titleB){
-                                    if (ordering.title === 'asc'){
+                                    if (ordering.title === 'ASC'){
                                         compare = -1;
                                     } else compare = 1;
                                 } 

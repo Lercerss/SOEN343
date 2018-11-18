@@ -48,15 +48,12 @@ export default class ItemsList extends React.Component {
             });
     }
     fetchPage = page => {
-        console.log("fetch page");
         if (this.state.filters.first === 0) {
             this.state.filters = { mediaType: null, fields: {} };
         }
         
         viewItems(this.props.token, page, this.state.filters, this.state.order)
             .then(response => {
-                
-
                 this.setState({
                     itemList: response.data.catalog,
                     catalogSize: response.data.size
