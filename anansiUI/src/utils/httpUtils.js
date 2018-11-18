@@ -106,7 +106,27 @@ export function editItem(type, itemInfo) {
     });
 }
 
-export function deleteItem(type, itemInfo) {
+export function getLock(type, id, username, token) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/get-lock/`, {
+        type: type,
+        id: id,
+        username: username,
+        token: token
+    });
+}
+
+export function releaseLock(type, id, username, token) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/release-lock/`, {
+        type: type,
+        id: id,
+        username: username,
+        token: token
+    });
+}
+
+export function deleteItem(type, itemInfo, token) {
     let req = client(Cookies.get('jwt'));
     return req.delete(`${backendURL}item/delete/`, {
         data: {

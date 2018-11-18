@@ -355,7 +355,23 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         media.forEach(el => {
             el.itemInfo.title += 'o';
             request(app)
-                .post('/item/edit/')
+                .post('/item/get-lock/')
+                .set('Authorization', `Bearer ${ adminToken }`)
+                .send()
+                .then(response => {
+                    request(app)
+                        .post('/item/edit/')
+                        .set('Authorization', `Bearer ${ adminToken }`)
+                        .send(el)
+                        .then(response => {
+                            expect(response.statusCode).toBe(200);
+                            el.itemInfo.title.slice(0, -1);
+                            done();
+                        });
+                });
+
+            request(app)
+                .post('/item/release-lock/')
                 .set('Authorization', `Bearer ${ adminToken }`)
                 .send(el)
                 .then(response => {

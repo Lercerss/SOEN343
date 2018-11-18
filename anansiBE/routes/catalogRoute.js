@@ -78,7 +78,7 @@ export function editItem(req, res) {
                 message: 'Only administrators can edit media items'
             });
         } else {
-            Catalog.editItem(req.body.type, req.body.itemInfo, (err, result) => {
+            Catalog.editItem(req.body.type, req.body.itemInfo, decoded.data.client_id, (err, result) => {
                 if (err && !result) {
                     console.log(err);
                     res.status(500).send({
@@ -98,6 +98,58 @@ export function editItem(req, res) {
                 res.status(200).send({
                     copies: result
                 });
+            });
+        }
+    });
+}
+
+export function getLock(req, res) {
+    validateToken(req.body.token, res, decoded => {
+        console.log(decoded);
+        if (!decoded.data.isAdmin) {
+            res.status(403).send({
+                message: 'Only administrators can edit media items'
+            });
+        } else {
+            Catalog.getLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
+                if (err.code === 409) {
+                    res.status(409).send({
+                        message: err.message
+                    });
+                    return;
+                } else if (err.code === 500) {
+                    res.status(500).send({
+                        message: err.message
+                    });
+                    return;
+                }
+                res.status(200).send();
+            });
+        }
+    });
+}
+
+export function releaseLock(req, res) {
+    validateToken(req.body.token, res, decoded => {
+        console.log(decoded);
+        if (!decoded.data.isAdmin) {
+            res.status(403).send({
+                message: 'Only administrators can edit media items'
+            });
+        } else {
+            Catalog.releaseLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
+                if (err.code === 500) {
+                    res.status(500).send({
+                        message: err.message
+                    });
+                    return;
+                } else if (err.code === 403) {
+                    res.status(403).send({
+                        message: err.message
+                    });
+                    return;
+                }
+                res.status(200).send();
             });
         }
     });
