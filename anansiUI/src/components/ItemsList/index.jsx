@@ -116,6 +116,18 @@ export default class ItemsList extends React.Component {
         this.setState({filters: filters}, 
             function(){ this.fetchPage(1); });
     };
+
+    handleType = type =>{
+        var _fields = {};
+        if (typeof this.state.fields !== "undefined"){
+            _fields = this.state.fields;
+        }
+        
+        this.setState({filters: { mediaType: type, fields: _fields}},
+            function() {
+                this.fetchPage(1);
+            });
+    }
     handleOrder = order => {
         console.log(order);
         this.setState({order: order }, 
@@ -130,7 +142,7 @@ export default class ItemsList extends React.Component {
         }
         return (
             <Card>
-                <Criteria onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder} />
+                <Criteria onMediaTypeClicked={this.handleType} onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder}/>
                 <List
                     itemLayout="horizontal"
                     size="small"

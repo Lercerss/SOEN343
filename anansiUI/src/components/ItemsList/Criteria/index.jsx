@@ -35,15 +35,25 @@ class Criteria extends React.Component {
     handleView = e => {
         const val = e.target.value;
         // set the state to filter type
-        this.setState({ filterType: val });
-        // dropdownOptions populate
-        if (val !== '') {
-            this.setState({ dropdownOptions: mediaData[val.toLocaleLowerCase()].sort() });
-        } else {
-            this.setState({ dropdownOptions: mediaData.all });
-        }
-        this.props.form.resetFields(['fields', 'inputs', 'keys']);
+
+        this.setState({ filterType: val }, 
+            function(){ if (val !== '') {
+                this.setState({ dropdownOptions: mediaData[val.toLocaleLowerCase()].sort() });
+            } else {
+                this.setState({ dropdownOptions: mediaData.all });
+            } 
+
+            this.props.form.resetFields(['fields', 'inputs', 'keys']);
+
+            this.setState( { searchBy: "title"});
+            this.forceUpdate();    
+        });
     };
+
+    
+
+
+
     handleSearch = e => {
         e.preventDefault();
         const { form } = this.props;
@@ -92,6 +102,17 @@ class Criteria extends React.Component {
             this.removeInput(delKey[0]);
         }
     };
+
+    handleType = e => {
+        var val = e.target.value;
+        console.log(val);
+        this.notifyMediaTypeChanged(val);
+    }
+
+    notifyMediaTypeChanged = (mediaType) => {
+        this.props.onMediaTypeClicked(mediaType);
+    }
+
     render() {
         const { dropdownOptions } = this.state;
         const orderMenu = (
@@ -154,12 +175,12 @@ class Criteria extends React.Component {
                 </div>
                 <div>
                     <b>Pick a media type : </b>
-                    <Radio.Group {...formItemLayout} buttonStyle="solid" onChange={this.handleView} defaultValue="">
-                        <Radio.Button value="">All</Radio.Button>
-                        <Radio.Button value="Book">Book</Radio.Button>
-                        <Radio.Button value="Magazine">Magazine</Radio.Button>
-                        <Radio.Button value="Movie">Movie</Radio.Button>
-                        <Radio.Button value="Music">Music</Radio.Button>
+                    <Radio.Group {...formItemLayout} buttonStyle="solid" onChange={this.handleView}  defaultValue="">
+                        <Radio.Button onClick={this.handleType} value="">All</Radio.Button>
+                        <Radio.Button onClick={this.handleType} value="Book">Book</Radio.Button>
+                        <Radio.Button onClick={this.handleType} value="Magazine">Magazine</Radio.Button>
+                        <Radio.Button onClick={this.handleType} value="Movie">Movie</Radio.Button>
+                        <Radio.Button onClick={this.handleType} value="Music">Music</Radio.Button>
                     </Radio.Group>
                     <Divider />
                 </div>
