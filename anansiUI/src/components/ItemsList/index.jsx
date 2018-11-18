@@ -122,54 +122,57 @@ export default class ItemsList extends React.Component {
         });
     };
 
-    renderButtons = item => {
+    renderButtons = (item, index) => {
         const { isAdmin, cart, removeItemFromCart, addItemToCart } = this.props;
         const mappedCart = cart.map(function(e) {
             return e.itemInfo.id + e.type;
         });
 
         if (isAdmin) {
-            return (<div>
-                <Button
-                    key={`Details.${Math.random()}`}
-                    onClick={e => this.handleDetails(index)}
-                    type="default"
-                    style={this.listStyle.controlBtn}
-                >
-                    <Icon type="ellipsis" />
-                </Button>
-                <Button
-                    key={`Edit.${Math.random()}`}
-                    onClick={e => this.handleEdit(item)}
-                    type="primary"
-                    style={this.listStyle.controlBtn}
-                >
-                    Edit
-                </Button>
-                <Button
-                    key={`Delete.${Math.random()}`}
-                    onClick={e => this.handleDelete(item)}
-                    type="danger"
-                    style={this.listStyle.controlBtn}
-                >
-                    Delete
-                </Button>
-            </div>);
+            return (
+                <div>
+                    <Button
+                        key={`Details.${Math.random()}`}
+                        onClick={e => this.handleDetails(index)}
+                        type="default"
+                        style={this.listStyle.controlBtn}
+                    >
+                        <Icon type="ellipsis" />
+                    </Button>
+                    <Button
+                        key={`Edit.${Math.random()}`}
+                        onClick={e => this.handleEdit(item)}
+                        type="primary"
+                        style={this.listStyle.controlBtn}
+                    >
+                        Edit
+                    </Button>
+                    <Button
+                        key={`Delete.${Math.random()}`}
+                        onClick={e => this.handleDelete(item)}
+                        type="danger"
+                        style={this.listStyle.controlBtn}
+                    >
+                        Delete
+                    </Button>
+                </div>
+            );
         } else if (item.type === 'Magazine') {
             return (
-            <div>
-                <Button
-                    key={`Details.${Math.random()}`}
-                    onClick={e => this.handleDetails(index)}
-                    type="default"
-                    style={this.listStyle.controlBtn}
-                >
-                    <Icon type="ellipsis" />
-                </Button>
-                <Button type="primary" disabled={true}>
-                    Cannot Be Loaned
-                </Button>
-            </div>);
+                <div>
+                    <Button
+                        key={`Details.${Math.random()}`}
+                        onClick={e => this.handleDetails(index)}
+                        type="default"
+                        style={this.listStyle.controlBtn}
+                    >
+                        <Icon type="ellipsis" />
+                    </Button>
+                    <Button type="primary" disabled={true} style={this.listStyle.controlBtn}>
+                        Cannot Be Loaned
+                    </Button>
+                </div>
+            );
         } else if (mappedCart.includes(item.itemInfo.id + item.type)) {
             return (
                 <div>
@@ -181,54 +184,55 @@ export default class ItemsList extends React.Component {
                     >
                         <Icon type="ellipsis" />
                     </Button>
-                    <Button 
+                    <Button
                         onClick={e => removeItemFromCart(item)}
-                        style={this.listStyle.controlBtn}>
+                        style={this.listStyle.controlBtn}
+                    >
                         Remove From Cart
                     </Button>
-                </div>);
+                </div>
+            );
         } else if (item.itemInfo.copies) {
             //Replace with check for available copies
             return (
                 <div>
                     <Button
-                    key={`Details.${Math.random()}`}
-                    onClick={e => this.handleDetails(index)}
-                    type="default"
-                    style={this.listStyle.controlBtn}
+                        key={`Details.${Math.random()}`}
+                        onClick={e => this.handleDetails(index)}
+                        type="default"
+                        style={this.listStyle.controlBtn}
                     >
-                    <Icon type="ellipsis" />
+                        <Icon type="ellipsis" />
                     </Button>
-                    <Button 
-                        onClick={e => addItemToCart(item)} 
+                    <Button
+                        onClick={e => addItemToCart(item)}
                         type="primary"
-                        style={this.listStyle.controlBtn}>
+                        style={this.listStyle.controlBtn}
+                    >
                         Add To Cart
                     </Button>
-                </div>);
+                </div>
+            );
         } else {
             return (
                 <div>
                     <Button
-                    key={`Details.${Math.random()}`}
-                    onClick={e => this.handleDetails(index)}
-                    type="default"
-                    style={this.listStyle.controlBtn}
+                        key={`Details.${Math.random()}`}
+                        onClick={e => this.handleDetails(index)}
+                        type="default"
+                        style={this.listStyle.controlBtn}
                     >
-                    <Icon type="ellipsis" />
+                        <Icon type="ellipsis" />
                     </Button>
-                    <Button 
-                        type="primary" 
-                        disabled={true}
-                        style={this.listStyle.controlBtn}>
-                            No Copies Available
+                    <Button type="primary" disabled={true} style={this.listStyle.controlBtn}>
+                        No Copies Available
                     </Button>
-                </div>);
+                </div>
+            );
         }
     };
 
     render() {
-        const { isAdmin, cart, removeItemFromCart, addItemToCart } = this.props;
         const { itemInfo, itemList } = this.state;
 
         if (!itemList) {
@@ -257,7 +261,7 @@ export default class ItemsList extends React.Component {
                                     />
                                 </Col>
                                 <Col span={12} style={this.listStyle.rightAlign}>
-                                    {this.renderButtons(item)}
+                                    {this.renderButtons(item, index)}
                                 </Col>
                             </Row>
 
