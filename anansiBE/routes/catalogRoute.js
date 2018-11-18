@@ -38,7 +38,7 @@ export function displayItems(req, res) {
 }
 
 export function loanCopies(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.client_id) {
             return;
         }
