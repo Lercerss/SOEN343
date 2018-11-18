@@ -46,7 +46,7 @@ export class MediaGateway {
     static addLoans(items, user, callback) {
         var mediaItem;
         for (mediaItem in items) {
-            if (mediaItem instanceof Book) {
+            if (mediaItem.mediaType === 'Book') {
                 const query = db.format('SELECT * FROM books_copies WHERE book_id = ? AND available = TRUE',
                     [
                         mediaItem.id
@@ -94,9 +94,9 @@ export class MediaGateway {
                         });
                     });
                 });
-            } else if (mediaItem instanceof Magazine) {
+            } else if (mediaItem.mediaType === 'Magazine') {
                 // cannot be loaned
-            } else if (mediaItem instanceof Movie) {
+            } else if (mediaItem.mediaType === 'Movie') {
                 const query = db.format('SELECT * FROM movies_copies WHERE movie_id = ? AND available = TRUE',
                     [
                         mediaItem.id
@@ -144,7 +144,7 @@ export class MediaGateway {
                         });
                     });
                 });
-            } else if (mediaItem instanceof Music) {
+            } else if (mediaItem.mediaType === 'Music') {
                 const query = db.format('SELECT * FROM music_copies WHERE music_id = ? AND available = TRUE',
                     [
                         mediaItem.id
