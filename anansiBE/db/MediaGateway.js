@@ -69,9 +69,10 @@ export class MediaGateway {
                         return;
                     }
                     var now = moment();
-                    if (bookIds !== null && bookIds.length > 0) {
-                        var values = [];
-                        for(var b in bookIds) {
+                    var values = [];
+                    var m;
+                    if (bookIds !== null && bookIds.length > 0) {                        
+                        for (var b in bookIds) {
                             values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
@@ -84,8 +85,7 @@ export class MediaGateway {
                         });
                     }
                     if (movieIds !== null && movieIds.length > 0) {
-                        var values = [];
-                        for(var m in movieIds) {
+                        for (m in movieIds) {
                             values.push(['movie', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
@@ -98,8 +98,7 @@ export class MediaGateway {
                         });
                     }
                     if (musicIds !== null && musicIds.length > 0) {
-                        var values = [];
-                        for(var m in musicIds) {
+                        for (m in musicIds) {
                             values.push(['music', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
