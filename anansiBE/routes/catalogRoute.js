@@ -105,7 +105,6 @@ export function editItem(req, res) {
 
 export function getLock(req, res) {
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
-        console.log(decoded);
         if (!decoded.data.isAdmin) {
             res.status(403).send({
                 message: 'Only administrators can edit media items'

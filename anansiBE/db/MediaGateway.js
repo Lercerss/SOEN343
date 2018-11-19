@@ -229,7 +229,7 @@ export class MediaGateway {
         });
     }
 
-    static releaseLock(type, id, userId, mediaId, callback){
+    static releaseLock(type, userId, mediaId, callback){
         var query;
         if (type === 'Book') {
             query = db.format('UPDATE books SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [userId, mediaId]);

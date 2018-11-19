@@ -426,31 +426,20 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
 
 afterAll(done => {
     Object.keys(mediaTables).forEach(key => {
-        db.query(`UPDATE ${mediaTables[key]} SET lockedBy_id = NULL`, (err, rows, fields) => {
+        db.query(`DELETE from ${mediaTables[key]}`, (err, rows, fields) => {
             if (err) {
                 console.log('Error while deleting foreign keys');
-                // process.exit(1);
-                throw err;
+                process.exit(1);
             }
         });
     });
+
     const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
     db.query(deleteUsersItemsQuery, (err, rows, fields) => {
         if (err) {
             console.log('Error while wiping out users test db');
             process.exit(1);
         }
-
-        Object.keys(mediaTables).forEach(key => {
-            const deleteCatalogItemsQuery = db.format('DELETE FROM ??', mediaTables[key]);
-            db.query(deleteCatalogItemsQuery, (err, rows, fields) => {
-                if (err) {
-                    console.log('Error while wiping out catalog test dbs');
-                    process.exit(1);
-                }
-            });
-        });
-
         db.end(function (err) {
             if (err) {
                 return console.log('error:' + err.message);

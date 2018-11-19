@@ -32,7 +32,7 @@ exports.up = function(db) {
     db.addColumn('magazines', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
-            name: 'locked_by_id_magazines_fk',
+            name: 'lockedBy_id_magazines_fk',
             table: 'users',
             rules: {
                 onDelete: 'NO ACTION'
@@ -43,10 +43,10 @@ exports.up = function(db) {
         if (err) throw err;
         db.addColumn('magazines', 'lockedAt', { type: 'datetime', defaultValue: null });
     });
-    db.addColumn('movies', 'locked_by_id', {
+    db.addColumn('movies', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
-            name: 'locked_by_id_movies_fk',
+            name: 'lockedBy_id_movies_fk',
             table: 'users',
             rules: {
                 onDelete: 'NO ACTION'
@@ -60,7 +60,7 @@ exports.up = function(db) {
     return db.addColumn('music', 'lockedBy_id', {
         type: 'int',
         foreignKey: {
-            name: 'locked_by_id_music_fk',
+            name: 'lockedBy_id_music_fk',
             table: 'users',
             rules: {
                 onDelete: 'NO ACTION'
@@ -78,13 +78,13 @@ exports.down = function(db) {
     db.removeColumn('movies', 'lockedAt');
     db.removeColumn('magazines', 'lockedAt');
     db.removeColumn('books', 'lockedAt');
-    return db.removeForeignKey('books', 'locked_by_id_books_fk', err => {
+    return db.removeForeignKey('books', 'lockedBy_id_books_fk', err => {
         if (err) throw err;
-        db.removeForeignKey('movies', 'locked_by_id_movies_fk', err => {
+        db.removeForeignKey('movies', 'lockedBy_id_movies_fk', err => {
             if (err) throw err;
-            db.removeForeignKey('music', 'locked_by_id_music_fk', err => {
+            db.removeForeignKey('music', 'lockedBy_id_music_fk', err => {
                 if (err) throw err;
-                db.removeForeignKey('magazines', 'locked_by_id_magazines_fk', err => {
+                db.removeForeignKey('magazines', 'lockedBy_id_magazines_fk', err => {
                     if (err) throw err;
                     db.removeColumn('books', 'lockedBy_id');
                     db.removeColumn('magazines', 'lockedBy_id');

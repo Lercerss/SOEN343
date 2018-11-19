@@ -53,7 +53,7 @@ export class Catalog {
                 if (rows[0].lockedBy_id === userId && timePassed < (10 * 60 * 1000)){
                     MediaGateway.editMedia(type, id, fields, callback);
                 } else {
-                    let error = new Error('Meida is currently being edited by another user');
+                    let error = new Error('Media is currently being edited by another user');
                     error.code = 400;
                     callback(error);
                 }
