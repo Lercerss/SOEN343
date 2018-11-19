@@ -124,7 +124,9 @@ export function getLock(req, res) {
                         return;
                     }
                 }
-                res.status(200).send();
+                res.status(200).send({
+                    lockedAt: result[0]
+                });
             });
         }
     });

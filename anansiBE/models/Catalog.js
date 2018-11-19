@@ -81,15 +81,18 @@ export class Catalog {
                 let error = new Error('Media item is currently being edited by another user try again at ' + unlockTime);
                 error.code = 409;
                 callback(error);
+            } else if (rows[0].lockedBy_id === userId) {
+                console.log(Date.parse(rows[0].lockedAt) / 1000);
+                callback(null, [Date.parse(rows[0].lockedAt) / 1000]);
             } else {
                 MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
                     if (err){
                         var error = new Error('There was an error querying the database');
                         error.code = 500;
-                        callback(error);
+                        callback(error, rows);
                         return;
                     }
-                    callback(err, rows);
+                    callback(err, [Date.now()]);
                 });
             }
         });

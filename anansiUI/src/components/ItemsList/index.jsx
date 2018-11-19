@@ -64,6 +64,7 @@ export default class ItemsList extends React.Component {
     handleEdit = item => {
         getLock(item.type, item.itemInfo.id)
             .then(response => {
+                console.log(response);
                 this.setState({
                     isEditFormShown: true,
                     editFormMediaType: item.type,
