@@ -115,3 +115,9 @@ export function deleteItem(type, itemInfo) {
         }
     });
 }
+
+export function getLoans() {
+    return axios.post(`${backendURL}media/loans/`,{
+        
+    })
+}

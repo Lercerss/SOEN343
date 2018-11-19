@@ -7,14 +7,14 @@ export function displayItems(req, res) {
             return;
         }
         Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (err, catalog, size) => {
-            if (err){
-                if (err.message.includes('database')){
+            if (err) {
+                if (err.message.includes('database')) {
                     res.status(500).send({
                         message: err.message,
                         error: err
                     });
                     return;
-                } else if (err.message.includes('media')){
+                } else if (err.message.includes('media')) {
                     res.status(400).send({
                         message: err.message,
                         error: err
@@ -127,3 +127,29 @@ export function deleteItem(req, res) {
         }
     });
 }
+
+export function getLoans(req, res) {
+    console.log('entered getloans');
+  
+        console.log('entering send');
+        res.status(200).send([{
+            itemInfo: { id:1, title: 'Perdido Street Station' },
+            id: 1,
+            item_type: 'book',
+            copy_id:1,
+            user_id:7,
+            loan_ts: new Date("December 20, 1995 23:15:30").getTime(),
+            return_ts: new Date("December 25, 1995 23:15:30").getTime()
+        },
+        {itemInfo: { id:2, title: 'second clear better audio' },
+            id: 2,
+            item_type: 'book',
+            copy_id:1,
+            user_id:7,
+            loan_ts: new Date().getTime(),
+            return_ts: new Date().getTime()
+    }
+        ]);   
+
+}
+    

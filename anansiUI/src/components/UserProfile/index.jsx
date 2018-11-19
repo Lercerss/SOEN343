@@ -2,11 +2,12 @@ import React from 'react';
 import { Card, Button, Icon, Avatar, List, Modal } from 'antd';
 import { Link } from 'react-router-dom';
 import { getUserProfile } from '../../utils/httpUtils';
+import LoanedList from './LoanedList';
 
 export default class UserProfile extends React.Component{
     
     state = {
-        user: {}
+        user: {},
     }
 
     componentDidMount(){
@@ -31,10 +32,12 @@ export default class UserProfile extends React.Component{
         }
         
     }
+
     render() {
         if (Object.keys(this.state.user).length === 0) {
             return <h2>Loading...</h2>;
         }
+    
 
         const styles = {
             Card: {
@@ -48,6 +51,7 @@ export default class UserProfile extends React.Component{
         const { user } = this.state;
         const isCurrentUserAdmin = this.props.isCurrentUserAdmin;
         const initials = this.getInitials(user.firstName, user.lastName);
+        
         const data = [
             {
                 title: 'First name',
@@ -105,6 +109,11 @@ export default class UserProfile extends React.Component{
                         )}
                     />
                 </Card>
+                <Card>
+                    <p><b>Your Loans</b></p>
+                    <LoanedList/> 
+                </Card>
+                
             </div>
             
         )
