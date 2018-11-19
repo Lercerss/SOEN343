@@ -71,20 +71,17 @@ export class MediaGateway {
                     var now = moment();
                     var values = [];
                     var m;
-                    if (bookIds !== null && bookIds.length > 0) {
-                        for (var b in bookIds) {
-                            values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
-                        }
-                        const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
-                            [values]
-                        );
-                        db.query(query, (err) => {
-                            if (err) {
-                                callback(err);
-                            }
-                        });
+                    for (var b in bookIds) {
+                        values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                     }
-                    if (movieIds !== null && movieIds.length > 0) {
+                    const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
+                        [values]
+                    );
+                    db.query(query, (err) => {
+                        if (err) {
+                            callback(err);
+                        }
+                        values = [];
                         for (m in movieIds) {
                             values.push(['movie', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
@@ -95,21 +92,21 @@ export class MediaGateway {
                             if (err) {
                                 callback(err);
                             }
-                        });
-                    }
-                    if (musicIds !== null && musicIds.length > 0) {
-                        for (m in musicIds) {
-                            values.push(['music', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
-                        }
-                        const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
-                            [values]
-                        );
-                        db.query(query, (err) => {
-                            if (err) {
-                                callback(err);
+                            values = [];
+                            for (m in musicIds) {
+                                values.push(['music', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                             }
+                            const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
+                                [values]
+                            );
+                            db.query(query, (err, rows) => {
+                                if (err) {
+                                    callback(err);
+                                }
+                                callback(null, rows);
+                            });
                         });
-                    }
+                    });
                 });
             });
         });
