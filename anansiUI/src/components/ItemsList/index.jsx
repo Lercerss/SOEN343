@@ -16,7 +16,7 @@ export default class ItemsList extends React.Component {
         editFormMediaType: '',
         itemInfo: undefined,
         catalogSize: 0,
-        filters: {first:0},
+        filters: { mediaType: null, fields: {} },
         order: {},
         detailsIndex: -1
     };
@@ -45,15 +45,13 @@ export default class ItemsList extends React.Component {
             });
     }
     fetchPage = page => {
-        if (this.state.filters.first === 0) {
-            this.state.filters = { mediaType: null, fields: {} };
-        }
         viewItems(page, this.state.filters, this.state.order)
 
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
-                    catalogSize: response.data.size
+                    catalogSize: response.data.size,
+                    detailsIndex: -1
                 });
             })
             .catch(reason => {
