@@ -232,13 +232,13 @@ export class MediaGateway {
     static releaseLock(type, userId, mediaId, callback){
         var query;
         if (type === 'Book') {
-            query = db.format('UPDATE books SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [userId, mediaId]);
+            query = db.format('UPDATE books SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
         } else if (type === 'Magazine') {
-            query = db.format('UPDATE magazines SET lockedBy_id = NULL, lockedAt = NULL WHERE id =?', [userId, mediaId]);
+            query = db.format('UPDATE magazines SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
         } else if (type === 'Music'){
-            query = db.format('UPDATE music SET lockedBy_id = NULL, lockedAt = NULL', [userId, mediaId]);
+            query = db.format('UPDATE music SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
         } else if (type === 'Movie'){
-            query = db.format('UPDATE movies SET lockedBy_id = NULL, lockedAt = NULL', [userId, mediaId]);
+            query = db.format('UPDATE movies SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
         }
         db.query(query, (err, rows, fields) => {
             callback(err, rows);

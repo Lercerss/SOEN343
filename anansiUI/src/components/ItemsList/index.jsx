@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Button, Card, Modal, Row, Col, Icon } from 'antd';
 import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
-import { deleteItem, viewItems } from '../../utils/httpUtils';
+import { deleteItem, viewItems, getLock, releaseLock } from '../../utils/httpUtils';
 import MediaDetails from '../MediaDetails';
 
 function compareMediaItems(item, type, other, otherType) {
@@ -59,14 +59,23 @@ export default class ItemsList extends React.Component {
                     title: 'Error fetching catalog items',
                     content: reason.message
                 });
-            });
+            });            
     };
     handleEdit = item => {
-        this.setState({
-            isEditFormShown: true,
-            editFormMediaType: item.type,
-            itemInfo: item.itemInfo
-        });
+        getLock(item.type, item.itemInfo.id)
+            .then(response => {
+                this.setState({
+                    isEditFormShown: true,
+                    editFormMediaType: item.type,
+                    itemInfo: item.itemInfo
+                });
+            })
+            .catch(reason => {
+                Modal.error({
+                    title: "Error because another user is editing the item",
+                    content: reason.message
+                });
+            });
     };
     handleDelete = item => {
         deleteItem(item.type, item.itemInfo)
@@ -82,14 +91,14 @@ export default class ItemsList extends React.Component {
                 console.log(err);
             });
     };
-    handleClose = itemInfo => {
-        if (!itemInfo) {
-            this.setState({
-                isEditFormShown: false,
-                editFormMediaType: ''
-            });
-            return;
-        }
+    handleModalCancel = itemInfo => {
+        releaseLock(this.state.editFormMediaType, itemInfo.id);
+        this.setState({
+            isEditFormShown: false,
+            editFormMediaType: ""
+        });
+    }
+    handleClose = itemInfo => {        
         const items = this.state.itemList;
         items[
             items.findIndex(el =>
@@ -281,7 +290,7 @@ export default class ItemsList extends React.Component {
                 <Modal
                     visible={this.state.isEditFormShown}
                     title="Edit Item"
-                    onCancel={e => this.handleClose(null)}
+                    onCancel={e => this.handleModalCancel(itemInfo)}
                     // Removes default footer
                     footer={null}
                 >

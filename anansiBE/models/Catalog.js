@@ -64,7 +64,7 @@ export class Catalog {
     static getLock(type, userId, mediaId, callback) {
         MediaGateway.findMediaById(type, mediaId, (err, rows) => {
             if (err) {
-                err.code(500);
+                err.code = 500;
                 callback(err);
                 return;
             } else if (rows.length === 0) {

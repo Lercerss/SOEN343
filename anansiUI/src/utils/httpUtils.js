@@ -106,27 +106,23 @@ export function editItem(type, itemInfo) {
     });
 }
 
-export function getLock(type, id, username, token) {
+export function getLock(type, id) {
     let req = client(Cookies.get('jwt'));
     return req.post(`${backendURL}item/get-lock/`, {
         type: type,
-        id: id,
-        username: username,
-        token: token
+        id: id
     });
 }
 
-export function releaseLock(type, id, username, token) {
+export function releaseLock(type, id) {
     let req = client(Cookies.get('jwt'));
     return req.post(`${backendURL}item/release-lock/`, {
         type: type,
-        id: id,
-        username: username,
-        token: token
+        id: id
     });
 }
 
-export function deleteItem(type, itemInfo, token) {
+export function deleteItem(type, itemInfo) {
     let req = client(Cookies.get('jwt'));
     return req.delete(`${backendURL}item/delete/`, {
         data: {
