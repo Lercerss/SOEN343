@@ -75,7 +75,6 @@ export class UserRegistry {
                     if (valid) {
                         if (user.loggedIn) {
                             let timeDelta = (Date.now() - user.timestamp) / (1000 * 60 * 60);
-
                             if (timeDelta < 1) {
                                 let err = new Error('This account is logged in elsewhere');
                                 err.httpStatusCode = 401;
