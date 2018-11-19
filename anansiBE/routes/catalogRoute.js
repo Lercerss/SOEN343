@@ -129,7 +129,7 @@ export function deleteItem(req, res) {
 }
 
 export function returnCopies(req, res) {
-    validateToken(req.body.token, res, decoded => {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
             if (err) {
                 console.log(err);
@@ -137,7 +137,6 @@ export function returnCopies(req, res) {
                     message: 'Could not return item',
                     error: err
                 });
-
                 return;
             }
             res.status(200).send({
