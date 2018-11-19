@@ -71,7 +71,7 @@ export class MediaGateway {
                     var now = moment();
                     var values = [];
                     var m;
-                    if (bookIds !== null && bookIds.length > 0) {                        
+                    if (bookIds !== null && bookIds.length > 0) {
                         for (var b in bookIds) {
                             values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
