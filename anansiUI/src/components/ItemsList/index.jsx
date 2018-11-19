@@ -59,7 +59,7 @@ export default class ItemsList extends React.Component {
                     title: 'Error fetching catalog items',
                     content: reason.message
                 });
-            });            
+            });
     };
     handleEdit = item => {
         getLock(item.type, item.itemInfo.id)
