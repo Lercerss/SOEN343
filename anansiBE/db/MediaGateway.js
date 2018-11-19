@@ -361,7 +361,7 @@ export class MediaGateway {
                             return o;
                         });
 
-                        db.query(queryMovie, function(err, rows, _fields) {
+                        db.query(queryMovie, function(err, rows, fields) {
                             if (err) {
                                 callback(new Error('Error querying database.'));
                                 return;
@@ -457,7 +457,7 @@ export class MediaGateway {
 
             console.log(query);
 
-            db.query(query, function(err, rows, _fields) {
+            db.query(query, function(err, rows, fields) {
                 if (err) {
                     console.log(err);
                     callback(new Error('Error querying database.'));
