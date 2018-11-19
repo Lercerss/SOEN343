@@ -82,7 +82,6 @@ export class Catalog {
                 error.code = 409;
                 callback(error);
             } else if (rows[0].lockedBy_id === userId) {
-                console.log(Date.parse(rows[0].lockedAt) / 1000);
                 callback(null, [Date.parse(rows[0].lockedAt) / 1000]);
             } else {
                 MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
