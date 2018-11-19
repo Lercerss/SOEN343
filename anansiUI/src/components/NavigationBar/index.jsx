@@ -16,7 +16,7 @@ export default class NavigationBar extends React.Component {
     };
     render() {
         const { openSignin, openSignup } = this.state;
-        const { handleLogin, handleLogout, loggedIn, isAdmin, username } = this.props;
+        const { handleLogin, handleLogout, loggedIn, isAdmin, username, cart } = this.props;
         let modal;
         if (openSignin) {
             modal = (
@@ -38,28 +38,27 @@ export default class NavigationBar extends React.Component {
                     </div>
                     <div className="navbar_links" />
                     <div className="navbar_auth">
-                        {loggedIn &&(
+                        {loggedIn && (
                             <div className="navbar_button">
                                 <Link to={`/users/${username}`}>
-                                    <button
-                                        className="navbar_button"
-                                    >My Profile</button>
+                                    <button className="navbar_button">My Profile</button>
+                                </Link>
+                            </div>
+                        )}
+                        {!isAdmin && loggedIn && (
+                            <div className="navbar_button">
+                                <Link to={'/cart'}>
+                                    <button className="navbar_button">Cart ({cart.length})</button>
                                 </Link>
                             </div>
                         )}
                         {loggedIn && (
-                            <button
-                                className="navbar_button"
-                                onClick={handleLogout}
-                            >
+                            <button className="navbar_button" onClick={handleLogout}>
                                 Sign Out
                             </button>
                         )}
                         {!loggedIn && (
-                            <button
-                                className="navbar_button"
-                                onClick={this.handleSigninButton}
-                            >
+                            <button className="navbar_button" onClick={this.handleSigninButton}>
                                 Sign In
                             </button>
                         )}

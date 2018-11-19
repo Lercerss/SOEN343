@@ -380,8 +380,9 @@ export class MediaGateway {
 
                                 let compare = 0;
                                 if (Object.keys(ordering).length === 0) return -1;
-                                if (titleA > titleB) {
-                                    if (ordering.title === 'ASC') {
+
+                                if (titleA > titleB){
+                                    if (ordering.title === 'ASC'){
                                         compare = 1;
                                     } else compare = -1;
                                 } else if (titleA < titleB) {
@@ -455,9 +456,12 @@ export class MediaGateway {
                         GROUP BY a.id 
                         ORDER BY ${ orderClause};`;
 
+
             console.log(query);
 
-            db.query(query, function(err, rows, _fields) {
+            db.query(query, function(err, rows, fields) {
+                console.log(query);
+
                 if (err) {
                     console.log(err);
                     callback(new Error('Error querying database.'));
