@@ -1,6 +1,3 @@
-/* eslint-disable no-redeclare */
-/* eslint-disable handle-callback-err */
-/* eslint-disable indent */
 import { DatabaseManager } from './DatabaseManager';
 import moment from 'moment';
 
@@ -229,7 +226,7 @@ export class MediaGateway {
             query = db.format('SELECT * FROM movies WHERE id = ?', id);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, rows, _fields) => {
             callback(err, rows);
         });
     }
@@ -250,7 +247,7 @@ export class MediaGateway {
             ]);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, rows, _fields) => {
             callback(err, rows);
         });
     }
@@ -268,7 +265,7 @@ export class MediaGateway {
             query = db.format('DELETE FROM movies WHERE id = ?', id);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, _rows, _fields) => {
             callback(err);
         });
     }
@@ -328,7 +325,7 @@ export class MediaGateway {
             var movies = [];
             var media = [];
 
-            db.query(queryBook, function(err, rows, fields) {
+            db.query(queryBook, function(err, rows, _fields) {
                 if (err) {
                     callback(new Error('Error querying database.'));
                     return;
@@ -340,7 +337,7 @@ export class MediaGateway {
                     return o;
                 });
 
-                db.query(queryMagazine, function(err, rows, fields) {
+                db.query(queryMagazine, function(err, rows, _fields) {
                     if (err) {
                         callback(new Error('Error querying database.'));
                         return;
@@ -352,7 +349,7 @@ export class MediaGateway {
                         return o;
                     });
 
-                    db.query(queryMusic, function(err, rows, fields) {
+                    db.query(queryMusic, function(err, rows, _fields) {
                         if (err) {
                             callback(new Error('Error querying database.'));
                             return;
@@ -364,7 +361,7 @@ export class MediaGateway {
                             return o;
                         });
 
-                        db.query(queryMovie, function(err, rows, fields) {
+                        db.query(queryMovie, function(err, rows, _fields) {
                             if (err) {
                                 callback(new Error('Error querying database.'));
                                 return;
@@ -403,25 +400,25 @@ export class MediaGateway {
             const mediaTable = 'a';
             var table, copyTable, type;
             switch (filters.mediaType) {
-                case 'Book':
-                    table = 'books';
-                    copyTable = 'book_copies';
-                    type = 'book';
-                    break;
-                case 'Magazine':
-                    table = 'magazines';
-                    copyTable = 'magazine_copies';
-                    type = 'magazine';
-                    break;
-                case 'Movie':
-                    table = 'movies';
-                    copyTable = 'movie_copies';
-                    type = 'movie';
-                    break;
-                case 'Music':
-                    table = 'music';
-                    copyTable = 'music_copies';
-                    type = 'music';
+            case 'Book':
+                table = 'books';
+                copyTable = 'book_copies';
+                type = 'book';
+                break;
+            case 'Magazine':
+                table = 'magazines';
+                copyTable = 'magazine_copies';
+                type = 'magazine';
+                break;
+            case 'Movie':
+                table = 'movies';
+                copyTable = 'movie_copies';
+                type = 'movie';
+                break;
+            case 'Music':
+                table = 'music';
+                copyTable = 'music_copies';
+                type = 'music';
                 break;
             }
 
@@ -460,7 +457,7 @@ export class MediaGateway {
 
             console.log(query);
 
-            db.query(query, function(err, rows, fields) {
+            db.query(query, function(err, rows, _fields) {
                 if (err) {
                     console.log(err);
                     callback(new Error('Error querying database.'));
@@ -481,21 +478,24 @@ export class MediaGateway {
     static updateLoans(id, clientID, callback) {
         var type;
         var copyID;
-        db.query(db.format('SELECT copy_id, user_id, item_type FROM loans WHERE id = ?', id), (err, rows, fields) => {
+        db.query(db.format('SELECT copy_id, user_id, item_type FROM loans WHERE id = ?', id), (err, rows, _fields) => {
             /* since id is primary key, I should not be expecting more than one results.
             Validate that person borrowing is the person who's returning the item. */
+            if (err) {
+                console.error(err);
+                callback(new Error('Error querying database.'));
+                return;
+            }
 
             if (rows[0].user_id !== clientID) {
                 // callback error : user_id associated with the loan is not the same as the client
-
                 callback(new Error('Item must be returned by the person who borrowed it.'));
                 return;
             }
 
-            // Record item type and copy id for use in the next section.
-
             copyID = rows[0].copyID;
             type = rows[0].item_type;
+            // Record item type and copy id for use in the next section.
         });
 
         // validate record of item & copy still exists in database
@@ -504,7 +504,7 @@ export class MediaGateway {
         var copyTable = type + '_copies';
         var query = db.format('SELECT * FROM ' + copyTable + ', ' + table + ' WHERE ' + copyTable + '.id = ?' + ' AND ' + table + '.id = ' + copyTable + '.' + type + '_id', copyID);
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (_err, rows, _fields) => {
             if (rows.length === 0) {
                 // callback error : element or the copy no longer exists in database system.
                 callback(new Error('Item/Copy no longer exists in the database'));
@@ -513,12 +513,11 @@ export class MediaGateway {
 
         // return copy : set return timestamp to current time
 
-        // eslint-disable-next-line no-redeclare
-        var query = db.format('UPDATE loans SET loans.return_ts = ? WHERE id = ?',
+        query = db.format('UPDATE loans SET loans.return_ts = ? WHERE id = ?',
             moment(new Date()).format('YYYY-MM-DD HH:mm:ss'), id);
 
         // return copy : set available to 1 (from 0)
 
-        var query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copyID);
- }
+        query = db.format('UPDATE ' + copyTable + ' SET available = 1 WHERE id = ? AND available = 0', copyID);
+    }
 }
