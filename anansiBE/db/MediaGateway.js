@@ -456,16 +456,8 @@ export class MediaGateway {
                         GROUP BY a.id 
                         ORDER BY ${ orderClause};`;
 
-
             console.log(query);
-<<<<<<< HEAD
             db.query(query, function(err, rows, fields) {
-=======
-
-            db.query(query, function(err, rows, fields) {
-                console.log(query);
-
->>>>>>> 3d27599eb85547b4c32a02283d93f7ef67130129
                 if (err) {
                     console.log(err);
                     callback(new Error('Error querying database.'));
