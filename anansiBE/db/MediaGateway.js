@@ -456,7 +456,6 @@ export class MediaGateway {
                         ORDER BY ${ orderClause};`;
 
             console.log(query);
-
             db.query(query, function(err, rows, fields) {
                 if (err) {
                     console.log(err);
