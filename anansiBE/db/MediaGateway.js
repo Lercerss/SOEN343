@@ -54,7 +54,15 @@ export class MediaGateway {
             }
         }
         this.addBookLoans(bookLoans, user, (err, bookIds) => {
+            if (err) {
+                callback(err);
+                return;
+            }
             this.addMovieLoans(movieLoans, user, (err, movieIds) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
                 this.addMusicLoans(musicLoans, user, (err, musicIds) => {
                     if (err) {
                         callback(err);
@@ -63,7 +71,7 @@ export class MediaGateway {
                     var now = moment();
                     if (bookIds !== null && bookIds.length > 0) {
                         var values = [];
-                        for(b in bookIds) {
+                        for(var b in bookIds) {
                             values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
@@ -72,13 +80,12 @@ export class MediaGateway {
                         db.query(query, (err) => {
                             if (err) {
                                 callback(err);
-                                return;
                             }
                         });
                     }
                     if (movieIds !== null && movieIds.length > 0) {
                         var values = [];
-                        for(m in movieIds) {
+                        for(var m in movieIds) {
                             values.push(['movie', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
@@ -87,13 +94,12 @@ export class MediaGateway {
                         db.query(query, (err) => {
                             if (err) {
                                 callback(err);
-                                return;
                             }
                         });
                     }
                     if (musicIds !== null && musicIds.length > 0) {
                         var values = [];
-                        for(m in musicIds) {
+                        for(var m in musicIds) {
                             values.push(['music', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
@@ -102,7 +108,6 @@ export class MediaGateway {
                         db.query(query, (err) => {
                             if (err) {
                                 callback(err);
-                                return;
                             }
                         });
                     }
@@ -128,7 +133,7 @@ export class MediaGateway {
             }
             // get only one copy of each book
             var bookCopyIds = [];
-            for(var i = 0; i < items; i++) {
+            for (var i = 0; i < items; i++) {
                 if (items[i] === rows.books_id && (!bookCopyIds.includes(rows.id))) {
                     bookCopyIds.push(rows.id);
                 }
@@ -170,7 +175,7 @@ export class MediaGateway {
             }
             // get only one copy of each movie
             var movieCopyIds = [];
-            for(var i = 0; i < items; i++) {
+            for (var i = 0; i < items; i++) {
                 if (items[i] === rows.movies_id && (!movieCopyIds.includes(rows.id))) {
                     movieCopyIds.push(rows.id);
                 }
@@ -212,12 +217,12 @@ export class MediaGateway {
             }
             // get only one copy of each music item
             var musicCopyIds = [];
-            for(var i = 0; i < items; i++) {
+            for (var i = 0; i < items; i++) {
                 if (items[i] === rows.music_id && (!musicCopyIds.includes(rows.id))) {
                     musicCopyIds.push(rows.id);
                 }
             }
-            if (movieCopyIds.length < items.length) {
+            if (musicCopyIds.length < items.length) {
                 // there are less copies available than requestied
                 callback(new Error('Not enough copies available'));
                 return;
