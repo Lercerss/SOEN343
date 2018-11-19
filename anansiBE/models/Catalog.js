@@ -5,6 +5,7 @@ import { Music } from './Music';
 import { MediaGateway } from '../db/MediaGateway';
 
 const pageSize = 15;
+const lockedTimeout = 10 * 60 * 1000;
 
 export class Catalog {
     static addItem(type, fields, callback) {
@@ -50,7 +51,7 @@ export class Catalog {
                     return;
                 }
                 var timePassed = Date.now() - rows[0].lockedAt;
-                if (rows[0].lockedBy_id === userId && timePassed < (10 * 60 * 1000)){
+                if (rows[0].lockedBy_id === userId && timePassed < lockedTimeout){
                     MediaGateway.editMedia(type, id, fields, callback);
                 } else {
                     let error = new Error('Media is currently being edited by another user');
@@ -74,10 +75,10 @@ export class Catalog {
                 return;
             }
             var timePassed = Date.now() - rows[0].lockedAt;
-            var unlockTimeInSeconds = rows[0].lockedAt + (10 * 60 * 1000);
+            var unlockTimeInSeconds = rows[0].lockedAt + lockedTimeout;
             var unlockTime = new Date(unlockTimeInSeconds).toString();
 
-            if (rows[0].lockedBy_id !== null && timePassed < (10 * 60 * 1000) && rows[0].lockedBy_id !== userId) {
+            if (rows[0].lockedBy_id !== null && timePassed < lockedTimeout && rows[0].lockedBy_id !== userId) {
                 let error = new Error('Media item is currently being edited by another user try again at ' + unlockTime);
                 error.code = 409;
                 callback(error);
