@@ -12,6 +12,7 @@ import AddMediaForm from './components/AddMediaForm';
 import PrivateRoute from './components/PrivateRoute';
 import UserProfile from './components/UserProfile';
 import Cart from './components/Cart';
+import Transactions from './components/Transactions';
 import './index.css';
 
 const { Content, Footer } = Layout;
@@ -43,7 +44,8 @@ class App extends React.Component {
         if (this.state.loans.length === 10) {
             Modal.error({
                 title: 'Cannot add items to cart',
-                content: 'You currently have 10 items on loan. Please make a return before adding items to your cart.'
+                content:
+                    'You currently have 10 items on loan. Please make a return before adding items to your cart.'
             });
         } else if (cart.length === 10 - this.state.loans.length) {
             Modal.error({
@@ -54,7 +56,9 @@ class App extends React.Component {
                     '. You can only loan 10 items at a time.'
             });
         } else if (
-            this.state.loans.map(loan => loan.media.type + loan.media.id).includes(item.type + item.itemInfo.id)
+            this.state.loans
+                .map(loan => loan.media.type + loan.media.id)
+                .includes(item.type + item.itemInfo.id)
         ) {
             Modal.error({
                 title: 'Cannot add item to cart',
@@ -91,7 +95,10 @@ class App extends React.Component {
         const { loans } = this.state;
         loans.push(
             ...items.map(item => {
-                return { media: { id: item.itemInfo.id, title: item.itemInfo.title, type: item.type }, id: -1 };
+                return {
+                    media: { id: item.itemInfo.id, title: item.itemInfo.title, type: item.type },
+                    id: -1
+                };
             })
         );
         this.setState(
@@ -202,7 +209,10 @@ class App extends React.Component {
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm />
                                 </PrivateRoute>
-                                <PrivateRoute path="/users/:username" condition={this.state.loggedIn}>
+                                <PrivateRoute
+                                    path="/users/:username"
+                                    condition={this.state.loggedIn}
+                                >
                                     <UserProfile isCurrentUserAdmin={this.state.isAdmin} />
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
@@ -220,7 +230,16 @@ class App extends React.Component {
                                         addItemToCart={this.addItemToCart}
                                     />
                                 </PrivateRoute>
-                                <PrivateRoute path="/cart" condition={this.state.loggedIn && !this.state.isAdmin}>
+                                <PrivateRoute
+                                    path="/media/transactions"
+                                    condition={this.state.isAdmin}
+                                >
+                                    <Transactions />
+                                </PrivateRoute>
+                                <PrivateRoute
+                                    path="/cart"
+                                    condition={this.state.loggedIn && !this.state.isAdmin}
+                                >
                                     <Cart
                                         cart={this.state.cart}
                                         removeItemFromCart={this.removeItemFromCart}

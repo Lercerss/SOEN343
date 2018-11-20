@@ -62,6 +62,9 @@ class AdminSider extends React.Component {
                         <Menu.Item key="4">
                             <Link to="/media/create/">Add New Media </Link>
                         </Menu.Item>
+                        <Menu.Item key="5">
+                            <Link to="/media/transactions/">View Transactions </Link>
+                        </Menu.Item>
                     </SubMenu>
                 </Menu>
             </Sider>
