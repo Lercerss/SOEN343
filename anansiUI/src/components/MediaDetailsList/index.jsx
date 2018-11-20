@@ -29,8 +29,8 @@ export default class MediaDetailsList extends React.Component {
 
         if(copies != null) {
             Object.values(copies).forEach(element => {
-                copyValues.push(Object.values(element))
-            }); 
+                copyValues.push(element.name)
+            });
         }
         
         return (  

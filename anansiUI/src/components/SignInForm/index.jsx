@@ -37,9 +37,9 @@ class SignInForm extends React.Component {
                 this.setState({ sent: true });
                 userLogin(userName, password)
                     .then(response => {
-                        const { username, isAdmin, token } = response.data;
+                        const { username, isAdmin, token, loans } = response.data;
 
-                        handleLogin(username, isAdmin, token);
+                        handleLogin(username, isAdmin, token, loans);
                         this.setState({ sent: false });
                         handleCloseButton();
                     })

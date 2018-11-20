@@ -2,6 +2,8 @@ import { Book } from './Book';
 import { Magazine } from './Magazine';
 import { Movie } from './Movie';
 import { Music } from './Music';
+import { Copy } from './Copy';
+import { Loan } from './Loan';
 import { MediaGateway } from '../db/MediaGateway';
 
 const pageSize = 15;
@@ -35,9 +37,7 @@ export class Catalog {
                     return;
                 }
                 callback(
-                    new Error(
-                        'Media item with the identifier you specified already exists in the database'
-                    ),
+                    new Error('Media item with the identifier you specified already exists in the database'),
                     rows
                 );
                 return;
@@ -85,22 +85,20 @@ export class Catalog {
         });
     }
 
-    static loanCopies(items, user, callback) {
-        var loans = [];
-        MediaGateway.getLoans(user, (err, rows) => {
+    static loanCopies(items, userId, callback) {
+        MediaGateway.getLoans({ user_id: userId, return_ts: 'NULL' }, (err, rows) => {
             if (err) {
                 callback(err);
                 return;
             }
 
-            loans = rows;
-            if ((loans.size() + items.size()) > maxLoans) {
+            if ((rows || []).length + items.length > maxLoans) {
                 let err = new Error('User exceeds maximum allowed number of loans');
-                err.code = 400;
+                err.status = 400;
                 callback(err);
                 return;
             }
-            MediaGateway.addLoans(items, user, callback);
+            MediaGateway.addLoans(items, userId, callback);
         });
     }
 
@@ -110,7 +108,18 @@ export class Catalog {
                 callback(err);
                 return;
             }
-            callback(null, rows);
+            callback(
+                null,
+                rows.map(row => {
+                    const loan = new Loan(row);
+                    loan.media = Object.keys(row)
+                        .filter(key => key.startsWith('media'))
+                        .reduce((acc, cur) => {
+                            return { ...acc, [cur.slice(6)]: row[cur] };
+                        }, {});
+                    return loan;
+                })
+            );
         });
     }
 
@@ -119,16 +128,17 @@ export class Catalog {
 
         jsonArray.forEach(el => {
             var media;
-            if (el.mediaType === 'Book'){
+            if (el.mediaType === 'Book') {
                 media = new Book(el);
-            } else if (el.mediaType === 'Magazine'){
+            } else if (el.mediaType === 'Magazine') {
                 media = new Magazine(el);
-            } else if (el.mediaType === 'Movie'){
+            } else if (el.mediaType === 'Movie') {
                 media = new Movie(el);
-            } else if (el.mediaType === 'Music'){
+            } else if (el.mediaType === 'Music') {
                 media = new Music(el);
             }
-            media.copies = JSON.parse(el.copies);
+            let copyArray = JSON.parse(el.copies);
+            media.copies = copyArray && copyArray.map(copy => new Copy(copy));
             mediaArray.push(media);
         });
         return mediaArray;

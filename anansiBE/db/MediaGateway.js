@@ -23,19 +23,53 @@ export class MediaGateway {
         });
     }
 
-    static getLoans(user, callback) {
-        // returns number of non-returned loans associated with the user
-        const query = db.format('SELECT * FROM loans WHERE user_id = ? AND return_ts = null', [user]);
+    static getLoans(filter, callback) {
+        const where = Object.entries(filter).reduce((acc, cur) => {
+            // Convert filter key-value pairs into where clause
+            const val = cur[1] !== 'NULL' ? ` = '${cur[1]}'` : ` is NULL`;
+            if (acc) {
+                return acc + ` AND l.${cur[0]}${val}`;
+            }
+            return `WHERE l.${cur[0]}${val}`;
+        }, '');
 
-        db.query(query, (err, rows) => {
-            callback(err, rows);
+        const queryFormat = type =>
+            `SELECT
+                l.*,
+                a.id as 'media.id',
+                l.item_type as 'media.type',
+                a.title as 'media.title'
+            FROM loans as l
+                LEFT JOIN ${type}_copies as b
+                    ON l.copy_id = b.id AND l.item_type = '${type.replace(/^./, c => c.toUpperCase())}'
+                INNER JOIN ${type === 'music' ? type : type + 's'} as a
+                    ON b.${type}_id = a.id
+            ${where}`;
+        db.query(queryFormat('book'), (err, bookLoans) => {
+            if (err) {
+                callback(err);
+                return;
+            }
+            db.query(queryFormat('music'), (err, musicLoans) => {
+                if (err) {
+                    callback(err);
+                    return;
+                }
+                db.query(queryFormat('movie'), (err, movieLoans) => {
+                    if (err) {
+                        callback(err);
+                        return;
+                    }
+                    callback(null, [ ...bookLoans, ...musicLoans, ...movieLoans ]);
+                });
+            });
         });
     }
 
     static addLoans(items, user, callback) {
-        var bookLoans = items.filter(item => item.mediaType === 'Book').map(item => item.id);
-        var movieLoans = items.filter(item => item.mediaType === 'Movie').map(item => item.id);
-        var musicLoans = items.filter(item => item.mediaType === 'Music').map(item => item.id);
+        var bookLoans = items.filter(item => item.type === 'Book').map(item => item.itemInfo.id);
+        var movieLoans = items.filter(item => item.type === 'Movie').map(item => item.itemInfo.id);
+        var musicLoans = items.filter(item => item.type === 'Music').map(item => item.itemInfo.id);
         this.selectBookCopies(bookLoans, (err, bookIds) => {
             if (err) {
                 callback(err);
@@ -53,34 +87,37 @@ export class MediaGateway {
                     }
                     var now = moment();
                     var values = [];
-                    for (var book in bookIds) {
+                    for (let book of bookIds) {
                         values.push([
-                            'book',
+                            'Book',
                             book,
                             user,
                             now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            moment(now)
+                                .add(7, 'days')
+                                .format('YYYY-MM-DD HH:mm:ss')
                         ]);
                     }
-                    for (var movie in movieIds) {
+                    for (let movie of movieIds) {
                         values.push([
-                            'movie',
+                            'Movie',
                             movie,
                             user,
                             now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            moment(now)
+                                .add(2, 'days')
+                                .format('YYYY-MM-DD HH:mm:ss')
                         ]);
                     }
-                    for (var music in musicIds) {
+                    for (let music of musicIds) {
                         values.push([
-                            'music',
+                            'Music',
                             music,
                             user,
                             now.format('YYYY-MM-DD HH:mm:ss'),
-                            null,
-                            now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')
+                            moment(now)
+                                .add(2, 'days')
+                                .format('YYYY-MM-DD HH:mm:ss')
                         ]);
                     }
                     const query = db.format(
@@ -92,9 +129,9 @@ export class MediaGateway {
                             callback(err);
                             return;
                         }
-                        db.query(db.format('UPDATE book_copies SET available = FALSE WHERE id IN ?', [bookIds]));
-                        db.query(db.format('UPDATE movie_copies SET available = FALSE WHERE id IN ?', [movieIds]));
-                        db.query(db.format('UPDATE music_copies SET available = FALSE WHERE id IN ?', [musicIds]));
+                        this._updateCopiesAvailability('book_copies', bookIds);
+                        this._updateCopiesAvailability('music_copies', musicIds);
+                        this._updateCopiesAvailability('movie_copies', movieIds);
                         callback(null, rows);
                     });
                 });
@@ -102,8 +139,18 @@ export class MediaGateway {
         });
     }
 
+    static _updateCopiesAvailability(table, ids) {
+        if (ids.length) {
+            db.query(db.format('UPDATE ?? SET available = FALSE WHERE id IN (?)', [table, ids]), err => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
+    }
+
     static selectBookCopies(itemIds, callback) {
-        if (!itemIds) {
+        if (!itemIds || !itemIds.length) {
             callback(null, []);
             return;
         }
@@ -117,9 +164,9 @@ export class MediaGateway {
                 return;
             }
             let copyIds = rows && rows.map(row => row.id);
-            if (!rows || rows.length < itemIds) {
+            if (!rows || rows.length < itemIds.length) {
                 let err = new Error('No copies available');
-                err.code = 400;
+                err.status = 400;
                 err.missingCopies = itemIds.filter(id => !rows || !rows.map(row => row.book_id).includes(id));
                 callback(err);
                 return;
@@ -129,7 +176,7 @@ export class MediaGateway {
     }
 
     static selectMovieCopies(itemIds, callback) {
-        if (!itemIds) {
+        if (!itemIds || !itemIds.length) {
             callback(null, []);
             return;
         }
@@ -143,9 +190,9 @@ export class MediaGateway {
                 return;
             }
             let copyIds = rows && rows.map(row => row.id);
-            if (!rows || rows.length < itemIds) {
+            if (!rows || rows.length < itemIds.length) {
                 let err = new Error('No copies available');
-                err.code = 400;
+                err.status = 400;
                 err.missingCopies = itemIds.filter(id => !rows || !rows.map(row => row.book_id).includes(id));
                 callback(err);
                 return;
@@ -155,7 +202,7 @@ export class MediaGateway {
     }
 
     static selectMusicCopies(itemIds, callback) {
-        if (!itemIds) {
+        if (!itemIds || !itemIds.length) {
             callback(null, []);
             return;
         }
@@ -169,9 +216,9 @@ export class MediaGateway {
                 return;
             }
             let copyIds = rows && rows.map(row => row.id);
-            if (!rows || rows.length < itemIds) {
+            if (!rows || rows.length < itemIds.length) {
                 let err = new Error('No copies available');
-                err.code = 400;
+                err.status = 400;
                 err.missingCopies = itemIds.filter(id => !rows || !rows.map(row => row.book_id).includes(id));
                 callback(err);
                 return;
@@ -423,6 +470,11 @@ export class MediaGateway {
     }
 
     static getItems(filters, ordering, callback) {
+        const copySelectFormat = `CONCAT(
+            '[',
+            GROUP_CONCAT(CONCAT('{"id":', b.id, ',"name":"', b.name, '","available":', b.available, '}') ORDER BY b.id DESC SEPARATOR ','),
+            ']'
+        ) as copies`;
         if (Object.keys(filters).length === 0) {
             callback(new Error('No media type specified for viewing all items'));
             return;
@@ -431,41 +483,25 @@ export class MediaGateway {
         if (!filters.mediaType) {
             var title = filters.fields.title ? " WHERE title LIKE '%" + filters.fields.title + "%'" : '';
             var queryBook = `SELECT a.*,
-                                CONCAT(
-                                    '{',
-                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                                    '}'
-                                ) as copies
+                                ${copySelectFormat}
                                 FROM books AS a
                                 LEFT JOIN book_copies AS b ON a.id = b.book_id
                                 ${title} 
                                 GROUP BY a.id;`;
             var queryMagazine = `SELECT a.*,
-                                CONCAT(
-                                    '{',
-                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                                    '}'
-                                ) as copies
+                                ${copySelectFormat}
                                 FROM magazines AS a
                                 LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
                                 ${title} 
                                 GROUP BY a.id;`;
             var queryMusic = `SELECT a.*,
-                                CONCAT(
-                                    '{',
-                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                                    '}'
-                                ) as copies
+                                ${copySelectFormat}
                                 FROM music AS a
                                 LEFT JOIN music_copies AS b ON a.id = b.music_id
                                 ${title} 
                                 GROUP BY a.id;`;
             var queryMovie = `SELECT a.*,
-                                CONCAT(
-                                    '{',
-                                    GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                                    '}'
-                                ) as copies
+                                ${copySelectFormat}
                                 FROM movies AS a
                                 LEFT JOIN movie_copies AS b ON a.id = b.movie_id
                                 ${title} 
@@ -596,11 +632,7 @@ export class MediaGateway {
             }
 
             var query = `SELECT a.*,
-                        CONCAT(
-                            '{',
-                            GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
-                            '}'
-                        ) as copies
+                        ${copySelectFormat}
                         FROM ${table} AS a
                         LEFT JOIN ${copyTable} AS b ON a.id = b.${type}_id
                         WHERE ${filterClause} 

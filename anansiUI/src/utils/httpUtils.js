@@ -115,3 +115,10 @@ export function deleteItem(type, itemInfo) {
         }
     });
 }
+
+export function loanCopies(items) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/loan`, {
+        items: items
+    });
+}

@@ -45,7 +45,7 @@ export function loanCopies(req, res) {
         }
         Catalog.loanCopies(req.body.items, decoded.data.client_id, err => {
             if (err) {
-                res.status(err.code || 500).send({
+                res.status(err.status || 500).send({
                     message: err.message || 'Could not loan item',
                     error: err
                 });
@@ -66,7 +66,7 @@ export function getLoans(req, res) {
         }
         Catalog.getLoans(req.body.filter, (err, loans) => {
             if (err) {
-                res.status(err.code || 500).send({
+                res.status(err.status || 500).send({
                     message: err.message || 'Could not get loans',
                     error: err
                 });

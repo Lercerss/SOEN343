@@ -67,7 +67,7 @@ class MovieForm extends React.Component {
             }
         };
         getFieldDecorator('copyIds', {
-            initialValue: (item.copies && Object.keys(item.copies).map(e => parseInt(e))) || []
+            initialValue: (item.copies && item.copies.map(e => e.id)) || []
         });
         return (
             <Form onSubmit={e => this.props.handleSubmit(e, this.props.form, this.deleted)} className="Form">
@@ -250,7 +250,7 @@ class MovieForm extends React.Component {
                                         }
                                     ],
                                     validateTrigger: ['onBlur'],
-                                    initialValue: item.copies && item.copies[copy]
+                                    initialValue: item.copies && (item.copies.find(el => el.id === copy)|| {}).name
                                 })(<Input placeholder="Copy identifier" style={{ width: '80%', marginRight: 8 }} />)}
                                 <Button type="default" onClick={() => this.handleDelete(copy)}>
                                     -
