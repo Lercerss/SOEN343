@@ -11,7 +11,8 @@
         "space-before-function-paren": "off",
         "template-curly-spacing": "off",
         "no-useless-constructor": "off",
-        "no-array-constructor": "off"
+        "no-array-constructor": "off",
+        "max-len": ["warn", { "code": 120 }]
     },
     "env": {
         "jest": true
