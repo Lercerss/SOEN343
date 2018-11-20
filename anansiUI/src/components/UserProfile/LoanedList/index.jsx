@@ -9,7 +9,6 @@ class LoanedList extends React.Component {
     componentDidMount() {
         getLoans()
             .then(response => {
-                console.log(response);
                 response.data.forEach(item => {
                     if (Date.now() > item.return_ts) {
                         item.isExpired = true;
@@ -17,11 +16,9 @@ class LoanedList extends React.Component {
                         item.isExpire = false;
                     }
                 });
-                console.log(response.data);
                 this.setState({
                     loanItems: response.data
                 });
-                console.log(this.state.loanItems);
             })
             .catch(reason => {
                 console.debug(`Loan Items error:${reason}`);
@@ -31,11 +28,9 @@ class LoanedList extends React.Component {
         e.preventDefault();
         const { form } = this.props;
         const values = form.getFieldsValue();
-        console.log(values);
     };
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { token } = this.props;
         const { loanItems } = this.state;
         const formItemLayout = {
             labelCol: {
@@ -72,7 +67,7 @@ class LoanedList extends React.Component {
                 </Form.Item>
             );
         });
-        // console.log(this.state.loanItems)
+
         return (
             <Form layout="horizontal" onSubmit={this.handleReturn}>
                 {formItems}
