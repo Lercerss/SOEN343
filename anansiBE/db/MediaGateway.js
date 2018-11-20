@@ -92,7 +92,7 @@ export class MediaGateway {
                                 callback(err);
                             }
                             values = [];
-                            for (music in musicIds) {
+                            for (var music in musicIds) {
                                 values.push(['music', music, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                             }
                             const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
