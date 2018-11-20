@@ -94,11 +94,23 @@ export class Catalog {
             }
 
             loans = rows;
-            if ((loans.size() + items.size()) < maxLoans) {
-                MediaGateway.addLoans(items, user, callback);
-            } else {
-                callback(new Error('User exceeds maximum allowed number of loans'));
+            if ((loans.size() + items.size()) > maxLoans) {
+                let err = new Error('User exceeds maximum allowed number of loans');
+                err.code = 400;
+                callback(err);
+                return;
             }
+            MediaGateway.addLoans(items, user, callback);
+        });
+    }
+
+    static getLoans(filter, callback) {
+        MediaGateway.getLoans(filter, (err, rows) => {
+            if (err) {
+                callback(err);
+                return;
+            }
+            callback(null, rows);
         });
     }
 

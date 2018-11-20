@@ -40,13 +40,13 @@ export function displayItems(req, res) {
 export function loanCopies(req, res) {
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.client_id) {
+            res.status(403).send();
             return;
         }
         Catalog.loanCopies(req.body.items, decoded.data.client_id, err => {
             if (err) {
-                console.log(err);
-                res.status(500).send({
-                    message: 'Could not loan item',
+                res.status(err.code || 500).send({
+                    message: err.message || 'Could not loan item',
                     error: err
                 });
                 return;
@@ -54,6 +54,25 @@ export function loanCopies(req, res) {
             res.status(200).send({
                 message: 'Items were loaned'
             });
+        });
+    });
+}
+
+export function getLoans(req, res) {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
+        if (!decoded.data.client_id) {
+            res.status(403).send();
+            return;
+        }
+        Catalog.getLoans(req.body.filter, (err, loans) => {
+            if (err) {
+                res.status(err.code || 500).send({
+                    message: err.message || 'Could not get loans',
+                    error: err
+                });
+                return;
+            }
+            res.status(200).send(loans);
         });
     });
 }
