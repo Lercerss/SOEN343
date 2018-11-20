@@ -127,3 +127,17 @@ export function deleteItem(req, res) {
         }
     });
 }
+
+export function returnCopies(req, res, next) {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
+        Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
+            if (err) {
+                next(err);
+                return;
+            }
+            res.status(200).send({
+                message: 'Items were successfully returned'
+            });
+        });
+    });
+}
