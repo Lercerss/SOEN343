@@ -3,15 +3,15 @@
     "plugins": ["jest"],
     "rules": {
         "semi": [2, "always"],
-        "indent": ["error", 4],
+        "indent": ["error", 4, { "SwitchCase": 1 }],
         "no-unused-vars": "warn",
         "comma-dangle": "off",
         "camelcase": "error",
         "space-before-blocks": "off",
-        "space-before-function-paren":"off",
-        "template-curly-spacing":"off",
+        "space-before-function-paren": "off",
+        "template-curly-spacing": "off",
         "no-useless-constructor": "off",
-        "no-array-constructor":"off"
+        "no-array-constructor": "off"
     },
     "env": {
         "jest": true
