@@ -372,6 +372,7 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
                             el.itemInfo.title.slice(0, -1);
                             done();
                         });
+                    done();
                 });
         });
     });
@@ -401,7 +402,6 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
                             el.itemInfo.title.slice(0, -1);
                             done();
                         });
-                    done();
                 });
         });
     });
@@ -425,28 +425,34 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
 });
 
 afterAll(done => {
+    var delPromises = [];
     Object.keys(mediaTables).forEach(key => {
-        db.query(`DELETE from ${mediaTables[key]}`, (err, rows, fields) => {
-            if (err) {
-                console.log('Error while deleting foreign keys');
-                process.exit(1);
-            }
+        let delProm = new Promise((resolve, reject) => {
+            db.query(`DELETE from ${mediaTables[key]}`, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while deleting foreign keys');
+                    process.exit(1);
+                }
+                resolve();
+            });
         });
+        delPromises.push(delProm);
     });
-
-    const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
-    db.query(deleteUsersItemsQuery, (err, rows, fields) => {
-        if (err) {
-            console.log('Error while wiping out users test db');
-            process.exit(1);
-        }
-        db.end(function (err) {
-            if (err) {
-                return console.log('error:' + err.message);
-            }
-
-            console.log('Closed the database connection.');
-            done();
+    return Promise.all(delPromises)
+        .then(values => {
+            const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
+            db.query(deleteUsersItemsQuery, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while wiping out users test db');
+                    process.exit(1);
+                }
+                db.end(function (err) {
+                    if (err) {
+                        return console.log('error:' + err.message);
+                    }
+                    console.log('Closed the database connection.');
+                    done();
+                });
+            });
         });
-    });
 });

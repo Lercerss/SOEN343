@@ -83,7 +83,7 @@ export class Catalog {
                 error.code = 409;
                 callback(error);
             } else if (rows[0].lockedBy_id === userId) {
-                callback(null, [Date.parse(rows[0].lockedAt) / 1000]);
+                callback(null, [parseInt(Date.parse(rows[0].lockedAt) / 1000)]);
             } else {
                 MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
                     if (err){
@@ -92,7 +92,7 @@ export class Catalog {
                         callback(error, rows);
                         return;
                     }
-                    callback(err, [Date.now()]);
+                    callback(err, [parseInt(Date.now() / 1000)]);
                 });
             }
         });

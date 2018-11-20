@@ -4,6 +4,7 @@ import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
 import { deleteItem, viewItems, getLock, releaseLock } from '../../utils/httpUtils';
 import MediaDetails from '../MediaDetails';
+import EditTimer from '../MediaForm/EditTimer'
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -18,7 +19,8 @@ export default class ItemsList extends React.Component {
         catalogSize: 0,
         filters: { mediaType: null, fields: {} },
         order: {},
-        detailsIndex: -1
+        detailsIndex: -1,
+        lockedAt: 0
     };
 
     listStyle = {
@@ -64,8 +66,8 @@ export default class ItemsList extends React.Component {
     handleEdit = item => {
         getLock(item.type, item.itemInfo.id)
             .then(response => {
-                console.log(response);
                 this.setState({
+                    lockedAt: response.data.lockedAt,
                     isEditFormShown: true,
                     editFormMediaType: item.type,
                     itemInfo: item.itemInfo
@@ -111,7 +113,6 @@ export default class ItemsList extends React.Component {
             editFormMediaType: '',
             itemsList: items
         });
-        console.log(items);
     };
     handleFilters = filters => {      
         filters.mediaType = filters.mediaType ? filters.mediaType : null;
@@ -131,7 +132,6 @@ export default class ItemsList extends React.Component {
             });
     }
     handleOrder = order => {
-        console.log(order);
         this.setState({order: order }, 
             function() { this.fetchPage(1); });
     };
@@ -290,9 +290,15 @@ export default class ItemsList extends React.Component {
                 />
                 <Modal
                     visible={this.state.isEditFormShown}
-                    title="Edit Item"
+                    title={
+                        <Row>
+                            <Col span='12'>Edit Item</Col>
+                            <Col span='12'>
+                                <EditTimer lockedAt={this.state.lockedAt} isEditFormShown={this.state.isEditFormShown} style={this.listStyle.rightAlign} />
+                            </Col>
+                        </Row>
+                    }
                     onCancel={e => this.handleModalCancel(itemInfo)}
-                    // Removes default footer
                     footer={null}
                 >
                     <div className="MetaForm">
