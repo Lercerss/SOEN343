@@ -6,39 +6,34 @@ export function displayItems(req, res) {
         if (!decoded.data.client_id) {
             return;
         }
-        Catalog.viewItems(
-            req.body.nPage,
-            req.body.filters,
-            req.body.ordering,
-            (err, catalog, size) => {
-                if (err) {
-                    if (err.message.includes('database')) {
-                        res.status(500).send({
-                            message: err.message,
-                            error: err
-                        });
-                        return;
-                    } else if (err.message.includes('media')) {
-                        res.status(400).send({
-                            message: err.message,
-                            error: err
-                        });
-                        return;
-                    }
+        Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (err, catalog, size) => {
+            if (err) {
+                if (err.message.includes('database')) {
+                    res.status(500).send({
+                        message: err.message,
+                        error: err
+                    });
+                    return;
+                } else if (err.message.includes('media')) {
+                    res.status(400).send({
+                        message: err.message,
+                        error: err
+                    });
+                    return;
                 }
-                let typedCatalog = catalog.map(val => {
-                    return {
-                        itemInfo: val,
-                        type: val.constructor.name
-                    };
-                });
-                let response = {
-                    catalog: typedCatalog,
-                    size: size
-                };
-                res.status(200).send(response);
             }
-        );
+            let typedCatalog = catalog.map(val => {
+                return {
+                    itemInfo: val,
+                    type: val.constructor.name
+                };
+            });
+            let response = {
+                catalog: typedCatalog,
+                size: size
+            };
+            res.status(200).send(response);
+        });
     });
 }
 
