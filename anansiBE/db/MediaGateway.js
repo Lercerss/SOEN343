@@ -70,9 +70,8 @@ export class MediaGateway {
                     }
                     var now = moment();
                     var values = [];
-                    var m;
-                    for (var b in bookIds) {
-                        values.push(['book', b, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
+                    for (var book in bookIds) {
+                        values.push(['book', book, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(7, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                     }
                     const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
                         [values]
@@ -82,8 +81,8 @@ export class MediaGateway {
                             callback(err);
                         }
                         values = [];
-                        for (m in movieIds) {
-                            values.push(['movie', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
+                        for (var movie in movieIds) {
+                            values.push(['movie', movie, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                         }
                         const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
                             [values]
@@ -93,8 +92,8 @@ export class MediaGateway {
                                 callback(err);
                             }
                             values = [];
-                            for (m in musicIds) {
-                                values.push(['music', m, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
+                            for (music in musicIds) {
+                                values.push(['music', music, user, now.format('YYYY-MM-DD HH:mm:ss'), null, now.add(2, 'days').format('YYYY-MM-DD HH:mm:ss')]);
                             }
                             const query = db.format('INSERT INTO loans(item_type, copy_id, user_id, loan_ts, expectedReturn) VALUES ?',
                                 [values]
