@@ -117,7 +117,6 @@ export function deleteItem(type, itemInfo) {
 }
 
 export function getLoans() {
-    return axios.post(`${backendURL}media/loans/`,{
-        
-    })
+    let req = client(Cookies.get('jwt'));
+    return req.get(`${backendURL}item/loans/`);
 }

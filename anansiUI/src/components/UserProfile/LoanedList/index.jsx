@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Checkbox, Form } from 'antd';
+import { Button, Checkbox, Form, Modal } from 'antd';
 import { getLoans } from '../../../utils/httpUtils';
 
 class LoanedList extends React.Component {
@@ -10,10 +10,10 @@ class LoanedList extends React.Component {
         getLoans()
             .then(response => {
                 response.data.forEach(item => {
-                    if (Date.now() > item.return_ts) {
+                    if (Date.now() > item.expectedReturn) {
                         item.isExpired = true;
                     } else {
-                        item.isExpire = false;
+                        item.isExpired = false;
                     }
                 });
                 this.setState({
@@ -21,7 +21,10 @@ class LoanedList extends React.Component {
                 });
             })
             .catch(reason => {
-                console.debug(`Loan Items error:${reason}`);
+                Modal.error({
+                    title: 'Error fetching loaned items',
+                    content: `Loan items error:${reason}`
+                });
             });
     }
     handleReturn = e => {
@@ -41,9 +44,7 @@ class LoanedList extends React.Component {
             }
         };
         const buttonLayout = {
-            wrapperCol: {
-                xs: { span: 16, offset: 8 }
-            }
+            textAlign: 'center'
         };
         if (!loanItems) {
             return <h2>Loading...</h2>;
@@ -63,18 +64,26 @@ class LoanedList extends React.Component {
                         valuePropName: 'checked',
                         initialValue: false
                     })(<Checkbox onChange={this.onChange} />)}
-                    {item.isExpired ? <span>This Item is Overdue!</span> : ''}
+                    {item.isExpired ? <span>This item is overdue!</span> : ''}
                 </Form.Item>
             );
         });
-
         return (
             <Form layout="horizontal" onSubmit={this.handleReturn}>
                 {formItems}
-                <Form.Item {...buttonLayout} key="util">
-                    <Button type="primary" htmlType="submit">
-                        Return Items
-                    </Button>
+                <Form.Item key="util" style={buttonLayout}>
+                    {(formItems.length === 0) ?
+                        <Button type="primary"
+                                htmlType="submit"
+                                disabled        
+                        >Return Items
+                        </Button>
+                    :
+                        <Button type="primary" htmlType="submit">
+                            Return Items
+                        </Button>
+                    }
+                    
                 </Form.Item>
             </Form>
         );

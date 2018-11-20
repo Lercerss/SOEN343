@@ -109,11 +109,12 @@ export default class UserProfile extends React.Component{
                         )}
                     />
                 </Card>
-                <Card>
-                    <p><b>Your Loans</b></p>
-                    <LoanedList/> 
-                </Card>
-                
+                {(!user.isAdmin &&
+                        <Card>
+                            <p><b>Your Loans</b></p>
+                            <LoanedList/> 
+                        </Card>
+                )}
             </div>
             
         )
