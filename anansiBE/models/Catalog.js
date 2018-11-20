@@ -86,13 +86,13 @@ export class Catalog {
     }
 
     static returnCopies(loans, clientID, callback) {
-        loans.forEach(id => {
-            MediaGateway.updateLoans(id, clientID, (err) => {
-                if (err) {
-                    callback(err);
-                }
-            });
-        });
+        if (loans.length > 0) {
+            MediaGateway.updateLoans(loans, clientID, callback);
+        } else {
+            let err = new Error('List of return must be greater than 0');
+            err.httpStatusCode = 400;
+            callback(err);
+        }
     }
 
     static jsonToMedia(jsonArray) {

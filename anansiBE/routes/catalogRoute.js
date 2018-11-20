@@ -6,34 +6,39 @@ export function displayItems(req, res) {
         if (!decoded.data.client_id) {
             return;
         }
-        Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (err, catalog, size) => {
-            if (err){
-                if (err.message.includes('database')){
-                    res.status(500).send({
-                        message: err.message,
-                        error: err
-                    });
-                    return;
-                } else if (err.message.includes('media')){
-                    res.status(400).send({
-                        message: err.message,
-                        error: err
-                    });
-                    return;
+        Catalog.viewItems(
+            req.body.nPage,
+            req.body.filters,
+            req.body.ordering,
+            (err, catalog, size) => {
+                if (err) {
+                    if (err.message.includes('database')) {
+                        res.status(500).send({
+                            message: err.message,
+                            error: err
+                        });
+                        return;
+                    } else if (err.message.includes('media')) {
+                        res.status(400).send({
+                            message: err.message,
+                            error: err
+                        });
+                        return;
+                    }
                 }
-            }
-            let typedCatalog = catalog.map(val => {
-                return {
-                    itemInfo: val,
-                    type: val.constructor.name
+                let typedCatalog = catalog.map(val => {
+                    return {
+                        itemInfo: val,
+                        type: val.constructor.name
+                    };
+                });
+                let response = {
+                    catalog: typedCatalog,
+                    size: size
                 };
-            });
-            let response = {
-                catalog: typedCatalog,
-                size: size
-            };
-            res.status(200).send(response);
-        });
+                res.status(200).send(response);
+            }
+        );
     });
 }
 
@@ -128,19 +133,15 @@ export function deleteItem(req, res) {
     });
 }
 
-export function returnCopies(req, res) {
+export function returnCopies(req, res, next) {
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
             if (err) {
-                console.log(err);
-                res.status(500).send({
-                    message: 'Could not return item',
-                    error: err
-                });
+                next(err);
                 return;
             }
             res.status(200).send({
-                message: 'Item was successfully returned'
+                message: 'Items were successfully returned'
             });
         });
     });
