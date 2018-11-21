@@ -82,7 +82,7 @@ export class Catalog {
                 let error = new Error('Media item is currently being edited by another user try again at ' + unlockTime);
                 error.httpStatusCode = 409;
                 callback(error);
-            } else if (rows[0].lockedBy_id === userId) {
+            } else if (rows[0].lockedBy_id === userId && timePassed < lockedTimeout) {
                 callback(null, [parseInt(Date.parse(rows[0].lockedAt) / 1000)]);
             } else {
                 MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
