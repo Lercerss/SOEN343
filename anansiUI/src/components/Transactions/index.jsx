@@ -30,7 +30,7 @@ export default class Transactions extends React.Component {
     };
 
     componentDidMount() {
-        getTransactions()
+        getTransactions({})
             .then(res => {
                 console.log(res);
                 let tableData = res.data.map(el => {
@@ -63,7 +63,72 @@ export default class Transactions extends React.Component {
         confirm();
         this.setState({ searchText: selectedKeys[0] });
     };
-
+    setCustomFilter = (key, hard = false) => {
+        let filterFunction;
+        if (hard) {
+            filterFunction = (value, record) => record[key] === value.toLowerCase();
+        } else {
+            filterFunction = (value, record) =>
+                record[key].toLowerCase().includes(value.toLowerCase());
+        }
+        return {
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+                <div style={styles.customDropdown}>
+                    <Input
+                        style={styles.customDropdownInput}
+                        ref={ele => (this.searchInput = ele)}
+                        placeholder="Search name"
+                        value={selectedKeys[0]}
+                        onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                        onPressEnter={this.handleSearch(selectedKeys, confirm)}
+                    />
+                    <Button
+                        style={styleMedia.customDropdownButton}
+                        type="primary"
+                        onClick={this.handleSearch(selectedKeys, confirm)}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        style={styles.customDropdownButton}
+                        onClick={this.handleReset(clearFilters)}
+                    >
+                        Reset
+                    </Button>
+                </div>
+            ),
+            filterIcon: filtered => <Icon type="filter" />,
+            onFilter: filterFunction,
+            onFilterDropdownVisibleChange: visible => {
+                if (visible) {
+                    setTimeout(() => {
+                        this.searchInput.focus();
+                    });
+                }
+            },
+            render: text => {
+                const { searchText } = this.state;
+                return searchText ? (
+                    <span>
+                        {text
+                            .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))
+                            .map((fragment, i) =>
+                                fragment.toLowerCase() === searchText.toLowerCase() ? (
+                                    <span key={i} style={styleMedia.highlighted}>
+                                        {fragment}
+                                    </span>
+                                ) : (
+                                    fragment
+                                )
+                            )}
+                    </span>
+                ) : (
+                    text
+                );
+            },
+            sorter: (a, b) => a[key].localeCompare(b[key])
+        };
+    };
     prettifyTimeStamp = timestamp => {
         if (timestamp) {
             return moment(timestamp).format('YYYY-MM-DD');
@@ -97,62 +162,7 @@ export default class Transactions extends React.Component {
                 title: 'Title',
                 dataIndex: 'title',
                 key: 'title',
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-                    <div style={styles.customDropdown}>
-                        <Input
-                            style={styles.customDropdownInput}
-                            ref={ele => (this.searchInput = ele)}
-                            placeholder="Search name"
-                            value={selectedKeys[0]}
-                            onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                            onPressEnter={this.handleSearch(selectedKeys, confirm)}
-                        />
-                        <Button
-                            style={styleMedia.customDropdownButton}
-                            type="primary"
-                            onClick={this.handleSearch(selectedKeys, confirm)}
-                        >
-                            Search
-                        </Button>
-                        <Button
-                            style={styles.customDropdownButton}
-                            onClick={this.handleReset(clearFilters)}
-                        >
-                            Reset
-                        </Button>
-                    </div>
-                ),
-                filterIcon: filtered => <Icon type="filter" />,
-                onFilter: (value, record) =>
-                    record.title.toLowerCase().includes(value.toLowerCase()),
-                onFilterDropdownVisibleChange: visible => {
-                    if (visible) {
-                        setTimeout(() => {
-                            this.searchInput.focus();
-                        });
-                    }
-                },
-                render: text => {
-                    const { searchText } = this.state;
-                    return searchText ? (
-                        <span>
-                            {text
-                                .split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))
-                                .map((fragment, i) =>
-                                    fragment.toLowerCase() === searchText.toLowerCase() ? (
-                                        <span key={i} style={styleMedia.highlighted}>
-                                            {fragment}
-                                        </span>
-                                    ) : (
-                                        fragment
-                                    )
-                                )}
-                        </span>
-                    ) : (
-                        text
-                    );
-                },
-                sorter: (a, b) => a.title.localeCompare(b.title)
+                ...this.setCustomFilter('title', true)
             },
             {
                 title: 'Type of Media',
@@ -177,17 +187,20 @@ export default class Transactions extends React.Component {
             {
                 title: 'Loaned on',
                 dataIndex: 'loan_ts',
-                key: 'loan_ts'
+                key: 'loan_ts',
+                ...this.setCustomFilter('loan_ts')
             },
             {
                 title: 'Expected by',
                 dataIndex: 'expectedReturn',
-                key: 'expectedReturn'
+                key: 'expectedReturn',
+                ...this.setCustomFilter('expectedReturn')
             },
             {
                 title: 'Returned on',
                 dataIndex: 'return_ts',
-                key: 'return_ts'
+                key: 'return_ts',
+                ...this.setCustomFilter('return_ts')
             }
         ];
         return (
