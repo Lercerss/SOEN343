@@ -44,6 +44,7 @@ export class MediaGateway {
             `SELECT
                 l.*,
                 u.username,
+                b.name,
                 a.id as 'media.id',
                 l.item_type as 'media.type',
                 a.title as 'media.title'

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Table, Button, Input, Icon, Form, Radio } from 'antd';
+import { Modal, Table, Button, Input, Icon, Form, Radio, Card } from 'antd';
 import { getTransactions } from '../../utils/httpUtils';
 import moment from 'moment';
 const styles = {
@@ -21,6 +21,9 @@ const styles = {
     },
     Form: {
         textAlign: 'center'
+    },
+    Table: {
+        border: '#e8e8e8 solid 1px'
     }
 };
 export default class Transactions extends React.Component {
@@ -40,6 +43,8 @@ export default class Transactions extends React.Component {
                     return {
                         key: el.id,
                         title: el.media.title,
+                        copyname: el.copyname,
+                        username: el.username,
                         loan_ts: this.prettifyTimeStamp(el.loan_ts),
                         return_ts: return_ts,
                         expectedReturn: expectedReturn,
@@ -185,6 +190,17 @@ export default class Transactions extends React.Component {
                 onFilter: (value, record) => record.type.indexOf(value) === 0
             },
             {
+                title: 'Copy Identifier',
+                dataIndex: 'copyname',
+                key: 'copyname'
+            },
+            {
+                title: 'Loaned by',
+                dataIndex: 'username',
+                key: 'username',
+                ...this.setCustomFilter('username', true)
+            },
+            {
                 title: 'Loaned on',
                 dataIndex: 'loan_ts',
                 key: 'loan_ts',
@@ -204,7 +220,7 @@ export default class Transactions extends React.Component {
             }
         ];
         return (
-            <div>
+            <Card>
                 <Form style={styles.Form}>
                     <Form.Item>
                         <Radio.Group
@@ -219,8 +235,8 @@ export default class Transactions extends React.Component {
                         </Radio.Group>
                     </Form.Item>
                 </Form>
-                <Table columns={columns} dataSource={shownData} />
-            </div>
+                <Table style={styles.Table} columns={columns} dataSource={shownData} />
+            </Card>
         );
     }
 }

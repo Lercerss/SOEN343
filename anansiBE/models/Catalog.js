@@ -119,6 +119,7 @@ export class Catalog {
                             return { ...acc, [cur.slice(6)]: row[cur] };
                         }, {});
                     loan.username = row.username;
+                    loan.copyname = row.name;
                     return loan;
                 })
             );

@@ -26,6 +26,8 @@ class AdminSider extends React.Component {
             selected = '3';
         } else if (url === '/media/create/') {
             selected = '4';
+        } else if (url === '/media/transactions/'){
+            selected = '5';
         }
 
         return (
