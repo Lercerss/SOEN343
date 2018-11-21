@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Table, Button, Input, Icon } from 'antd';
 import { getTransactions } from '../../utils/httpUtils';
+import moment from 'moment';
 const styles = {
     customDropdown: {
         padding: '8px',
@@ -28,14 +29,14 @@ export default class Transactions extends React.Component {
         getTransactions()
             .then(res => {
                 console.log(res);
-                let tableData = res.map(el => {
+                let tableData = res.data.map(el => {
                     return {
                         key: el.id,
-                        title: el.item_info.title,
-                        loan_ts: el.loan_ts,
-                        return_ts: el.return_ts,
-                        expectedReturn: el.expectedReturn,
-                        type: el.item_type
+                        title: el.media.title,
+                        loan_ts: this.prettifyTimeStamp(el.loan_ts),
+                        return_ts: this.prettifyTimeStamp(el.return_ts),
+                        expectedReturn: this.prettifyTimeStamp(el.expectedReturn),
+                        type: el.media.type
                     };
                 });
                 console.log(tableData);
@@ -55,6 +56,13 @@ export default class Transactions extends React.Component {
         this.setState({ searchText: selectedKeys[0] });
     };
 
+    prettifyTimeStamp(timestamp) {
+        if (timestamp) {
+            return moment(timestamp).format('YYYY-MM-DD');
+        } else {
+            return 'N/A';
+        }
+    }
     handleReset = clearFilters => () => {
         clearFilters();
         this.setState({ searchText: '' });

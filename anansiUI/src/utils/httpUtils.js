@@ -124,41 +124,8 @@ export function loanCopies(items) {
 }
 
 export function getTransactions() {
-    return new Promise((resolve, reject) => {
-        let data = [
-            {
-                id: 1,
-                item_type: 'Music',
-                item_info: { title: 'boogie' },
-                loan_ts: '1992-10-10',
-                return_ts: '1992-10-10',
-                expectedReturn: '1002-321-321'
-            },
-            {
-                id: 2,
-                item_type: 'Music',
-                item_info: { title: 'rhcp' },
-                loan_ts: '1992-10-10',
-                return_ts: '1992-10-10',
-                expectedReturn: '1002-321-321'
-            },
-            {
-                id: 3,
-                item_type: 'Book',
-                item_info: { title: 'mistborn' },
-                loan_ts: '1992-10-10',
-                return_ts: '1995-10-10',
-                expectedReturn: '1002-321-321'
-            },
-            {
-                id: 4,
-                item_type: 'Movie',
-                item_info: { title: 'boogie' },
-                loan_ts: '1992-10-10',
-                return_ts: '1992-10-10',
-                expectedReturn: '1002-321-321'
-            }
-        ];
-        resolve(data);
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/get-loans`, {
+        filter: {}
     });
 }
