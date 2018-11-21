@@ -129,3 +129,10 @@ export function getTransactions(filter) {
         filter: filter
     });
 }
+
+export function returnCopies(loanIds) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/return`, {
+        loans: loanIds
+    });
+}

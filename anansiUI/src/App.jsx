@@ -101,12 +101,9 @@ class App extends React.Component {
                 };
             })
         );
-        this.setState(
-            {
-                loans: loans
-            },
-            () => console.log(this.state.loans)
-        );
+        this.setState({
+            loans: loans
+        });
     };
     emptyCart = () => {
         this.setState({ cart: [] });

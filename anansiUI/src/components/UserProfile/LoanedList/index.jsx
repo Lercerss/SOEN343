@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Checkbox, Form, Modal } from 'antd';
-import { getTransactions } from '../../../utils/httpUtils';
+import { getTransactions, returnCopies } from '../../../utils/httpUtils';
 
 class LoanedList extends React.Component {
     state = {
@@ -8,10 +8,10 @@ class LoanedList extends React.Component {
     };
     componentDidMount() {
         let userID = this.props.userID;
-        getTransactions({ user_id: userID })
+        getTransactions({ user_id: userID, return_ts: 'NULL' })
             .then(response => {
                 response.data.forEach(item => {
-                    if (Date.now() > item.expectedReturn) {
+                    if (Date.now() > Date(item.expectedReturn)) {
                         item.isExpired = true;
                     } else {
                         item.isExpired = false;
@@ -31,8 +31,20 @@ class LoanedList extends React.Component {
     handleReturn = e => {
         e.preventDefault();
         const { form } = this.props;
-        const values = form.getFieldsValue();
-    };
+        const values = Object.entries(form.getFieldsValue()).filter(el => el[1]).map(el => parseInt(el[0]));
+        returnCopies(values)
+            .then(response => {
+                const loanItems = this.state.loanItems.filter(el => !values.includes(el.id));
+                this.setState({
+                    loanItems: loanItems
+                });
+            }).catch(error => {
+                Modal.error({
+                    title: 'Failed to return selected items',
+                    content: error.response ? error.response.data.message : 'Connection error'
+                })
+            });
+    }
     render() {
         const { getFieldDecorator } = this.props.form;
         const { loanItems } = this.state;
