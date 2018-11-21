@@ -31,7 +31,7 @@ export class MediaGateway {
     }
 
     static getLoans(filter, callback) {
-        const where = Object.entries(filter).reduce((acc, cur) => {
+        const where = filter && Object.entries(filter).reduce((acc, cur) => {
             // Convert filter key-value pairs into where clause
             const val = cur[1] !== 'NULL' ? ` = '${cur[1]}'` : ` is NULL`;
             if (acc) {
@@ -54,7 +54,7 @@ export class MediaGateway {
                     ON b.${type}_id = a.id
                 INNER JOIN users as u
                     ON l.user_id = u.client_id
-            ${where}`;
+            ${where || ''}`;
         db.query(queryFormat('book'), (err, bookLoans) => {
             if (err) {
                 callback(err);
