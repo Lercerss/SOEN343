@@ -118,6 +118,7 @@ export class Catalog {
                         .reduce((acc, cur) => {
                             return { ...acc, [cur.slice(6)]: row[cur] };
                         }, {});
+                    loan.username = row.username;
                     return loan;
                 })
             );

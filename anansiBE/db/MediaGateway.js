@@ -43,6 +43,7 @@ export class MediaGateway {
         const queryFormat = type =>
             `SELECT
                 l.*,
+                u.username,
                 a.id as 'media.id',
                 l.item_type as 'media.type',
                 a.title as 'media.title'
@@ -51,6 +52,8 @@ export class MediaGateway {
                     ON l.copy_id = b.id AND l.item_type = '${type.replace(/^./, c => c.toUpperCase())}'
                 INNER JOIN ${type === 'music' ? type : type + 's'} as a
                     ON b.${type}_id = a.id
+                INNER JOIN users as u
+                    ON l.user_id = u.client_id
             ${where}`;
         db.query(queryFormat('book'), (err, bookLoans) => {
             if (err) {
