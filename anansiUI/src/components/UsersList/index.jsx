@@ -14,11 +14,10 @@ const styles = {
     }
 };
 export default class UsersList extends React.Component {
-
-    constructor(props){ 
-        super(props)
+    constructor(props) {
+        super(props);
     }
-    
+
     state = {
         users: [],
         shownList: []
@@ -84,12 +83,8 @@ export default class UsersList extends React.Component {
                             key={`${item.firstName} ${item.lastName}`}
                             actions={[
                                 <Link to={`/users/${item.username}/`}>
-                                    <Button
-                                        type="primary"
-                                    >
-                                        View Profile
-                                    </Button>
-                                </Link>    
+                                    <Button type="primary">View Profile</Button>
+                                </Link>
                             ]}
                         >
                             <List.Item.Meta

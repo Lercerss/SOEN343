@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Table, Button, Input, Icon } from 'antd';
+import { Modal, Table, Button, Input, Icon, Form, Radio } from 'antd';
 import { getTransactions } from '../../utils/httpUtils';
 import moment from 'moment';
 const styles = {
@@ -18,11 +18,15 @@ const styles = {
     },
     highlighted: {
         color: 'red'
+    },
+    Form: {
+        textAlign: 'center'
     }
 };
 export default class Transactions extends React.Component {
     state = {
-        transactions: []
+        transactions: [],
+        view: 'all'
     };
 
     componentDidMount() {
@@ -30,12 +34,16 @@ export default class Transactions extends React.Component {
             .then(res => {
                 console.log(res);
                 let tableData = res.data.map(el => {
+                    let expectedReturn = this.prettifyTimeStamp(el.expectedReturn);
+                    let return_ts = this.prettifyTimeStamp(el.return_ts);
+
                     return {
                         key: el.id,
                         title: el.media.title,
                         loan_ts: this.prettifyTimeStamp(el.loan_ts),
-                        return_ts: this.prettifyTimeStamp(el.return_ts),
-                        expectedReturn: this.prettifyTimeStamp(el.expectedReturn),
+                        return_ts: return_ts,
+                        expectedReturn: expectedReturn,
+                        overdue: this.checkOverdue(expectedReturn, return_ts),
                         type: el.media.type
                     };
                 });
@@ -56,19 +64,34 @@ export default class Transactions extends React.Component {
         this.setState({ searchText: selectedKeys[0] });
     };
 
-    prettifyTimeStamp(timestamp) {
+    prettifyTimeStamp = timestamp => {
         if (timestamp) {
             return moment(timestamp).format('YYYY-MM-DD');
         } else {
             return 'N/A';
         }
-    }
+    };
+    handleView = e => {
+        this.setState({
+            view: e.target.value
+        });
+    };
     handleReset = clearFilters => () => {
         clearFilters();
         this.setState({ searchText: '' });
     };
 
+    checkOverdue = (expectedReturn, return_ts) => {
+        return moment().isAfter(moment(expectedReturn, 'YYYY-MM-DD')) && return_ts == 'N/A';
+    };
+
     render() {
+        let shownData = this.state.transactions;
+        if (this.state.view === 'overdue') {
+            shownData = shownData.filter(el => {
+                return el.overdue;
+            });
+        }
         const columns = [
             {
                 title: 'Title',
@@ -167,6 +190,24 @@ export default class Transactions extends React.Component {
                 key: 'return_ts'
             }
         ];
-        return <Table columns={columns} dataSource={this.state.transactions} />;
+        return (
+            <div>
+                <Form style={styles.Form}>
+                    <Form.Item>
+                        <Radio.Group
+                            defaultValue="All"
+                            buttonStyle="solid"
+                            onChange={this.handleView}
+                        >
+                            <Radio.Button defaultChecked value="All">
+                                All
+                            </Radio.Button>
+                            <Radio.Button value="overdue">Overdue Loans</Radio.Button>
+                        </Radio.Group>
+                    </Form.Item>
+                </Form>
+                <Table columns={columns} dataSource={shownData} />
+            </div>
+        );
     }
 }
