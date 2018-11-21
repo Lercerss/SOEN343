@@ -12,7 +12,8 @@ export class MediaGateway {
                 name=VALUES(name);`,
             [
                 copiesTable,
-                copies && copies.map(copy => [(copy.id >= 0 ? copy.id : null), itemId, copy.name, true]),
+                copies &&
+                    copies.map(copy => [copy.id >= 0 ? copy.id : null, itemId, copy.name, true])
             ]
         );
         db.query(copiesQuery, err => {
@@ -20,9 +21,12 @@ export class MediaGateway {
                 callback(err);
                 return;
             }
-            db.query(`SELECT id, name FROM ${copiesTable} WHERE ${copiesFK}=${itemId}`, (err, rows) => {
-                callback(err, rows);
-            });
+            db.query(
+                `SELECT id, name FROM ${copiesTable} WHERE ${copiesFK}=${itemId}`,
+                (err, rows) => {
+                    callback(err, rows);
+                }
+            );
         });
     }
 
@@ -186,14 +190,12 @@ export class MediaGateway {
             const copies = fields.copies.filter(copy => copy.name);
             const deletedCopyIds = fields.copies.filter(copy => !copy.name).map(copy => copy.id);
             if (deletedCopyIds && deletedCopyIds.length) {
-                const deleteCopiesQuery = db.format(
-                    'DELETE FROM ?? WHERE id IN (?) AND ??=?',
-                    [
-                        copiesTable,
-                        deletedCopyIds,
-                        copiesFK,
-                        id
-                    ]);
+                const deleteCopiesQuery = db.format('DELETE FROM ?? WHERE id IN (?) AND ??=?', [
+                    copiesTable,
+                    deletedCopyIds,
+                    copiesFK,
+                    id
+                ]);
                 db.query(deleteCopiesQuery, err => {
                     if (err) {
                         callback(err);
@@ -258,7 +260,7 @@ export class MediaGateway {
             query = db.format('SELECT * FROM movies WHERE id = ?', id);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, rows, _fields) => {
             callback(err, rows);
         });
     }
@@ -279,7 +281,7 @@ export class MediaGateway {
             ]);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, rows, _fields) => {
             callback(err, rows);
         });
     }
@@ -297,19 +299,21 @@ export class MediaGateway {
             query = db.format('DELETE FROM movies WHERE id = ?', id);
         }
 
-        db.query(query, (err, rows, fields) => {
+        db.query(query, (err, _rows, _fields) => {
             callback(err);
         });
     }
 
     static getItems(filters, ordering, callback) {
-        if (Object.keys(filters).length === 0){
+        if (Object.keys(filters).length === 0) {
             callback(new Error('No media type specified for viewing all items'));
             return;
         }
 
         if (!filters.mediaType) {
-            var title = filters.fields.title ? ' WHERE title LIKE \'%' + filters.fields.title + '%\'' : '';
+            var title = filters.fields.title
+                ? " WHERE title LIKE '%" + filters.fields.title + "%'"
+                : '';
             var queryBook = `SELECT a.*,
                                 CONCAT(
                                     '{',
@@ -318,7 +322,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM books AS a
                                 LEFT JOIN book_copies AS b ON a.id = b.book_id
-                                ${ title } 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMagazine = `SELECT a.*,
                                 CONCAT(
@@ -328,7 +332,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM magazines AS a
                                 LEFT JOIN magazine_copies AS b ON a.id = b.magazine_id
-                                ${ title } 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMusic = `SELECT a.*,
                                 CONCAT(
@@ -338,7 +342,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM music AS a
                                 LEFT JOIN music_copies AS b ON a.id = b.music_id
-                                ${ title } 
+                                ${title} 
                                 GROUP BY a.id;`;
             var queryMovie = `SELECT a.*,
                                 CONCAT(
@@ -348,7 +352,7 @@ export class MediaGateway {
                                 ) as copies
                                 FROM movies AS a
                                 LEFT JOIN movie_copies AS b ON a.id = b.movie_id
-                                ${ title } 
+                                ${title} 
                                 GROUP BY a.id;`;
 
             var books = [];
@@ -357,7 +361,7 @@ export class MediaGateway {
             var movies = [];
             var media = [];
 
-            db.query(queryBook, function(err, rows, fields) {
+            db.query(queryBook, function(err, rows, _fields) {
                 if (err) {
                     callback(new Error('Error querying database.'));
                     return;
@@ -369,7 +373,7 @@ export class MediaGateway {
                     return o;
                 });
 
-                db.query(queryMagazine, function(err, rows, fields) {
+                db.query(queryMagazine, function(err, rows, _fields) {
                     if (err) {
                         callback(new Error('Error querying database.'));
                         return;
@@ -381,7 +385,7 @@ export class MediaGateway {
                         return o;
                     });
 
-                    db.query(queryMusic, function(err, rows, fields) {
+                    db.query(queryMusic, function(err, rows, _fields) {
                         if (err) {
                             callback(new Error('Error querying database.'));
                             return;
@@ -413,12 +417,12 @@ export class MediaGateway {
                                 let compare = 0;
                                 if (Object.keys(ordering).length === 0) return -1;
 
-                                if (titleA > titleB){
-                                    if (ordering.title === 'ASC'){
+                                if (titleA > titleB) {
+                                    if (ordering.title === 'ASC') {
                                         compare = 1;
                                     } else compare = -1;
-                                } else if (titleA < titleB){
-                                    if (ordering.title === 'ASC'){
+                                } else if (titleA < titleB) {
+                                    if (ordering.title === 'ASC') {
                                         compare = -1;
                                     } else compare = 1;
                                 }
@@ -433,33 +437,35 @@ export class MediaGateway {
             const mediaTable = 'a';
             var table, copyTable, type;
             switch (filters.mediaType) {
-            case 'Book':
-                table = 'books';
-                copyTable = 'book_copies';
-                type = 'book';
-                break;
-            case 'Magazine':
-                table = 'magazines';
-                copyTable = 'magazine_copies';
-                type = 'magazine';
-                break;
-            case 'Movie':
-                table = 'movies';
-                copyTable = 'movie_copies';
-                type = 'movie';
-                break;
-            case 'Music':
-                table = 'music';
-                copyTable = 'music_copies';
-                type = 'music';
-                break;
+                case 'Book':
+                    table = 'books';
+                    copyTable = 'book_copies';
+                    type = 'book';
+                    break;
+                case 'Magazine':
+                    table = 'magazines';
+                    copyTable = 'magazine_copies';
+                    type = 'magazine';
+                    break;
+                case 'Movie':
+                    table = 'movies';
+                    copyTable = 'movie_copies';
+                    type = 'movie';
+                    break;
+                case 'Music':
+                    table = 'music';
+                    copyTable = 'music_copies';
+                    type = 'music';
+                    break;
             }
 
             var filterClause, orderClause;
             if (Object.keys(filters.fields).length !== 0) {
                 var fieldArray = [];
                 Object.keys(filters.fields).forEach(function(key) {
-                    fieldArray.push(`${ mediaTable }.` + key + " LIKE '%" + filters.fields[key] + "%'");
+                    fieldArray.push(
+                        `${mediaTable}.` + key + " LIKE '%" + filters.fields[key] + "%'"
+                    );
                 });
                 filterClause = fieldArray.join(' AND ');
             } else {
@@ -469,11 +475,11 @@ export class MediaGateway {
                 orderClause = ' ORDER BY ';
                 fieldArray = [];
                 Object.keys(ordering).forEach(function(key) {
-                    fieldArray.push(`${ mediaTable }.` + key + ' ' + ordering[key]);
+                    fieldArray.push(`${mediaTable}.` + key + ' ' + ordering[key]);
                 });
                 orderClause = fieldArray.join(', ');
             } else {
-                orderClause = ` ${ mediaTable }.id ASC`;
+                orderClause = ` ${mediaTable}.id ASC`;
             }
 
             var query = `SELECT a.*,
@@ -482,14 +488,14 @@ export class MediaGateway {
                             GROUP_CONCAT(CONCAT('"', b.id, '":"', b.name, '"') ORDER BY b.id DESC SEPARATOR ','),
                             '}'
                         ) as copies
-                        FROM ${ table } AS a
-                        LEFT JOIN ${ copyTable } AS b ON a.id = b.${ type }_id
-                        WHERE ${ filterClause } 
+                        FROM ${table} AS a
+                        LEFT JOIN ${copyTable} AS b ON a.id = b.${type}_id
+                        WHERE ${filterClause} 
                         GROUP BY a.id 
-                        ORDER BY ${ orderClause };`;
+                        ORDER BY ${orderClause};`;
 
+            console.log(query);
             db.query(query, function(err, rows, fields) {
-                console.log(query);
                 if (err) {
                     console.log(err);
                     callback(new Error('Error querying database.'));
@@ -505,5 +511,101 @@ export class MediaGateway {
                 callback(err, mediaRows);
             });
         }
+    }
+
+    static updateLoans(loans, clientID, callback) {
+        const selectQuery = db.format(
+            'SELECT * FROM loans WHERE return_ts IS NULL AND id IN (?) AND user_id=?',
+            [loans, clientID]
+        );
+        db.query(selectQuery, (err, rows) => {
+            /* since id is primary key, I should not be expecting more than one results.
+            Validate that person borrowing is the person who's returning the item. */
+            if (err) {
+                let err = new Error('Error querying database.');
+                err.httpStatusCode = 500;
+                callback(err);
+                return;
+            }
+            if (rows.length === loans.length) {
+                const updateLoanQuery = db.format(
+                    'UPDATE loans SET return_ts=CURRENT_TIMESTAMP WHERE id in (?)',
+                    [loans]
+                );
+                db.query(updateLoanQuery, err => {
+                    if (err) {
+                        callback(err);
+                    }
+
+                    const bookCopyIds = rows
+                        .filter(el => {
+                            return el.item_type === 'Book';
+                        })
+                        .map(el => {
+                            return el.copy_id;
+                        });
+                    const movieCopyIds = rows
+                        .filter(el => {
+                            return el.item_type === 'Movie';
+                        })
+                        .map(el => {
+                            return el.copy_id;
+                        });
+                    const musicCopyIds = rows
+                        .filter(el => {
+                            return el.item_type === 'Music';
+                        })
+                        .map(el => {
+                            return el.copy_id;
+                        });
+
+                    const QueryDict = [
+                        {
+                            table: 'book_copies',
+                            ids: bookCopyIds
+                        },
+                        {
+                            table: 'movie_copies',
+                            ids: movieCopyIds
+                        },
+                        {
+                            table: 'music_copies',
+                            ids: musicCopyIds
+                        }
+                    ];
+                    Promise.all(QueryDict.map(el => {
+                        return this.returnCopies(el.table, el.ids);
+                    }))
+                        .then(res => {
+                            callback(null);
+                        })
+                        .catch(callback);
+                });
+            } else {
+                let err = new Error('Item must be returned by the person who borrowed it.');
+                err.httpStatusCode = 403;
+                callback(err);
+            }
+        });
+    }
+
+    static returnCopies(table, ids) {
+        return new Promise((resolve, reject) => {
+            console.log(table, ids);
+            if (ids.length > 0) {
+                const query = db.format('UPDATE ?? SET available=1 WHERE id IN (?)', [table, ids]);
+                db.query(query, (err, rows, fields) => {
+                    if (err) {
+                        err.message = 'There was an error updating ' + table;
+                        err.httpStatusCode = 500;
+                        reject(err);
+                        return;
+                    }
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
     }
 }

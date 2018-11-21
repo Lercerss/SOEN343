@@ -7,7 +7,7 @@ import {
     createUser,
     displayUserProfile
 } from './userRoute';
-import { displayItems, addItem, editItem, deleteItem, getLock, releaseLock } from './catalogRoute';
+import { displayItems, addItem, editItem, deleteItem, getLock, releaseLock, returnCopies } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
 var router = express.Router();
@@ -42,5 +42,6 @@ router.route('/item/edit').post(editItem);
 router.route('/item/get-lock').post(getLock);
 router.route('/item/release-lock').post(releaseLock);
 router.route('/item/delete').delete(deleteItem);
+router.route('/item/return').post(returnCopies);
 
 export { router, validateToken };

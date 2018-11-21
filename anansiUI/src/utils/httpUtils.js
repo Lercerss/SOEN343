@@ -131,3 +131,8 @@ export function deleteItem(type, itemInfo) {
         }
     });
 }
+
+export function getLoans() {
+    let req = client(Cookies.get('jwt'));
+    return req.get(`${backendURL}item/loans/`);
+}

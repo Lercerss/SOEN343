@@ -162,9 +162,11 @@ class Criteria extends React.Component {
                             Sort Results by: {` ${this.state.searchBy}`} <Icon type="down" />
                         </a>
                     </Dropdown>
+
+
                     <Dropdown overlay={orderMenu} trigger={["click"]}>
                         <a className="ant-dropdown-link" href="#">
-                            Order: {` ${this.state.order}`} <Icon type="down" />
+                            Order: {`  ${this.state.order}`} <Icon type="down" />
                         </a>
                     </Dropdown>
                 </div>
