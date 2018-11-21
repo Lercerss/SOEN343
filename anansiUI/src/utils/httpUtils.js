@@ -123,9 +123,9 @@ export function loanCopies(items) {
     });
 }
 
-export function getTransactions() {
+export function getTransactions(filter) {
     let req = client(Cookies.get('jwt'));
     return req.post(`${backendURL}item/get-loans`, {
-        filter: {}
+        filter: filter
     });
 }

@@ -1,13 +1,6 @@
 import express from 'express';
-import {
-    loginUser,
-    logoutUser,
-    displayUsers,
-    validateUser,
-    createUser,
-    displayUserProfile
-} from './userRoute';
-import { displayItems, addItem, editItem, deleteItem, loanCopies, getLoans } from './catalogRoute';
+import { loginUser, logoutUser, displayUsers, validateUser, createUser, displayUserProfile } from './userRoute';
+import { displayItems, addItem, editItem, deleteItem, loanCopies, getLoans, returnCopies } from './catalogRoute';
 import { verifyToken } from '../utils/Auth';
 
 var router = express.Router();
@@ -42,5 +35,6 @@ router.route('/item/edit').post(editItem);
 router.route('/item/delete').delete(deleteItem);
 router.route('/item/loan').post(loanCopies);
 router.route('/item/get-loans').post(getLoans);
+router.route('/item/return').post(returnCopies);
 
 export { router, validateToken };

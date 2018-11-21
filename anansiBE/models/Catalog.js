@@ -81,6 +81,7 @@ export class Catalog {
                 callback(new Error('Media item does not exist in the database'));
                 return;
             }
+
             MediaGateway.deleteMedia(type, id, callback);
         });
     }
@@ -122,6 +123,15 @@ export class Catalog {
             );
         });
     }
+    static returnCopies(loans, clientID, callback) {
+        if (loans.length > 0) {
+            MediaGateway.updateLoans(loans, clientID, callback);
+        } else {
+            let err = new Error('List of return must be greater than 0');
+            err.httpStatusCode = 400;
+            callback(err);
+        }
+    }
 
     static jsonToMedia(jsonArray) {
         var mediaArray = [];
@@ -141,6 +151,7 @@ export class Catalog {
             media.copies = copyArray && copyArray.map(copy => new Copy(copy));
             mediaArray.push(media);
         });
+
         return mediaArray;
     }
 }

@@ -7,14 +7,14 @@ export function displayItems(req, res) {
             return;
         }
         Catalog.viewItems(req.body.nPage, req.body.filters, req.body.ordering, (err, catalog, size) => {
-            if (err){
-                if (err.message.includes('database')){
+            if (err) {
+                if (err.message.includes('database')) {
                     res.status(500).send({
                         message: err.message,
                         error: err
                     });
                     return;
-                } else if (err.message.includes('media')){
+                } else if (err.message.includes('media')) {
                     res.status(400).send({
                         message: err.message,
                         error: err
@@ -165,5 +165,19 @@ export function deleteItem(req, res) {
                 });
             });
         }
+    });
+}
+
+export function returnCopies(req, res, next) {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
+        Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
+            if (err) {
+                next(err);
+                return;
+            }
+            res.status(200).send({
+                message: 'Items were successfully returned'
+            });
+        });
     });
 }
