@@ -59,7 +59,7 @@ export default class ItemsList extends React.Component {
             .catch(reason => {
                 Modal.error({
                     title: 'Error fetching catalog items',
-                    content: reason.message
+                    content: reason.response.data.message
                 });
             });
     };
@@ -75,8 +75,8 @@ export default class ItemsList extends React.Component {
             })
             .catch(reason => {
                 Modal.error({
-                    title: "Error because another user is editing the item",
-                    content: reason.message
+                    title: 'Could not edit item',
+                    content: reason.response ? reason.response.data.message : 'Connection error'
                 });
             });
     };

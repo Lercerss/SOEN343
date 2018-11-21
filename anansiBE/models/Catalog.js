@@ -55,7 +55,7 @@ export class Catalog {
                     MediaGateway.editMedia(type, id, fields, callback);
                 } else {
                     let error = new Error('Media is currently being edited by another user');
-                    error.code = 400;
+                    error.httpStatusCode = 400;
                     callback(error);
                 }
             });
@@ -65,12 +65,12 @@ export class Catalog {
     static getLock(type, userId, mediaId, callback) {
         MediaGateway.findMediaById(type, mediaId, (err, rows) => {
             if (err) {
-                err.code = 500;
+                err.httpStatusCode = 500;
                 callback(err);
                 return;
             } else if (rows.length === 0) {
                 let error = new Error('Media item does not exist in the database');
-                error.code = 500;
+                error.httpStatusCode = 500;
                 callback(error);
                 return;
             }
@@ -80,7 +80,7 @@ export class Catalog {
 
             if (rows[0].lockedBy_id !== null && timePassed < lockedTimeout && rows[0].lockedBy_id !== userId) {
                 let error = new Error('Media item is currently being edited by another user try again at ' + unlockTime);
-                error.code = 409;
+                error.httpStatusCode = 409;
                 callback(error);
             } else if (rows[0].lockedBy_id === userId) {
                 callback(null, [parseInt(Date.parse(rows[0].lockedAt) / 1000)]);
@@ -88,7 +88,7 @@ export class Catalog {
                 MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
                     if (err){
                         var error = new Error('There was an error querying the database');
-                        error.code = 500;
+                        error.httpStatusCode = 500;
                         callback(error, rows);
                         return;
                     }
@@ -101,12 +101,12 @@ export class Catalog {
     static releaseLock(type, userId, mediaId, callback) {
         MediaGateway.findMediaById(type, mediaId, (err, rows) => {
             if (err) {
-                err.code(500);
+                err.httpStatusCode = 500;
                 callback(err);
                 return;
             } else if (rows.length === 0) {
                 let error = new Error('Media item does not exist in the database');
-                error.code = 500;
+                error.httpStatusCode = 500;
                 callback(error);
                 return;
             }
@@ -114,7 +114,7 @@ export class Catalog {
                 MediaGateway.releaseLock(type, userId, mediaId, (err, rowa) => {
                     if (err){
                         let error = new Error('Media item is locked by another user');
-                        error.code = 403;
+                        error.httpStatusCode = 403;
                         callback(error);
                         return;
                     }

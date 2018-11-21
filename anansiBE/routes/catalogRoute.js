@@ -81,8 +81,8 @@ export function editItem(req, res) {
             Catalog.editItem(req.body.type, req.body.itemInfo, decoded.data.client_id, (err, result) => {
                 if (err && !result) {
                     console.log(err);
-                    res.status(500).send({
-                        message: 'Could not edit item',
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Could not edit item',
                         error: err
                     });
                     return;
@@ -112,17 +112,10 @@ export function getLock(req, res) {
         } else {
             Catalog.getLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
                 if (err){
-                    if (err.code === 409) {
-                        res.status(409).send({
-                            message: err.message
-                        });
-                        return;
-                    } else if (err.code === 500) {
-                        res.status(500).send({
-                            message: err.message
-                        });
-                        return;
-                    }
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Failed to get lock'
+                    });
+                    return;
                 }
                 res.status(200).send({
                     lockedAt: result[0]
@@ -142,17 +135,10 @@ export function releaseLock(req, res) {
         } else {
             Catalog.releaseLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
                 if (err) {
-                    if (err.code === 500) {
-                        res.status(500).send({
-                            message: err.message
-                        });
-                        return;
-                    } else if (err.code === 403) {
-                        res.status(403).send({
-                            message: err.message
-                        });
-                        return;
-                    }
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Failed to release lock'
+                    });
+                    return;
                 }
                 res.status(200).send();
             });
