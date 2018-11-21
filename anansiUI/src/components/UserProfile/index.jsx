@@ -10,6 +10,16 @@ export default class UserProfile extends React.Component {
     };
 
     componentDidMount() {
+        this.getUserInfo();
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.linkProps.computedMatch.params.username != this.props.linkProps.computedMatch.params.username) {
+            this.getUserInfo();
+        }
+    }
+
+    getUserInfo = () => {
         getUserProfile(this.props.linkProps.computedMatch.params.username)
             .then(response => {
                 this.setState({
@@ -21,8 +31,7 @@ export default class UserProfile extends React.Component {
                     title: 'User profile could not be fetched.'
                 });
             });
-    }
-
+    };
     getInitials = (first, last) => {
         try {
             return first.charAt(0).toUpperCase() + last.charAt(0).toUpperCase();
@@ -88,30 +97,21 @@ export default class UserProfile extends React.Component {
                     </Button>
                 </Link>
                 <Card
-                    title={
-                        user.username.endsWith('s')
-                            ? `${user.username}' profile`
-                            : `${user.username}'s profile`
-                    }
+                    title={user.username.endsWith('s') ? `${user.username}' profile` : `${user.username}'s profile`}
                     style={styles.card}
-                    extra={
-                        initials ? <Avatar size="large">{initials}</Avatar> : <Avatar icon="user" />
-                    }
+                    extra={initials ? <Avatar size="large">{initials}</Avatar> : <Avatar icon="user" />}
                 >
                     <List
                         itemLayout="horizontal"
                         dataSource={data}
                         renderItem={item => (
                             <List.Item key={`${item.username}`}>
-                                <List.Item.Meta
-                                    title={<b>{item.title}</b>}
-                                    description={item.content}
-                                />
+                                <List.Item.Meta title={<b>{item.title}</b>} description={item.content} />
                             </List.Item>
                         )}
                     />
                 </Card>
-                {!user.isAdmin && (
+                {!isCurrentUserAdmin && (
                     <Card>
                         <p>
                             <b>Your Loans</b>
