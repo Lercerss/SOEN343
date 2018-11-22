@@ -19,16 +19,6 @@ function mergeCopies(initial, deleted) {
     ];
 }
 
-function parseNewCopies(newCopies, oldCopies) {
-    const obj = newCopies && oldCopies.filter(copy => copy.name);
-    return (
-        obj &&
-        obj.reduce((acc, cur) => {
-            return { ...acc, [cur.id]: cur.name };
-        }, {})
-    );
-}
-
 export default class MediaForm extends React.Component {
     handleSubmit = (e, form, deleted) => {
         e.preventDefault();
@@ -50,11 +40,12 @@ export default class MediaForm extends React.Component {
                         });
                         if (handleClose) {
                             const { copies, ...newItem } = requestData;
-                            newItem.copies = parseNewCopies(response.data && response.data.copies, copies);
+                            newItem.copies = response.data ? response.data.copies : copies.filter(copy => copy.name);
                             handleClose(newItem);
                         }
                     })
                     .catch(err => {
+                        console.log(err);
                         if (err.response.status !== 401) {
                             Modal.error({
                                 title: 'Failed to create a new user',
