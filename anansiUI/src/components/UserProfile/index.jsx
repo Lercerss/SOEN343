@@ -111,7 +111,7 @@ export default class UserProfile extends React.Component {
                         )}
                     />
                 </Card>
-                {!isCurrentUserAdmin && (
+                {!user.isAdmin && !isCurrentUserAdmin && (
                     <Card>
                         <p>
                             <b>Your Loans</b>
