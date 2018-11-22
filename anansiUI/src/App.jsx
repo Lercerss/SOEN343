@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Modal } from 'antd';
+import { Layout, Modal, Icon } from 'antd';
 import { withCookies } from 'react-cookie';
 import { Switch, Redirect, withRouter } from 'react-router-dom';
 import { getTokenInfo, setAppInterceptor, userLogout } from './utils/httpUtils';
@@ -25,8 +25,18 @@ const styles = {
     },
     Footer: {
         textAlign: 'center'
+    },
+    mainIcon: {    
+        fontSize: '3000%',
+        color: '#1f61b5' 
+    },
+    centerContent:{
+        width: 'inherit',
+        textAlign: 'center',
+        paddingTop: '10vh'
     }
 };
+
 class App extends React.Component {
     state = {
         loggedIn: false,
@@ -194,6 +204,9 @@ class App extends React.Component {
                     cart: []
                 });
                 this.props.cookies.remove('jwt');
+                Modal.info({
+                    title: 'You were logged out.'
+                });
             })
             .catch(err => {
                 Modal.error({
@@ -224,6 +237,7 @@ class App extends React.Component {
     };
     render() {
         const token = this.props.cookies.get('jwt');
+        var dynamicOpacity = (this.state.isAdmin ? {opacity: '0.1'}:{opacity: '0.36'});
 
         if (!this.state.isAdmin && this.state.loggedIn && this.props.location.pathname === '/') {
             return <Redirect to="/media" />;
@@ -244,6 +258,12 @@ class App extends React.Component {
                     <Layout>
                         {this.state.isAdmin && <AdminSider />}
                         <Content style={styles.Content}>
+                            {   (!this.state.loggedIn ||
+                                (this.state.isAdmin && this.props.location.pathname === '/')) &&
+                                <div style={styles.centerContent}>
+                                    <Icon type="read" style={{...styles.mainIcon, ...dynamicOpacity}}/>
+                                </div>
+                            }
                             <Switch>
                                 <PrivateRoute path="/users/register" condition={this.state.isAdmin}>
                                     <RegisterForm />

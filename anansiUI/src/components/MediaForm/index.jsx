@@ -38,6 +38,7 @@ export default class MediaForm extends React.Component {
                         Modal.success({
                             title: `${requestData.title} has been saved.`
                         });
+                        form.resetFields();
                         if (handleClose) {
                             const { copies, ...newItem } = requestData;
                             newItem.copies = response.data ? response.data.copies : copies.filter(copy => copy.name);
@@ -57,13 +58,45 @@ export default class MediaForm extends React.Component {
         });
     };
     render() {
+        const styles = {
+            formItemLayout: {
+                labelCol: {
+                    xs: { span: 24 },
+                    sm: { span: this.props.action === 'insert' ? 6 : 8  }
+                },
+                wrapperCol: {
+                    xs: { span: 24 },
+                    sm: { 
+                        span: this.props.action === 'insert' ? 14 : 12,
+                        offset: 1,    
+                    }
+                }
+            }, 
+            tailFormItemLayout: {
+                wrapperCol: {
+                    xs: {
+                        span: 24,
+                        offset: 0
+                    },
+                    sm: {
+                        span:  24,
+                        offset: 0
+                    }
+                }
+            },
+            centerButton: {
+                textAlign: 'center',
+                paddingTop: '10px',
+
+            }
+        }
         const { type, ...props } = this.props;
         let formComponent = '';
         props.handleSubmit = this.handleSubmit;
-        if (type == 'Book') formComponent = <BookForm {...props} />;
-        else if (type == 'Magazine') formComponent = <MagazineForm {...props} />;
-        else if (type == 'Movie') formComponent = <MovieForm {...props} />;
-        else if (type == 'Music') formComponent = <MusicForm {...props} />;
+        if (type == 'Book') formComponent = <BookForm {...props} styles={styles} />;
+        else if (type == 'Magazine') formComponent = <MagazineForm {...props} styles={styles}/>;
+        else if (type == 'Movie') formComponent = <MovieForm {...props} styles={styles}/>;
+        else if (type == 'Music') formComponent = <MusicForm {...props} styles={styles}/>;
         return formComponent;
     }
 }

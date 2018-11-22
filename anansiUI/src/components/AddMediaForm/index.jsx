@@ -15,27 +15,24 @@ export default class AddMediaForm extends React.Component {
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
-                sm: { span: 8 }
+                sm: { span: 3 }
             },
             wrapperCol: {
                 xs: { span: 24 },
-                sm: { span: 16 }
+                sm: { span: 10 }
             }
         };
         const { handleClose } = this.props;
 
         return (
             <Card>
-                <Form>
-                    <Form.Item {...formItemLayout} label="Pick a media type:">
-                        <Radio.Group buttonStyle="solid" onChange={this.handleView}>
-                            <Radio.Button value="Book">Book</Radio.Button>
-                            <Radio.Button value="Magazine">Magazine</Radio.Button>
-                            <Radio.Button value="Movie">Movie</Radio.Button>
-                            <Radio.Button value="Music">Music</Radio.Button>
-                        </Radio.Group>
-                    </Form.Item>
-                </Form>
+                <b>Pick a media type : </b>
+                <Radio.Group buttonStyle="solid" onChange={this.handleView}>
+                    <Radio.Button value="Book">Book</Radio.Button>
+                    <Radio.Button value="Magazine">Magazine</Radio.Button>
+                    <Radio.Button value="Movie">Movie</Radio.Button>
+                    <Radio.Button value="Music">Music</Radio.Button>
+                </Radio.Group>
                 <Divider />
                 <MediaForm
                     type={this.state.mediaType}

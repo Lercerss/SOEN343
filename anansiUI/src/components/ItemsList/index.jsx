@@ -1,10 +1,11 @@
 import React from 'react';
-import { List, Button, Card, Modal, Row, Col, Icon } from 'antd';
+import { List, Button, Card, Modal, Row, Col, Icon, Popconfirm } from 'antd';
 import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
 import { deleteItem, viewItems, getLock, releaseLock } from '../../utils/httpUtils';
 import MediaDetails from '../MediaDetails';
-import EditTimer from '../MediaForm/EditTimer';
+import EditTimer from '../MediaForm/EditTimer'
+import { getMagIssue, getMovieYear } from "../../utils/formatUtils";
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -87,9 +88,15 @@ export default class ItemsList extends React.Component {
                         el => !compareMediaItems(item.itemInfo, item.type, el.itemInfo, el.type)
                     )
                 });
+                Modal.success({
+                    title: 'Item was successfully deleted',
+                  });
             })
             .catch(err => {
-                // TODO: Handle error when deleting item in backend
+                Modal.error({
+                    title: 'Error deleting item',
+                    content: reason.message
+                });
                 console.log(err);
             });
     };
@@ -146,6 +153,7 @@ export default class ItemsList extends React.Component {
         const mappedCart = cart.map(function(e) {
             return e.itemInfo.id + e.type;
         });
+        const confirmDelete = 'Are you sure to delete this item?'
 
         if (isAdmin) {
             return (
@@ -166,14 +174,21 @@ export default class ItemsList extends React.Component {
                     >
                         Edit
                     </Button>
-                    <Button
-                        key={`Delete.${Math.random()}`}
-                        onClick={e => this.handleDelete(item)}
-                        type="danger"
-                        style={this.listStyle.controlBtn}
-                    >
-                        Delete
-                    </Button>
+                    <Popconfirm placement='topRight'
+                                title={confirmDelete}
+                                okText='Yes'
+                                cancelText='Cancel'
+                                onConfirm={e => this.handleDelete(item)}
+                                icon={<Icon type="warning" style={{ color: 'red' }}/>}
+                                >
+                        <Button
+                            key={`Delete.${Math.random()}`}
+                            type="danger"
+                            style={this.listStyle.controlBtn}
+                        >
+                            Delete
+                        </Button>
+                    </Popconfirm>
                 </div>
             );
         } else if (item.type === 'Magazine') {
@@ -250,6 +265,15 @@ export default class ItemsList extends React.Component {
         }
     };
 
+    selectOriginator = (mediaType, item) =>{
+        var magIssue = getMagIssue(item.publicationDate);
+        var movieYear = getMovieYear(item.releaseDate);
+
+        if (mediaType === 'Book') return ' by ' + item.author;
+        else if (mediaType === 'Magazine') return magIssue;
+        else if (mediaType === 'Music') return ' by ' + item.artist;
+        else if (mediaType === 'Movie') return movieYear;
+    }
     render() {
         const { itemInfo, itemList } = this.state;
         const { isAdmin } = this.props;
@@ -279,7 +303,11 @@ export default class ItemsList extends React.Component {
                                 <Col span={12}>
                                     <List.Item.Meta
                                         title={`${item.itemInfo.title}`}
-                                        description={<div>{item.type}</div>}
+                                        description={
+                                        <div>
+                                            {item.type}, {this.selectOriginator(item.type, item.itemInfo)}
+                                        </div>
+                                        }
                                     />
                                 </Col>
                                 <Col span={12} style={this.listStyle.rightAlign}>
