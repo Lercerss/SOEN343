@@ -109,8 +109,33 @@ class App extends React.Component {
         this.setState({ cart: [] });
     };
 
+    restoreFromStorage = (username, callback) => {
+        const loans = localStorage.getItem(`${username}-loans`);
+        const cart = localStorage.getItem(`${username}-cart`);
+        this.setState(
+            {
+                loans: loans ? JSON.parse(atob(loans)) : [],
+                cart: cart ? JSON.parse(atob(cart)) : []
+            },
+            callback
+        );
+    };
+
+    saveToStorage = () => {
+        console.log('this.state.loans :', this.state.loans);
+        localStorage.setItem(`${this.state.username}-loans`, btoa(JSON.stringify(this.state.loans)));
+        console.log('this.state.cart :', this.state.cart);
+        localStorage.setItem(`${this.state.username}-cart`, btoa(JSON.stringify(this.state.cart)));
+    };
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.saveToStorage.bind(this));
+        this.saveToStorage();
+    }
+
     componentDidMount() {
         setAppInterceptor(this.handleExpired);
+        window.addEventListener('beforeunload', this.saveToStorage.bind(this));
         // If jwt is stored in cookies
         // It sends it to server to validate it
         // and gather user info
@@ -119,6 +144,7 @@ class App extends React.Component {
             getTokenInfo(jwt)
                 .then(response => {
                     console.log(response.data.data);
+                    this.restoreFromStorage(response.data.username);
                     this.setState({
                         loggedIn: true,
                         username: response.data.username,
@@ -132,12 +158,14 @@ class App extends React.Component {
         }
     }
     handleLogin = (username, isAdmin, token, loans) => {
-        this.props.cookies.set('jwt', token);
-        this.setState({
-            username: username,
-            isAdmin: isAdmin,
-            loggedIn: true,
-            loans: loans
+        this.props.cookies.set('jwt', token, {path: '/'});
+        this.restoreFromStorage(username, () => {
+            this.setState({
+                username: username,
+                isAdmin: isAdmin,
+                loggedIn: true,
+                loans: loans
+            });
         });
     };
     handleLogout = () => {
@@ -145,6 +173,7 @@ class App extends React.Component {
 
         userLogout(token)
             .then(response => {
+                this.saveToStorage();
                 this.setState({
                     loggedIn: false,
                     username: '',
@@ -157,7 +186,7 @@ class App extends React.Component {
             .catch(err => {
                 Modal.error({
                     title: 'Failed to sign out',
-                    content: err.response.data ? err.response.data.message : 'Connection error'
+                    content: err.response ? err.response.data.message : 'Connection error'
                 });
             });
     };
@@ -171,6 +200,7 @@ class App extends React.Component {
             title: 'Expired Token',
             content: 'Please log in for this request.'
         });
+        this.saveToStorage();
         this.setState({
             loggedIn: false,
             username: '',

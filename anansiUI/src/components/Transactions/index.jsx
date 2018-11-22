@@ -230,7 +230,7 @@ export default class Transactions extends React.Component {
                         </Radio.Group>
                     </Form.Item>
                 </Form>
-                <Table style={styles.Table} columns={columns} dataSource={shownData} />
+                <Table style={styles.Table} columns={columns} dataSource={shownData} pagination={{ pageSize: 20 }} />
             </Card>
         );
     }
