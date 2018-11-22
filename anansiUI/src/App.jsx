@@ -113,7 +113,7 @@ class App extends React.Component {
         // mediaArr = [{mediaType: str, id: int}, ...]
         var updatedLoans = this.state.loans.filter(el => {
             return mediaArr.some(f => {
-                return (el.type === f.mediaType && el.itemInfo.id === f.id);
+                return (el.media.type === f.mediaType && el.media.id === f.id);
             });
         });
         this.setState({
