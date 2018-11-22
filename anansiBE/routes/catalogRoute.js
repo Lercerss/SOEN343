@@ -118,11 +118,11 @@ export function editItem(req, res) {
                 message: 'Only administrators can edit media items'
             });
         } else {
-            Catalog.editItem(req.body.type, req.body.itemInfo, (err, result) => {
+            Catalog.editItem(req.body.type, req.body.itemInfo, decoded.data.client_id, (err, result) => {
                 if (err && !result) {
                     console.log(err);
-                    res.status(500).send({
-                        message: 'Could not edit item',
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Could not edit item',
                         error: err
                     });
                     return;
@@ -138,6 +138,49 @@ export function editItem(req, res) {
                 res.status(200).send({
                     copies: result
                 });
+            });
+        }
+    });
+}
+
+export function getLock(req, res) {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
+        if (!decoded.data.isAdmin) {
+            res.status(403).send({
+                message: 'Only administrators can edit media items'
+            });
+        } else {
+            Catalog.getLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
+                if (err){
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Failed to get lock'
+                    });
+                    return;
+                }
+                res.status(200).send({
+                    lockedAt: result[0]
+                });
+            });
+        }
+    });
+}
+
+export function releaseLock(req, res) {
+    validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
+        console.log(decoded);
+        if (!decoded.data.isAdmin) {
+            res.status(403).send({
+                message: 'Only administrators can edit media items'
+            });
+        } else {
+            Catalog.releaseLock(req.body.type, decoded.data.client_id, req.body.id, (err, result) => {
+                if (err) {
+                    res.status(err.httpStatusCode || 500).send({
+                        message: err.message || 'Failed to release lock'
+                    });
+                    return;
+                }
+                res.status(200).send();
             });
         }
     });

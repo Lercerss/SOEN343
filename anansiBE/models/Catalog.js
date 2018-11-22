@@ -8,6 +8,7 @@ import { MediaGateway } from '../db/MediaGateway';
 
 const pageSize = 15;
 const maxLoans = 10;
+const lockedTimeout = 10 * 60 * 1000;
 
 export class Catalog {
     static addItem(type, fields, callback) {
@@ -27,7 +28,7 @@ export class Catalog {
         });
     }
 
-    static editItem(type, fields, callback) {
+    static editItem(type, fields, userId, callback) {
         var id = fields['id'];
 
         MediaGateway.findMedia(type, fields, (err, rows) => {
@@ -50,8 +51,77 @@ export class Catalog {
                     callback(new Error('Media item does not exist in the database'), rows);
                     return;
                 }
-                MediaGateway.editMedia(type, id, fields, callback);
+                var timePassed = Date.now() - rows[0].lockedAt;
+                if (rows[0].lockedBy_id === userId && timePassed < lockedTimeout){
+                    MediaGateway.editMedia(type, id, fields, callback);
+                } else {
+                    let error = new Error('Media is currently being edited by another user');
+                    error.httpStatusCode = 400;
+                    callback(error);
+                }
             });
+        });
+    }
+
+    static getLock(type, userId, mediaId, callback) {
+        MediaGateway.findMediaById(type, mediaId, (err, rows) => {
+            if (err) {
+                err.httpStatusCode = 500;
+                callback(err);
+                return;
+            } else if (rows.length === 0) {
+                let error = new Error('Media item does not exist in the database');
+                error.httpStatusCode = 500;
+                callback(error);
+                return;
+            }
+            var timePassed = Date.now() - rows[0].lockedAt;
+            var unlockTimeInSeconds = rows[0].lockedAt + lockedTimeout;
+            var unlockTime = new Date(unlockTimeInSeconds).toString();
+
+            if (rows[0].lockedBy_id !== null && timePassed < lockedTimeout && rows[0].lockedBy_id !== userId) {
+                let error = new Error('Media item is currently being edited by another user try again at ' + unlockTime);
+                error.httpStatusCode = 409;
+                callback(error);
+            } else if (rows[0].lockedBy_id === userId && timePassed < lockedTimeout) {
+                callback(null, [parseInt(Date.parse(rows[0].lockedAt) / 1000)]);
+            } else {
+                MediaGateway.getLock(type, userId, mediaId, (err, rows) => {
+                    if (err){
+                        var error = new Error('There was an error querying the database');
+                        error.httpStatusCode = 500;
+                        callback(error, rows);
+                        return;
+                    }
+                    callback(err, [parseInt(Date.now() / 1000)]);
+                });
+            }
+        });
+    }
+
+    static releaseLock(type, userId, mediaId, callback) {
+        MediaGateway.findMediaById(type, mediaId, (err, rows) => {
+            if (err) {
+                err.httpStatusCode = 500;
+                callback(err);
+                return;
+            } else if (rows.length === 0) {
+                let error = new Error('Media item does not exist in the database');
+                error.httpStatusCode = 500;
+                callback(error);
+                return;
+            }
+            if (rows[0].lockedBy_id === userId) {
+                MediaGateway.releaseLock(type, userId, mediaId, (err, rowa) => {
+                    if (err){
+                        let error = new Error('Media item is locked by another user');
+                        error.httpStatusCode = 403;
+                        callback(error);
+                        return;
+                    }
+                    callback(err, rows);
+                });
+            }
         });
     }
 

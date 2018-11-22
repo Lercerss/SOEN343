@@ -30,13 +30,13 @@ function buildCatalogRequest(arr) {
         m['itemInfo'] = el;
         builtArr.push(m);
 
-        if (type === 'Book'){
+        if (type === 'Book') {
             m['itemInfo']['id'] = mediaCount[0];
             mediaCount[0]++;
         } else if (type === 'Magazine') {
             m['itemInfo']['id'] = mediaCount[1];
             mediaCount[1]++;
-        } else if (type === 'Music'){
+        } else if (type === 'Music') {
             m['itemInfo']['id'] = mediaCount[2];
             mediaCount[2]++;
         } else if (type === 'Movie') {
@@ -117,7 +117,7 @@ describe('routes: create user', () => {
     test('Correct information expects status 200', done => {
         request(app)
             .post('/user/create/')
-            .set('Authorization', `Bearer ${ adminToken }`)
+            .set('Authorization', `Bearer ${adminToken}`)
             .send(validUser)
             .then(response => {
                 expect(response.statusCode).toBe(200);
@@ -127,7 +127,7 @@ describe('routes: create user', () => {
     test('Correct information, but unauthorized expects status 403', done => {
         request(app)
             .post('/user/create/')
-            .set('Authorization', `Bearer ${ clientToken }`)
+            .set('Authorization', `Bearer ${clientToken}`)
             .send(validUser)
             .then(response => {
                 expect(response.statusCode).toBe(403);
@@ -141,7 +141,7 @@ describe('routes: validate token', () => {
     test('Valid token expects status 200', done => {
         request(app)
             .get('/user/validate/')
-            .set('Authorization', `Bearer ${ adminToken }`)
+            .set('Authorization', `Bearer ${adminToken}`)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.isAdmin).toBe(1);
@@ -152,7 +152,7 @@ describe('routes: validate token', () => {
     test('Invalid token expects status 401', done => {
         request(app)
             .get('/user/validate/')
-            .set('Authorization', `Bearer ${ fakeToken }`)
+            .set('Authorization', `Bearer ${fakeToken}`)
             .then(response => {
                 expect(response.statusCode).toBe(401);
                 done();
@@ -164,7 +164,7 @@ describe('routes: get user list', () => {
     test('Valid token expects status 200 and user list', done => {
         request(app)
             .get('/user/display-all/')
-            .set('Authorization', `Bearer ${ adminToken }`)
+            .set('Authorization', `Bearer ${adminToken}`)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.length).toBeGreaterThanOrEqual(2);
@@ -174,7 +174,7 @@ describe('routes: get user list', () => {
     test('Valid client token, forbidden request expects status 403', done => {
         request(app)
             .get('/user/display-all/')
-            .set('Authorization', `Bearer ${ clientToken }`)
+            .set('Authorization', `Bearer ${clientToken}`)
             .then(response => {
                 expect(response.statusCode).toBe(403);
                 done();
@@ -186,8 +186,8 @@ describe('routes: obtaining a user profile', () => {
     const validUser = user;
     test('It should respond with user details for the user requested with valid token', done => {
         request(app)
-            .get(`/user/profile/${ validUser.username }`)
-            .set('Authorization', `Bearer ${ clientToken }`)
+            .get(`/user/profile/${validUser.username}`)
+            .set('Authorization', `Bearer ${clientToken}`)
             .then(response => {
                 expect(response.statusCode).toBe(200);
                 expect(response.body.user.username).toBe(validUser.username);
@@ -196,8 +196,8 @@ describe('routes: obtaining a user profile', () => {
     });
     test('It should respond with 401 for the user requested with invalid token', done => {
         request(app)
-            .get(`/user/profile/${ validUser.username }`)
-            .set('Authorization', `Bearer ${ clientToken }error`)
+            .get(`/user/profile/${validUser.username}`)
+            .set('Authorization', `Bearer ${clientToken}error`)
             .then(response => {
                 expect(response.statusCode).toBe(401);
                 done();
@@ -211,7 +211,7 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
-                .set('Authorization', `Bearer ${ token }`)
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     filters: {
                         mediaType: null,
@@ -236,7 +236,7 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
-                .set('Authorization', `Bearer ${ token }`)
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     filters: {
                         mediaType: 'Magazine',
@@ -262,7 +262,7 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
-                .set('Authorization', `Bearer ${ token }`)
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     filters: {
                         mediaType: null,
@@ -288,7 +288,7 @@ describe('routes: retrieve catalog elements', () => {
         tokens.forEach(token => {
             request(app)
                 .post('/item/display/')
-                .set('Authorization', `Bearer ${ token }`)
+                .set('Authorization', `Bearer ${token}`)
                 .send({
                     filters: {
                         mediaType: 'Book',
@@ -322,7 +322,7 @@ describe('routes: addition of a media item', () => {
         media.forEach(el => {
             request(app)
                 .post('/item/add/')
-                .set('Authorization', `Bearer ${ adminToken }`)
+                .set('Authorization', `Bearer ${adminToken}`)
                 .send(el)
                 .then(response => {
                     console.log(response.body);
@@ -340,7 +340,7 @@ describe('routes: addition of a media item', () => {
         let existingMedia = buildCatalogRequest(mediaData.initial);
         request(app)
             .post('/item/add/')
-            .set('Authorization', `Bearer ${ adminToken }`)
+            .set('Authorization', `Bearer ${adminToken}`)
             .send(existingMedia[0])
             .then(response => {
                 expect(response.statusCode).toBe(400);
@@ -355,13 +355,53 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         media.forEach(el => {
             el.itemInfo.title += 'o';
             request(app)
-                .post('/item/edit/')
-                .set('Authorization', `Bearer ${ adminToken }`)
-                .send(el)
+                .post('/item/get-lock/')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    id: el.itemInfo.id,
+                    type: el.type
+                })
                 .then(response => {
                     expect(response.statusCode).toBe(200);
-                    el.itemInfo.title.slice(0, -1);
+                    request(app)
+                        .post('/item/edit/')
+                        .set('Authorization', `Bearer ${adminToken}`)
+                        .send(el)
+                        .then(response => {
+                            expect(response.statusCode).toBe(200);
+                            el.itemInfo.title.slice(0, -1);
+                            done();
+                        });
                     done();
+                });
+        });
+    });
+
+    test(`It should respond to getting and releasing a lock with 200`, done => {
+        let media = buildCatalogRequest(mediaData.initial);
+        media.forEach(el => {
+            el.itemInfo.title += 'o';
+            request(app)
+                .post('/item/get-lock/')
+                .set('Authorization', `Bearer ${adminToken}`)
+                .send({
+                    id: el.itemInfo.id,
+                    type: el.type,
+                })
+                .then(response => {
+                    expect(response.statusCode).toBe(200);
+                    request(app)
+                        .post('/item/release-lock/')
+                        .set('Authorization', `Bearer ${adminToken}`)
+                        .send({
+                            id: el.itemInfo.id,
+                            type: el.type,
+                        })
+                        .then(response => {
+                            expect(response.statusCode).toBe(200);
+                            el.itemInfo.title.slice(0, -1);
+                            done();
+                        });
                 });
         });
     });
@@ -373,7 +413,7 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
         media.forEach(el => {
             request(app)
                 .del('/item/delete/')
-                .set('Authorization', `Bearer ${ adminToken }`)
+                .set('Authorization', `Bearer ${adminToken}`)
                 .send(el)
                 .then(response => {
                     expect(response.statusCode).toBe(200);
@@ -385,30 +425,34 @@ describe('routes: editing and deleting of a media item in the catalog', () => {
 });
 
 afterAll(done => {
-    const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
-    db.query(deleteUsersItemsQuery, (err, rows, fields) => {
-        if (err) {
-            console.log('Error while wiping out users test db');
-            process.exit(1);
-        }
-
-        Object.keys(mediaTables).forEach(key => {
-            const deleteCatalogItemsQuery = db.format('DELETE FROM ??', mediaTables[key]);
-            db.query(deleteCatalogItemsQuery, (err, rows, fields) => {
+    var delPromises = [];
+    Object.keys(mediaTables).forEach(key => {
+        let delProm = new Promise((resolve, reject) => {
+            db.query(`DELETE from ${mediaTables[key]}`, (err, rows, fields) => {
                 if (err) {
-                    console.log('Error while wiping out catalog test dbs');
+                    console.log('Error while deleting foreign keys');
                     process.exit(1);
                 }
+                resolve();
             });
         });
-
-        db.end(function(err) {
-            if (err) {
-                return console.log('error:' + err.message);
-            }
-
-            console.log('Closed the database connection.');
-            done();
-        });
+        delPromises.push(delProm);
     });
+    return Promise.all(delPromises)
+        .then(values => {
+            const deleteUsersItemsQuery = db.format('DELETE FROM ??', usersTable);
+            db.query(deleteUsersItemsQuery, (err, rows, fields) => {
+                if (err) {
+                    console.log('Error while wiping out users test db');
+                    process.exit(1);
+                }
+                db.end(function (err) {
+                    if (err) {
+                        return console.log('error:' + err.message);
+                    }
+                    console.log('Closed the database connection.');
+                    done();
+                });
+            });
+        });
 });
