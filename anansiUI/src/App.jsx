@@ -16,7 +16,7 @@ import Transactions from './components/Transactions';
 import './index.css';
 
 const { Content, Footer } = Layout;
-var styles = {
+const styles = {
     Layout: {
         minHeight: '100vh'
     },
@@ -261,7 +261,7 @@ class App extends React.Component {
                             {   (!this.state.loggedIn ||
                                 (this.state.isAdmin && this.props.location.pathname === '/')) &&
                                 <div style={styles.centerContent}>
-                                    <Icon type="read" style={Object.assign({}, styles.mainIcon, dynamicOpacity)}/>
+                                    <Icon type="read" style={{...styles.mainIcon, ...dynamicOpacity}}/>
                                 </div>
                             }
                             <Switch>

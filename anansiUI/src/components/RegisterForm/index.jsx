@@ -29,7 +29,7 @@ class RegisterForm extends React.Component {
                         submissionResult: response.status,
                         message: response.data.message 
                     });
-                    
+                    this.props.form.resetFields();
                     console.log(response);
                     const { onUserRegistered } = this.props;
                     if (onUserRegistered) {

@@ -38,6 +38,7 @@ export default class MediaForm extends React.Component {
                         Modal.success({
                             title: `${requestData.title} has been saved.`
                         });
+                        form.resetFields();
                         if (handleClose) {
                             const { copies, ...newItem } = requestData;
                             newItem.copies = response.data ? response.data.copies : copies.filter(copy => copy.name);
