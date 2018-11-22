@@ -6,3 +6,11 @@ export function prettifyTimeStamp(timestamp) {
         return 'N/A';
     }
 }
+export function getMagIssue(date){
+    var dateObj = moment(date, 'YYYY-MM-DD');
+    return dateObj.format('MMMM') + ' ' + dateObj.format('YYYY');
+}
+export function getMovieYear(date){
+    var dateObj = moment(date, 'YYYY-MM-DD');
+    return dateObj.format('YYYY');
+}

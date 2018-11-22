@@ -44,29 +44,8 @@ class MusicForm extends React.Component {
     render() {
         const { getFieldDecorator, getFieldValue } = this.props.form;
         const item = this.props.item || {};
+        const { formItemLayout, tailFormItemLayout, centerButton } = this.props.styles;
 
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 24 },
-                sm: { span: 8 }
-            },
-            wrapperCol: {
-                xs: { span: 24 },
-                sm: { span: 16 }
-            }
-        };
-        const tailFormItemLayout = {
-            wrapperCol: {
-                xs: {
-                    span: 24,
-                    offset: 0
-                },
-                sm: {
-                    span: 16,
-                    offset: 8
-                }
-            }
-        };
         getFieldDecorator('copyIds', {
             initialValue: (item.copies && item.copies.map(e => e.id)) || []
         });
@@ -157,7 +136,7 @@ class MusicForm extends React.Component {
                 <Card title="Music Copies">
                     {getFieldValue('copyIds').map((copy, index) => {
                         return (
-                            <FormItem key={copy} {...formItemLayout}>
+                            <FormItem key={copy}>
                                 {getFieldDecorator(`copies[${copy}]`, {
                                     rules: [
                                         {
@@ -183,7 +162,7 @@ class MusicForm extends React.Component {
                     </Button>
                 </Card>
 
-                <FormItem {...tailFormItemLayout}>
+                <FormItem {...tailFormItemLayout} style={centerButton}>
                     <Button type="primary" htmlType="submit">
                         Submit
                     </Button>
