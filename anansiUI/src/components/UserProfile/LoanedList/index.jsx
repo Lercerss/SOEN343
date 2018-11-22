@@ -7,7 +7,7 @@ class LoanedList extends React.Component {
     state = {
         loanItems: [],
         checkedList: [],
-        indeterminate: true,
+        indeterminate: false,
         checkAll: false,
         radioOptions: []
     };
@@ -50,6 +50,7 @@ class LoanedList extends React.Component {
     }
     updateCurrentLoans = (loanItems, callback) => {
         this.setState({
+            checkedList: [],
             loanItems: loanItems
         }, callback);
     } 
@@ -73,7 +74,6 @@ class LoanedList extends React.Component {
                     this.props.updateLoans(mediaArr);
                     this.updateRadioButtons(e => {
                         Modal.success({ title: 'Successfully returned item(s).' });
-                        this.forceUpdate();
                     });
                 });
             }).catch(error => {
@@ -85,7 +85,7 @@ class LoanedList extends React.Component {
     }
     onChange = (checkedList) => {
         this.setState({
-          checkedList,
+          checkedList: checkedList,
           indeterminate:!!checkedList.length &&
                         (checkedList.length < this.state.radioOptions.length),
           checkAll: checkedList.length === this.state.radioOptions.length,
@@ -103,16 +103,7 @@ class LoanedList extends React.Component {
     }
 
     render() {
-        const { getFieldDecorator } = this.props.form;
         const { loanItems } = this.state;
-        const formItemLayout = {
-            labelCol: {
-                xs: { span: 8 }
-            },
-            wrapperCol: {
-                xs: { span: 16 }
-            }
-        };
         const CheckboxGroup = Checkbox.Group;
         const buttonLayout = {
             textAlign: 'center'
