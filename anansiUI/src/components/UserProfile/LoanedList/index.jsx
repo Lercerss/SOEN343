@@ -1,10 +1,15 @@
 import React from 'react';
-import { Button, Checkbox, Form, Modal } from 'antd';
+import { Button, Checkbox, Form, Modal, Row, Col } from 'antd';
 import { getTransactions, returnCopies } from '../../../utils/httpUtils';
+import moment from 'moment';
 
 class LoanedList extends React.Component {
     state = {
-        loanItems: []
+        loanItems: [],
+        checkedList: [],
+        indeterminate: true,
+        checkAll: false,
+        radioOptions: []
     };
     componentDidMount() {
         let userID = this.props.userID;
@@ -17,8 +22,8 @@ class LoanedList extends React.Component {
                         item.isExpired = false;
                     }
                 });
-                this.setState({
-                    loanItems: response.data
+                this.updateCurrentLoans(response.data, e => {
+                    this.updateRadioButtons();
                 });
             })
             .catch(reason => {
@@ -29,6 +34,20 @@ class LoanedList extends React.Component {
             });
     }
 
+    updateRadioButtons = (callback) =>{
+        var _options = this.state.loanItems.map(el => {
+            return {
+                label: el.media.title +
+                       ', due ' +
+                       moment(el.expectedReturn).format('YYYY-MM-DD') +
+                       (el.isExpired ? ' (This item is overdue!)' : ''),
+                value: el.id
+            };  
+        });
+        this.setState({
+            radioOptions: _options
+        }, callback);
+    }
     updateCurrentLoans = (loanItems, callback) => {
         this.setState({
             loanItems: loanItems
@@ -38,7 +57,7 @@ class LoanedList extends React.Component {
     handleReturn = e => {
         e.preventDefault();
         const { form } = this.props;
-        const values = Object.entries(form.getFieldsValue()).filter(el => el[1]).map(el => parseInt(el[0]));
+        const values = this.state.checkedList;
         returnCopies(values)
             .then(response => {
                 const loanItems = this.state.loanItems.filter(el => !values.includes(el.id));
@@ -52,7 +71,10 @@ class LoanedList extends React.Component {
                         mediaArr.push(mediaToKeep);
                     });
                     this.props.updateLoans(mediaArr);
-                    Modal.success({ title: 'Successfully returned item(s).' });
+                    this.updateRadioButtons(e => {
+                        Modal.success({ title: 'Successfully returned item(s).' });
+                        this.forceUpdate();
+                    });
                 });
             }).catch(error => {
                 Modal.error({
@@ -61,6 +83,25 @@ class LoanedList extends React.Component {
                 })
             });
     }
+    onChange = (checkedList) => {
+        this.setState({
+          checkedList,
+          indeterminate:!!checkedList.length &&
+                        (checkedList.length < this.state.radioOptions.length),
+          checkAll: checkedList.length === this.state.radioOptions.length,
+        });
+      }
+    
+    onCheckAllChange = (e) => {
+        this.setState({
+            checkedList: e.target.checked ?
+                        this.state.radioOptions.map(el => {return el.value}) 
+                        : [],
+            indeterminate: false,
+            checkAll: e.target.checked,
+        });
+    }
+
     render() {
         const { getFieldDecorator } = this.props.form;
         const { loanItems } = this.state;
@@ -72,36 +113,45 @@ class LoanedList extends React.Component {
                 xs: { span: 16 }
             }
         };
+        const CheckboxGroup = Checkbox.Group;
         const buttonLayout = {
             textAlign: 'center'
         };
         if (!loanItems) {
             return <h2>Loading...</h2>;
         }
-        const formItems = this.state.loanItems.map((item, index) => {
-            return (
-                <Form.Item
-                    {...formItemLayout}
-                    validateStatus={'error'}
-                    required={false}
-                    key={`${item.id}`}
-                    label={item.media.title}
-                >
-                    {getFieldDecorator(`${item.id}`, {
-                        id: item.id,
-                        getValueProps: item.checked,
-                        valuePropName: 'checked',
-                        initialValue: false
-                    })(<Checkbox onChange={this.onChange} />)}
-                    {item.isExpired ? <span>This item is overdue!</span> : ''}
-                </Form.Item>
-            );
-        });
         return (
             <Form layout="horizontal" onSubmit={this.handleReturn}>
-                {formItems}
+                {loanItems.length !== 0 &&
+                    <div>
+                        <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+                            <Row>
+                                <Checkbox
+                                indeterminate={this.state.indeterminate}
+                                onChange={this.onCheckAllChange}
+                                checked={this.state.checkAll}
+                                >
+                                Return all 
+                                </Checkbox>
+                            </Row>
+                        </div>
+                        <br />
+                        <CheckboxGroup  
+                                    value={this.state.checkedList}
+                                    onChange={this.onChange}>
+                        {this.state.radioOptions.map(option =>
+                            <div style={{lineHeight: '2'}}>
+                                <Checkbox 
+                                        value={option.value} 
+                                        checked={this.state.checkAll}>{option.label}
+                                </Checkbox>
+                            </div>
+                        )}
+                        </CheckboxGroup>
+                    </div>
+                }
                 <Form.Item key="util" style={buttonLayout}>
-                    {formItems.length === 0 ? (
+                    {loanItems.length === 0 ? (
                         <Button type="primary" htmlType="submit" disabled>
                             Return Items
                         </Button>
