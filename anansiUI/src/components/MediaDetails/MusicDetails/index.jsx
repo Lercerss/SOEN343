@@ -1,5 +1,6 @@
-import React from "react";
-import MediaDetailsList from "../../MediaDetailsList";
+import React from 'react';
+import MediaDetailsList from '../../MediaDetailsList';
+import { prettifyTimeStamp } from '../../../utils/formatUtils';
 
 export default class MusicDetails extends React.Component {
     render() {
@@ -8,26 +9,25 @@ export default class MusicDetails extends React.Component {
             {
                 title: 'Artists:',
                 content: item.itemInfo.artist
-            }, {
+            },
+            {
                 title: 'Label:',
                 content: item.itemInfo.label
-            }, {
+            },
+            {
                 title: 'Release Date:',
-                content: item.itemInfo.releaseDate.substring(0,10)
-            }, {
+                content: prettifyTimeStamp(item.itemInfo.releaseDate)
+            },
+            {
                 title: 'Type:',
                 content: item.itemInfo.type.toUpperCase()
-            }, {
+            },
+            {
                 title: 'ASIN:',
                 content: item.itemInfo.asin
             }
         ];
 
-        return (
-            <MediaDetailsList 
-                data={data} 
-                copies={item.itemInfo.copies}
-            />
-        );
+        return <MediaDetailsList type="Music" data={data} copies={item.itemInfo.copies} />;
     }
 }

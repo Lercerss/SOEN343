@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Table, Button, Input, Icon, Form, Radio, Card } from 'antd';
 import { getTransactions } from '../../utils/httpUtils';
+import { prettifyTimeStamp } from '../../utils/formatUtils';
 import moment from 'moment';
 const styles = {
     customDropdown: {
@@ -33,19 +34,19 @@ export default class Transactions extends React.Component {
     };
 
     componentDidMount() {
-        getTransactions({})
+        let filter = this.props.filter || {};
+        getTransactions(filter)
             .then(res => {
-                console.log(res);
                 let tableData = res.data.map(el => {
-                    let expectedReturn = this.prettifyTimeStamp(el.expectedReturn);
-                    let return_ts = this.prettifyTimeStamp(el.return_ts);
+                    let expectedReturn = prettifyTimeStamp(el.expectedReturn);
+                    let return_ts = prettifyTimeStamp(el.return_ts);
 
                     return {
                         key: el.id,
                         title: el.media.title,
                         copyname: el.copyname,
                         username: el.username,
-                        loan_ts: this.prettifyTimeStamp(el.loan_ts),
+                        loan_ts: prettifyTimeStamp(el.loan_ts),
                         return_ts: return_ts,
                         expectedReturn: expectedReturn,
                         overdue: this.checkOverdue(expectedReturn, return_ts),
@@ -134,13 +135,7 @@ export default class Transactions extends React.Component {
             sorter: (a, b) => a[key].localeCompare(b[key])
         };
     };
-    prettifyTimeStamp = timestamp => {
-        if (timestamp) {
-            return moment(timestamp).format('YYYY-MM-DD');
-        } else {
-            return 'N/A';
-        }
-    };
+
     handleView = e => {
         this.setState({
             view: e.target.value
