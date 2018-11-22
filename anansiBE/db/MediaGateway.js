@@ -166,7 +166,7 @@ export class MediaGateway {
             return;
         }
         const query = db.format(
-            'SELECT * FROM book_copies WHERE available = TRUE AND book_id IN (?) GROUP BY book_id',
+            'SELECT MIN(id), book_id FROM book_copies WHERE available = TRUE AND book_id IN (?) GROUP BY book_id',
             [itemIds]
         );
         db.query(query, (err, rows) => {
@@ -192,7 +192,7 @@ export class MediaGateway {
             return;
         }
         const query = db.format(
-            'SELECT * FROM movie_copies WHERE available = TRUE AND movie_id IN (?) GROUP BY movie_id',
+            'SELECT MIN(id), movie_id FROM movie_copies WHERE available = TRUE AND movie_id IN (?) GROUP BY movie_id',
             [itemIds]
         );
         db.query(query, (err, rows) => {
@@ -218,7 +218,7 @@ export class MediaGateway {
             return;
         }
         const query = db.format(
-            'SELECT * FROM music_copies WHERE available = TRUE AND music_id IN (?) GROUP BY music_id',
+            'SELECT MIN(id), music_id FROM music_copies WHERE available = TRUE AND music_id IN (?) GROUP BY music_id',
             [itemIds]
         );
         db.query(query, (err, rows) => {
