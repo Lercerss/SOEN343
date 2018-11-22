@@ -2,8 +2,9 @@ import React from 'react';
 import { List, Button, Card, Modal, Row, Col, Icon } from 'antd';
 import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
-import { deleteItem, viewItems } from '../../utils/httpUtils';
+import { deleteItem, viewItems, getLock, releaseLock } from '../../utils/httpUtils';
 import MediaDetails from '../MediaDetails';
+import EditTimer from '../MediaForm/EditTimer'
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -18,7 +19,8 @@ export default class ItemsList extends React.Component {
         catalogSize: 0,
         filters: { mediaType: null, fields: {} },
         order: {},
-        detailsIndex: -1
+        detailsIndex: -1,
+        lockedAt: 0
     };
 
     listStyle = {
@@ -57,16 +59,26 @@ export default class ItemsList extends React.Component {
             .catch(reason => {
                 Modal.error({
                     title: 'Error fetching catalog items',
-                    content: reason.message
+                    content: reason.response.data.message
                 });
             });
     };
     handleEdit = item => {
-        this.setState({
-            isEditFormShown: true,
-            editFormMediaType: item.type,
-            itemInfo: item.itemInfo
-        });
+        getLock(item.type, item.itemInfo.id)
+            .then(response => {
+                this.setState({
+                    lockedAt: response.data.lockedAt,
+                    isEditFormShown: true,
+                    editFormMediaType: item.type,
+                    itemInfo: item.itemInfo
+                });
+            })
+            .catch(reason => {
+                Modal.error({
+                    title: 'Could not edit item',
+                    content: reason.response ? reason.response.data.message : 'Connection error'
+                });
+            });
     };
     handleDelete = item => {
         deleteItem(item.type, item.itemInfo)
@@ -82,14 +94,14 @@ export default class ItemsList extends React.Component {
                 console.log(err);
             });
     };
-    handleClose = itemInfo => {
-        if (!itemInfo) {
-            this.setState({
-                isEditFormShown: false,
-                editFormMediaType: ''
-            });
-            return;
-        }
+    handleModalCancel = itemInfo => {
+        releaseLock(this.state.editFormMediaType, itemInfo.id);
+        this.setState({
+            isEditFormShown: false,
+            editFormMediaType: ""
+        });
+    }
+    handleClose = itemInfo => {        
         const items = this.state.itemList;
         items[
             items.findIndex(el =>
@@ -101,7 +113,6 @@ export default class ItemsList extends React.Component {
             editFormMediaType: '',
             itemsList: items
         });
-        console.log(items);
     };
     handleFilters = filters => {      
         filters.mediaType = filters.mediaType ? filters.mediaType : null;
@@ -121,7 +132,6 @@ export default class ItemsList extends React.Component {
             });
     }
     handleOrder = order => {
-        console.log(order);
         this.setState({order: order }, 
             function() { this.fetchPage(1); });
     };
@@ -280,9 +290,15 @@ export default class ItemsList extends React.Component {
                 />
                 <Modal
                     visible={this.state.isEditFormShown}
-                    title="Edit Item"
-                    onCancel={e => this.handleClose(null)}
-                    // Removes default footer
+                    title={
+                        <Row>
+                            <Col span='12'>Edit Item</Col>
+                            <Col span='12'>
+                                <EditTimer lockedAt={this.state.lockedAt} isEditFormShown={this.state.isEditFormShown} style={this.listStyle.rightAlign} />
+                            </Col>
+                        </Row>
+                    }
+                    onCancel={e => this.handleModalCancel(itemInfo)}
                     footer={null}
                 >
                     <div className="MetaForm">

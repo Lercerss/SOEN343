@@ -112,7 +112,7 @@ export class MediaGateway {
         if (type === 'Book') {
             query = db.format(
                 'UPDATE books SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                    'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ? WHERE id = ?',
+                    'publisher = ?, publicationDate = ?, author = ?, format = ?, pages = ?, lockedBy_id = NULL WHERE id = ?',
                 [
                     fields['title'],
                     fields['language'],
@@ -131,7 +131,7 @@ export class MediaGateway {
         } else if (type === 'Magazine') {
             query = db.format(
                 'UPDATE magazines SET title = ?, language = ?, isbn10 = ?, isbn13 = ?, ' +
-                    'publisher = ?, publicationDate = ? WHERE id = ?',
+                    'publisher = ?, publicationDate = ?, lockedBy_id = NULL WHERE id = ?',
                 [
                     fields['title'],
                     fields['language'],
@@ -146,7 +146,7 @@ export class MediaGateway {
             copiesFK = 'magazine_id';
         } else if (type === 'Music') {
             query = db.format(
-                'UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ? WHERE id = ?',
+                'UPDATE music SET title = ?, releaseDate = ?, type = ?, artist = ?, label = ?, asin = ?, lockedBy_id = NULL WHERE id = ?',
                 [
                     fields['title'],
                     moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
@@ -162,7 +162,7 @@ export class MediaGateway {
         } else if (type === 'Movie') {
             query = db.format(
                 'UPDATE movies SET title = ?, releaseDate = ?, director = ?, producers = ?, actors = ?,' +
-                    'language = ?, subtitles = ?, dubbed = ?, runtime = ? WHERE id = ?',
+                    'language = ?, subtitles = ?, dubbed = ?, runtime = ?, lockedBy_id = NULL WHERE id = ?',
                 [
                     fields['title'],
                     moment(fields['releaseDate']).format('YYYY-MM-DD HH:mm:ss'),
@@ -212,6 +212,38 @@ export class MediaGateway {
             } else {
                 callback(err);
             }
+        });
+    }
+
+    static getLock(type, userId, mediaId, callback){
+        var query;
+        if (type === 'Book') {
+            query = db.format('UPDATE books SET lockedBy_id = ?, lockedAt = CURRENT_TIMESTAMP WHERE id = ?', [userId, mediaId]);
+        } else if (type === 'Magazine') {
+            query = db.format('UPDATE magazines SET lockedBy_id = ?, lockedAt = CURRENT_TIMESTAMP WHERE id = ?', [userId, mediaId]);
+        } else if (type === 'Music'){
+            query = db.format('UPDATE music SET lockedBy_id = ?, lockedAt = CURRENT_TIMESTAMP WHERE id = ?', [userId, mediaId]);
+        } else if (type === 'Movie'){
+            query = db.format('UPDATE movies SET lockedBy_id = ?, lockedAt = CURRENT_TIMESTAMP WHERE id = ?', [userId, mediaId]);
+        }
+        db.query(query, (err, rows, fields) => {
+            callback(err, rows);
+        });
+    }
+
+    static releaseLock(type, userId, mediaId, callback){
+        var query;
+        if (type === 'Book') {
+            query = db.format('UPDATE books SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
+        } else if (type === 'Magazine') {
+            query = db.format('UPDATE magazines SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
+        } else if (type === 'Music'){
+            query = db.format('UPDATE music SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
+        } else if (type === 'Movie'){
+            query = db.format('UPDATE movies SET lockedBy_id = NULL, lockedAt = NULL WHERE id = ?', [mediaId]);
+        }
+        db.query(query, (err, rows, fields) => {
+            callback(err, rows);
         });
     }
 
