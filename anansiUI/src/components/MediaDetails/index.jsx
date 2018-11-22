@@ -6,12 +6,15 @@ import MusicDetails from './MusicDetails';
 
 export default class MediaDetails extends React.Component {
     render() {
-        const { item, visible } = this.props;
+        const { item, visible, isAdmin } = this.props;
         let detailComponent = '';
-        if (item.type == 'Book') detailComponent = <BookDetails item={item} />;
-        else if (item.type == 'Magazine') detailComponent = <MagazineDetails item={item} />;
-        else if (item.type == 'Movie') detailComponent = <MovieDetails item={item} />;
-        else if (item.type == 'Music') detailComponent = <MusicDetails item={item} />;
+        if (item.type == 'Book') detailComponent = <BookDetails isAdmin={isAdmin} item={item} />;
+        else if (item.type == 'Magazine')
+            detailComponent = <MagazineDetails isAdmin={isAdmin} item={item} />;
+        else if (item.type == 'Movie')
+            detailComponent = <MovieDetails isAdmin={isAdmin} item={item} />;
+        else if (item.type == 'Music')
+            detailComponent = <MusicDetails isAdmin={isAdmin} item={item} />;
 
         return visible && detailComponent;
     }

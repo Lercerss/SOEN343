@@ -4,7 +4,7 @@ import MediaForm from '../MediaForm';
 import Criteria from './Criteria';
 import { deleteItem, viewItems, getLock, releaseLock } from '../../utils/httpUtils';
 import MediaDetails from '../MediaDetails';
-import EditTimer from '../MediaForm/EditTimer'
+import EditTimer from '../MediaForm/EditTimer';
 
 function compareMediaItems(item, type, other, otherType) {
     return item.id === other.id && type === otherType;
@@ -48,7 +48,6 @@ export default class ItemsList extends React.Component {
     }
     fetchPage = page => {
         viewItems(page, this.state.filters, this.state.order)
-
             .then(response => {
                 this.setState({
                     itemList: response.data.catalog,
@@ -98,10 +97,10 @@ export default class ItemsList extends React.Component {
         releaseLock(this.state.editFormMediaType, itemInfo.id);
         this.setState({
             isEditFormShown: false,
-            editFormMediaType: ""
+            editFormMediaType: ''
         });
-    }
-    handleClose = itemInfo => {        
+    };
+    handleClose = itemInfo => {
         const items = this.state.itemList;
         items[
             items.findIndex(el =>
@@ -114,26 +113,27 @@ export default class ItemsList extends React.Component {
             itemsList: items
         });
     };
-    handleFilters = filters => {      
+    handleFilters = filters => {
         filters.mediaType = filters.mediaType ? filters.mediaType : null;
-        this.setState({filters: filters}, 
-            function(){ this.fetchPage(1); });
+        this.setState({ filters: filters }, function() {
+            this.fetchPage(1);
+        });
     };
 
-    handleType = type =>{
+    handleType = type => {
         var _fields = {};
-        if (typeof this.state.fields !== "undefined"){
+        if (typeof this.state.fields !== 'undefined') {
             _fields = this.state.fields;
         }
-        
-        this.setState({filters: { mediaType: type, fields: _fields}},
-            function() {
-                this.fetchPage(1);
-            });
-    }
+
+        this.setState({ filters: { mediaType: type, fields: _fields } }, function() {
+            this.fetchPage(1);
+        });
+    };
     handleOrder = order => {
-        this.setState({order: order }, 
-            function() { this.fetchPage(1); });
+        this.setState({ order: order }, function() {
+            this.fetchPage(1);
+        });
     };
     handleDetails = index => {
         this.setState({
@@ -252,14 +252,18 @@ export default class ItemsList extends React.Component {
 
     render() {
         const { itemInfo, itemList } = this.state;
-
+        const { isAdmin } = this.props;
         if (!itemList) {
             return <h2>Loading...</h2>;
         }
 
         return (
             <Card>
-                <Criteria onMediaTypeClicked={this.handleType} onFiltersChanged={this.handleFilters} onOrderChanged={this.handleOrder}/>
+                <Criteria
+                    onMediaTypeClicked={this.handleType}
+                    onFiltersChanged={this.handleFilters}
+                    onOrderChanged={this.handleOrder}
+                />
                 <List
                     itemLayout="vertical"
                     size="small"
@@ -283,7 +287,11 @@ export default class ItemsList extends React.Component {
                                 </Col>
                             </Row>
 
-                            <MediaDetails item={item} visible={this.state.detailsIndex === index} />
+                            <MediaDetails
+                                isAdmin={isAdmin}
+                                item={item}
+                                visible={this.state.detailsIndex === index}
+                            />
                         </List.Item>
                     )}
                 />
@@ -291,9 +299,13 @@ export default class ItemsList extends React.Component {
                     visible={this.state.isEditFormShown}
                     title={
                         <Row>
-                            <Col span='12'>Edit Item</Col>
-                            <Col span='12'>
-                                <EditTimer lockedAt={this.state.lockedAt} isEditFormShown={this.state.isEditFormShown} style={this.listStyle.rightAlign} />
+                            <Col span="12">Edit Item</Col>
+                            <Col span="12">
+                                <EditTimer
+                                    lockedAt={this.state.lockedAt}
+                                    isEditFormShown={this.state.isEditFormShown}
+                                    style={this.listStyle.rightAlign}
+                                />
                             </Col>
                         </Row>
                     }

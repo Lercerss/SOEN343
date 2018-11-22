@@ -4,7 +4,7 @@ import { prettifyTimeStamp } from '../../../utils/formatUtils';
 
 export default class BookDetails extends React.Component {
     render() {
-        const { item } = this.props;
+        const { item, isAdmin } = this.props;
         const data = [
             {
                 title: 'Author:',
@@ -42,6 +42,13 @@ export default class BookDetails extends React.Component {
             }
         ];
 
-        return <MediaDetailsList type="Book" data={data} copies={item.itemInfo.copies} />;
+        return (
+            <MediaDetailsList
+                isAdmin={isAdmin}
+                type="Book"
+                data={data}
+                copies={item.itemInfo.copies}
+            />
+        );
     }
 }

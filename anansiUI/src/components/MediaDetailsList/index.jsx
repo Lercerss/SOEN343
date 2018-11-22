@@ -1,5 +1,4 @@
 import React from 'react';
-import { getTransactions } from '../../utils/httpUtils';
 import { List, Card, Row, Col, Icon, Tooltip, Modal } from 'antd';
 import Transactions from '../Transactions';
 const styles = {
@@ -20,7 +19,7 @@ export default class MediaDetailsList extends React.Component {
         });
     };
     render() {
-        const { data, copies } = this.props;
+        const { data, copies, isAdmin } = this.props;
         const listItemMetaStyle = {
             padding: '0 0 0 0',
             margin: '0 0 0 0'
@@ -75,14 +74,16 @@ export default class MediaDetailsList extends React.Component {
                                             title={
                                                 <p style={titleStyle}>
                                                     {item.name}&nbsp;
-                                                    <Tooltip title="View copy transaction history">
-                                                        <Icon
-                                                            onClick={this.showTransactions}
-                                                            id={item.id}
-                                                            style={styles.pointer}
-                                                            type="file-search"
-                                                        />
-                                                    </Tooltip>
+                                                    {isAdmin && (
+                                                        <Tooltip title="View copy transaction history">
+                                                            <Icon
+                                                                onClick={this.showTransactions}
+                                                                id={item.id}
+                                                                style={styles.pointer}
+                                                                type="file-search"
+                                                            />
+                                                        </Tooltip>
+                                                    )}
                                                 </p>
                                             }
                                         />

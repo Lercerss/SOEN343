@@ -4,7 +4,7 @@ import { prettifyTimeStamp } from '../../../utils/formatUtils';
 
 export default class MovieDetails extends React.Component {
     render() {
-        const { item } = this.props;
+        const { item, isAdmin } = this.props;
         const data = [
             {
                 title: 'Actors:',
@@ -32,6 +32,13 @@ export default class MovieDetails extends React.Component {
             }
         ];
 
-        return <MediaDetailsList type="Movie" data={data} copies={item.itemInfo.copies} />;
+        return (
+            <MediaDetailsList
+                isAdmin={isAdmin}
+                type="Movie"
+                data={data}
+                copies={item.itemInfo.copies}
+            />
+        );
     }
 }
