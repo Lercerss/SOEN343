@@ -109,6 +109,18 @@ class App extends React.Component {
         this.setState({ cart: [] });
     };
 
+    updateLoans = (mediaArr) => {
+        // mediaArr = [{mediaType: str, id: int}, ...]
+        var updatedLoans = this.state.loans.filter(el => {
+            return mediaArr.some(f => {
+                return (el.type === f.mediaType && el.itemInfo.id === f.id);
+            });
+        });
+        this.setState({
+            loans: updatedLoans
+        });
+    }
+
     restoreFromStorage = (username, callback) => {
         const loans = localStorage.getItem(`${username}-loans`);
         const cart = localStorage.getItem(`${username}-cart`);
@@ -240,7 +252,7 @@ class App extends React.Component {
                                     path="/users/:username"
                                     condition={this.state.loggedIn}
                                 >
-                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin} />
+                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin} updateLoans={this.updateLoans}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
                                     <UsersList />

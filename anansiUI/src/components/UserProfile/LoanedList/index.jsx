@@ -28,6 +28,13 @@ class LoanedList extends React.Component {
                 });
             });
     }
+
+    updateCurrentLoans = (loanItems, callback) => {
+        this.setState({
+            loanItems: loanItems
+        }, callback);
+    } 
+
     handleReturn = e => {
         e.preventDefault();
         const { form } = this.props;
@@ -35,8 +42,17 @@ class LoanedList extends React.Component {
         returnCopies(values)
             .then(response => {
                 const loanItems = this.state.loanItems.filter(el => !values.includes(el.id));
-                this.setState({
-                    loanItems: loanItems
+                this.updateCurrentLoans(loanItems, (err) => {
+                    var mediaArr = [];
+                    this.state.loanItems.forEach(el => {
+                        let mediaToKeep = {
+                            mediaType: el.media.type,
+                            id: el.media.id
+                        };
+                        mediaArr.push(mediaToKeep);
+                    });
+                    this.props.updateLoans(mediaArr);
+                    Modal.success({ title: 'Successfully returned item(s).' });
                 });
             }).catch(error => {
                 Modal.error({

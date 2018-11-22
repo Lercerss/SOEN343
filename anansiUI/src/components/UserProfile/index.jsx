@@ -116,7 +116,7 @@ export default class UserProfile extends React.Component {
                         <p>
                             <b>Your Loans</b>
                         </p>
-                        <LoanedList userID={user.client_id} />
+                        <LoanedList userID={user.client_id} updateLoans={this.props.updateLoans} />
                     </Card>
                 )}
             </div>
