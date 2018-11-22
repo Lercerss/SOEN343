@@ -163,6 +163,18 @@ class RegisterForm extends React.Component {
                         })(<Input placeholder="pat.ko@internet.com" />)}
                     </FormItem>
 
+
+                    <FormItem {...formItemLayout} label="Address">
+                        {getFieldDecorator('address', {
+                            rules: [
+                                {
+                                    required: true,
+                                    message: 'Please input your adress!',
+                                }
+                            ]
+                        })(<Input placeholder="221B Baker St." />)}
+                    </FormItem>
+
                     <FormItem {...formItemLayout} label="Phone Number">
                         {getFieldDecorator('phoneNumber', {
                             rules: [

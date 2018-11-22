@@ -132,7 +132,23 @@ export function deleteItem(type, itemInfo) {
     });
 }
 
-export function getLoans() {
+export function loanCopies(items) {
     let req = client(Cookies.get('jwt'));
-    return req.get(`${backendURL}item/loans/`);
+    return req.post(`${backendURL}item/loan`, {
+        items: items
+    });
+}
+
+export function getTransactions(filter) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/get-loans`, {
+        filter: filter
+    });
+}
+
+export function returnCopies(loanIds) {
+    let req = client(Cookies.get('jwt'));
+    return req.post(`${backendURL}item/return`, {
+        loans: loanIds
+    });
 }

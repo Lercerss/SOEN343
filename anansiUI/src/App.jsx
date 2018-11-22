@@ -12,6 +12,7 @@ import AddMediaForm from './components/AddMediaForm';
 import PrivateRoute from './components/PrivateRoute';
 import UserProfile from './components/UserProfile';
 import Cart from './components/Cart';
+import Transactions from './components/Transactions';
 import './index.css';
 
 const { Content, Footer } = Layout;
@@ -31,7 +32,8 @@ class App extends React.Component {
         loggedIn: false,
         username: '',
         isAdmin: false,
-        cart: []
+        cart: [],
+        loans: []
     };
 
     addItemToCart = item => {
@@ -39,29 +41,32 @@ class App extends React.Component {
         const mappedCart = cart.map(function(e) {
             return e.itemInfo.id + e.type;
         });
-        const loanedItems = []; // TODO: Replace with list of loaned items from backend
-        if (loanedItems.length === 10) {
+        if (this.state.loans.length === 10) {
             Modal.error({
                 title: 'Cannot add items to cart',
                 content:
                     'You currently have 10 items on loan. Please make a return before adding items to your cart.'
             });
-        } else if (cart.length === 10 - loanedItems.length) {
+        } else if (cart.length === 10 - this.state.loans.length) {
             Modal.error({
                 title: 'Cannot add more items to cart.',
                 content:
                     'Your current number of items on loan: ' +
-                    loanedItems.length +
+                    this.state.loans.length +
                     '. You can only loan 10 items at a time.'
             });
-        } else if (loanedItems.includes(item)) {
+        } else if (
+            this.state.loans
+                .map(loan => loan.media.type + loan.media.id)
+                .includes(item.type + item.itemInfo.id)
+        ) {
             Modal.error({
                 title: 'Cannot add item to cart',
                 content: 'You currently have this item on loan.'
             });
         } else if (item.type === 'Magazine') {
             Modal.error({ title: 'Cannot loan magazines.' });
-        } else if (!mappedCart.includes(item.itemInfo + item.type)) {
+        } else if (!mappedCart.includes(item.itemInfo.id + item.type)) {
             cart.push(item);
             this.setState({ cart: cart });
         } else {
@@ -86,13 +91,63 @@ class App extends React.Component {
             });
         }
     };
-
+    handleCartSubmitted = items => {
+        const { loans } = this.state;
+        loans.push(
+            ...items.map(item => {
+                return {
+                    media: { id: item.itemInfo.id, title: item.itemInfo.title, type: item.type },
+                    id: -1
+                };
+            })
+        );
+        this.setState({
+            loans: loans
+        });
+    };
     emptyCart = () => {
         this.setState({ cart: [] });
     };
 
+    updateLoans = (mediaArr) => {
+        // mediaArr = [{mediaType: str, id: int}, ...]
+        var updatedLoans = this.state.loans.filter(el => {
+            return mediaArr.some(f => {
+                return (el.type === f.mediaType && el.itemInfo.id === f.id);
+            });
+        });
+        this.setState({
+            loans: updatedLoans
+        });
+    }
+
+    restoreFromStorage = (username, callback) => {
+        const loans = localStorage.getItem(`${username}-loans`);
+        const cart = localStorage.getItem(`${username}-cart`);
+        this.setState(
+            {
+                loans: loans ? JSON.parse(atob(loans)) : [],
+                cart: cart ? JSON.parse(atob(cart)) : []
+            },
+            callback
+        );
+    };
+
+    saveToStorage = () => {
+        console.log('this.state.loans :', this.state.loans);
+        localStorage.setItem(`${this.state.username}-loans`, btoa(JSON.stringify(this.state.loans)));
+        console.log('this.state.cart :', this.state.cart);
+        localStorage.setItem(`${this.state.username}-cart`, btoa(JSON.stringify(this.state.cart)));
+    };
+
+    componentWillUnmount() {
+        window.removeEventListener('beforeunload', this.saveToStorage.bind(this));
+        this.saveToStorage();
+    }
+
     componentDidMount() {
         setAppInterceptor(this.handleExpired);
+        window.addEventListener('beforeunload', this.saveToStorage.bind(this));
         // If jwt is stored in cookies
         // It sends it to server to validate it
         // and gather user info
@@ -101,6 +156,7 @@ class App extends React.Component {
             getTokenInfo(jwt)
                 .then(response => {
                     console.log(response.data.data);
+                    this.restoreFromStorage(response.data.username);
                     this.setState({
                         loggedIn: true,
                         username: response.data.username,
@@ -113,12 +169,15 @@ class App extends React.Component {
                 });
         }
     }
-    handleLogin = (username, isAdmin, token) => {
-        this.props.cookies.set('jwt', token);
-        this.setState({
-            username: username,
-            isAdmin: isAdmin,
-            loggedIn: true
+    handleLogin = (username, isAdmin, token, loans) => {
+        this.props.cookies.set('jwt', token, {path: '/'});
+        this.restoreFromStorage(username, () => {
+            this.setState({
+                username: username,
+                isAdmin: isAdmin,
+                loggedIn: true,
+                loans: loans
+            });
         });
     };
     handleLogout = () => {
@@ -126,10 +185,12 @@ class App extends React.Component {
 
         userLogout(token)
             .then(response => {
+                this.saveToStorage();
                 this.setState({
                     loggedIn: false,
                     username: '',
                     isAdmin: false,
+                    loans: [],
                     cart: []
                 });
                 this.props.cookies.remove('jwt');
@@ -137,7 +198,7 @@ class App extends React.Component {
             .catch(err => {
                 Modal.error({
                     title: 'Failed to sign out',
-                    content: err.response.data ? err.response.data.message : 'Connection error'
+                    content: err.response ? err.response.data.message : 'Connection error'
                 });
             });
     };
@@ -151,10 +212,12 @@ class App extends React.Component {
             title: 'Expired Token',
             content: 'Please log in for this request.'
         });
+        this.saveToStorage();
         this.setState({
             loggedIn: false,
             username: '',
             isAdmin: false,
+            loans: [],
             cart: []
         });
         this.props.cookies.remove('jwt');
@@ -189,7 +252,7 @@ class App extends React.Component {
                                     path="/users/:username"
                                     condition={this.state.loggedIn}
                                 >
-                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin} />
+                                    <UserProfile isCurrentUserAdmin={this.state.isAdmin} updateLoans={this.updateLoans}/>
                                 </PrivateRoute>
                                 <PrivateRoute path="/users" condition={this.state.isAdmin}>
                                     <UsersList />
@@ -207,6 +270,12 @@ class App extends React.Component {
                                     />
                                 </PrivateRoute>
                                 <PrivateRoute
+                                    path="/media/transactions"
+                                    condition={this.state.isAdmin}
+                                >
+                                    <Transactions />
+                                </PrivateRoute>
+                                <PrivateRoute
                                     path="/cart"
                                     condition={this.state.loggedIn && !this.state.isAdmin}
                                 >
@@ -214,6 +283,7 @@ class App extends React.Component {
                                         cart={this.state.cart}
                                         removeItemFromCart={this.removeItemFromCart}
                                         emptyCart={this.emptyCart}
+                                        handleSubmit={this.handleCartSubmitted}
                                     />
                                 </PrivateRoute>
                             </Switch>

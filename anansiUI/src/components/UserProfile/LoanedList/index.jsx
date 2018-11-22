@@ -1,16 +1,17 @@
 import React from 'react';
 import { Button, Checkbox, Form, Modal } from 'antd';
-import { getLoans } from '../../../utils/httpUtils';
+import { getTransactions, returnCopies } from '../../../utils/httpUtils';
 
 class LoanedList extends React.Component {
     state = {
         loanItems: []
     };
     componentDidMount() {
-        getLoans()
+        let userID = this.props.userID;
+        getTransactions({ user_id: userID, return_ts: 'NULL' })
             .then(response => {
                 response.data.forEach(item => {
-                    if (Date.now() > item.expectedReturn) {
+                    if (Date.now() > Date(item.expectedReturn)) {
                         item.isExpired = true;
                     } else {
                         item.isExpired = false;
@@ -27,11 +28,39 @@ class LoanedList extends React.Component {
                 });
             });
     }
+
+    updateCurrentLoans = (loanItems, callback) => {
+        this.setState({
+            loanItems: loanItems
+        }, callback);
+    } 
+
     handleReturn = e => {
         e.preventDefault();
         const { form } = this.props;
-        const values = form.getFieldsValue();
-    };
+        const values = Object.entries(form.getFieldsValue()).filter(el => el[1]).map(el => parseInt(el[0]));
+        returnCopies(values)
+            .then(response => {
+                const loanItems = this.state.loanItems.filter(el => !values.includes(el.id));
+                this.updateCurrentLoans(loanItems, (err) => {
+                    var mediaArr = [];
+                    this.state.loanItems.forEach(el => {
+                        let mediaToKeep = {
+                            mediaType: el.media.type,
+                            id: el.media.id
+                        };
+                        mediaArr.push(mediaToKeep);
+                    });
+                    this.props.updateLoans(mediaArr);
+                    Modal.success({ title: 'Successfully returned item(s).' });
+                });
+            }).catch(error => {
+                Modal.error({
+                    title: 'Failed to return selected items',
+                    content: error.response ? error.response.data.message : 'Connection error'
+                })
+            });
+    }
     render() {
         const { getFieldDecorator } = this.props.form;
         const { loanItems } = this.state;
@@ -56,7 +85,7 @@ class LoanedList extends React.Component {
                     validateStatus={'error'}
                     required={false}
                     key={`${item.id}`}
-                    label={item.itemInfo.title}
+                    label={item.media.title}
                 >
                     {getFieldDecorator(`${item.id}`, {
                         id: item.id,
@@ -72,18 +101,15 @@ class LoanedList extends React.Component {
             <Form layout="horizontal" onSubmit={this.handleReturn}>
                 {formItems}
                 <Form.Item key="util" style={buttonLayout}>
-                    {(formItems.length === 0) ?
-                        <Button type="primary"
-                                htmlType="submit"
-                                disabled        
-                        >Return Items
+                    {formItems.length === 0 ? (
+                        <Button type="primary" htmlType="submit" disabled>
+                            Return Items
                         </Button>
-                    :
+                    ) : (
                         <Button type="primary" htmlType="submit">
                             Return Items
                         </Button>
-                    }
-                    
+                    )}
                 </Form.Item>
             </Form>
         );

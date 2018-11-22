@@ -1,6 +1,7 @@
 import { UserRegistry } from '../models/UserRegistry';
 import { createToken } from '../utils/Auth';
 import { validateToken } from './router';
+import { Catalog } from '../models/Catalog';
 
 export function loginUser(req, res, next) {
     let { username, password } = req.body;
@@ -9,11 +10,20 @@ export function loginUser(req, res, next) {
         if (err) {
             return next(err);
         }
-
-        res.status(200).json({
-            isAdmin: user.isAdmin,
-            username: user.username,
-            token: createToken(user)
+        Catalog.getLoans({ user_id: user.client_id, return_ts: 'NULL' }, (err, loans) => {
+            if (err) {
+                console.log('err :', err);
+                res.status(500).send({
+                    message: 'Failed to retrieve user information'
+                });
+                return;
+            }
+            res.status(200).json({
+                isAdmin: user.isAdmin,
+                username: user.username,
+                loans: loans,
+                token: createToken(user)
+            });
         });
     });
 }

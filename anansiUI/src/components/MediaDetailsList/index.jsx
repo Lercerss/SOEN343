@@ -1,10 +1,25 @@
-import React from "react";
-import { List, Card, Row, Col } from "antd";
-
+import React from 'react';
+import { List, Card, Row, Col, Icon, Tooltip, Modal } from 'antd';
+import Transactions from '../Transactions';
+const styles = {
+    pointer: {
+        cursor: 'pointer'
+    }
+};
 export default class MediaDetailsList extends React.Component {
+    showTransactions = e => {
+        let filter = {
+            copy_id: e.currentTarget.id,
+            item_type: this.props.type
+        };
+        Modal.info({
+            title: 'Transaction History',
+            content: <Transactions filter={filter} />,
+            width: '80%'
+        });
+    };
     render() {
-        const { data, copies } = this.props;
-        const copyValues = [];
+        const { data, copies, isAdmin } = this.props;
         const listItemMetaStyle = {
             padding: '0 0 0 0',
             margin: '0 0 0 0'
@@ -22,18 +37,12 @@ export default class MediaDetailsList extends React.Component {
         const listStyle = {
             backgroundColor: '#f2f2f2',
             padding: '0 0 0 10px'
-        }
+        };
         const cardStyle = {
             backgroundColor: '#f2f2f2'
         };
 
-        if(copies != null) {
-            Object.values(copies).forEach(element => {
-                copyValues.push(Object.values(element))
-            }); 
-        }
-        
-        return (  
+        return (
             <div>
                 <Row gutter={16}>
                     <Col span={14}>
@@ -41,30 +50,42 @@ export default class MediaDetailsList extends React.Component {
                             style={listStyle}
                             dataSource={data}
                             renderItem={item => (
-                                <List.Item
-                                    key={`${item}.${Math.random()}`}
-                                >
+                                <List.Item key={`${item}.${Math.random()}`}>
                                     <List.Item.Meta
                                         style={listItemMetaStyle}
                                         title={<p style={titleStyle}> {item.title}</p>}
-                                        description={<p style={descriptionTitle}> {item.content}</p>}
+                                        description={
+                                            <p style={descriptionTitle}> {item.content}</p>
+                                        }
                                     />
                                 </List.Item>
                             )}
                         />
                     </Col>
                     <Col span={10}>
-                        <Card title='Copies' style={cardStyle}>
+                        <Card title="Copies" style={cardStyle}>
                             <List
                                 bordered={true}
-                                dataSource={copyValues}
+                                dataSource={copies || []}
                                 renderItem={item => (
-                                    <List.Item
-                                        key={`${item}.${Math.random()}`}
-                                    >
+                                    <List.Item key={`${item}.${Math.random()}`}>
                                         <List.Item.Meta
                                             style={listItemMetaStyle}
-                                            title={<p style={titleStyle}> {item}</p>}
+                                            title={
+                                                <p style={titleStyle}>
+                                                    {item.name}&nbsp;
+                                                    {isAdmin && (
+                                                        <Tooltip title="View copy transaction history">
+                                                            <Icon
+                                                                onClick={this.showTransactions}
+                                                                id={item.id}
+                                                                style={styles.pointer}
+                                                                type="file-search"
+                                                            />
+                                                        </Tooltip>
+                                                    )}
+                                                </p>
+                                            }
                                         />
                                     </List.Item>
                                 )}

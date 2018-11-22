@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Button, Card, Icon, Modal } from 'antd';
 import { Link, Redirect } from 'react-router-dom';
+import { loanCopies } from '../../utils/httpUtils';
 
 const styles = {
     Card: {
@@ -10,7 +11,8 @@ const styles = {
         marginBottom: '10px'
     },
     CheckoutButton: {
-        marginTop: '10px'
+        marginTop: '10px',
+        marginRight: '10px'
     }
 };
 
@@ -27,17 +29,26 @@ export default class Cart extends React.Component {
 
     handleConfirm = () => {
         this.setState({ checkoutInProgress: true });
-        const success = true; // TODO: Replace with actual success boolean
-        if (success) {
-            this.props.emptyCart();
-            this.setState({ checkoutVisible: false });
-            Modal.success({ title: 'Successfully loaned items.', onOk: this.redirect });
-        } else {
-            this.setState({ checkoutVisible: false });
-            Modal.error({
-                title: 'Error processing checkout.'
+        loanCopies(this.props.cart)
+            .then(response => {
+                this.props.handleSubmit(this.props.cart);
+                this.props.emptyCart();
+                this.setState({
+                    checkoutInProgress: false,
+                    checkoutVisible: false
+                });
+                Modal.success({ title: 'Successfully loaned items.', onOk: this.redirect });
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({
+                    checkoutInProgress: false,
+                    checkoutVisible: false
+                });
+                Modal.error({
+                    title: (error.response && error.response.data.message) || 'Error processing checkout.'
+                });
             });
-        }
     };
 
     handleCancel = () => {
@@ -70,7 +81,7 @@ export default class Cart extends React.Component {
                 >
                     <h3>Please press confirm to loan the following items:</h3>
                     {cart.map(item => (
-                        <p>{item.itemInfo.title}</p>
+                        <p key={`${item.type}${item.itemInfo.id}`}>{item.itemInfo.title}</p>
                     ))}
                 </Modal>
                 <Card title="Cart" style={styles.Card}>
@@ -84,11 +95,7 @@ export default class Cart extends React.Component {
                                 renderItem={item => (
                                     <List.Item
                                         key={`${item.itemInfo.title}`}
-                                        actions={[
-                                            <Button onClick={e => removeItemFromCart(item)}>
-                                                Remove
-                                            </Button>
-                                        ]}
+                                        actions={[<Button onClick={e => removeItemFromCart(item)}>Remove</Button>]}
                                     >
                                         <List.Item.Meta
                                             title={`${item.itemInfo.title}`}
@@ -97,12 +104,11 @@ export default class Cart extends React.Component {
                                     </List.Item>
                                 )}
                             />
-                            <Button
-                                type="primary"
-                                style={styles.CheckoutButton}
-                                onClick={this.showCheckout}
-                            >
+                            <Button type="primary" style={styles.CheckoutButton} onClick={this.showCheckout}>
                                 Checkout
+                            </Button>
+                            <Button type="default" style={styles.CheckoutButton} onClick={this.props.emptyCart}>
+                                Clear cart
                             </Button>
                         </div>
                     )}

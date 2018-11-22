@@ -26,6 +26,8 @@ class AdminSider extends React.Component {
             selected = '3';
         } else if (url === '/media/create/') {
             selected = '4';
+        } else if (url === '/media/transactions/'){
+            selected = '5';
         }
 
         return (
@@ -61,6 +63,9 @@ class AdminSider extends React.Component {
                         </Menu.Item>
                         <Menu.Item key="4">
                             <Link to="/media/create/">Add New Media </Link>
+                        </Menu.Item>
+                        <Menu.Item key="5">
+                            <Link to="/media/transactions/">View Transactions </Link>
                         </Menu.Item>
                     </SubMenu>
                 </Menu>
