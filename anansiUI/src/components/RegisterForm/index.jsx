@@ -10,12 +10,13 @@ class RegisterForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { firstName, lastName, email, username, password, phoneNumber, isAdmin } = values;
+                const { firstName, lastName, email, address, username, password, phoneNumber, isAdmin } = values;
 
                 createNewUser(
                     firstName,
                     lastName,
                     email,
+                    address,
                     username,
                     password,
                     phoneNumber,
