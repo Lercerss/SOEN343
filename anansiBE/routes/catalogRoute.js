@@ -38,6 +38,11 @@ export function displayItems(req, res) {
 }
 
 export function loanCopies(req, res) {
+    // Contract:
+    // Pre:     req.body.items.length + MediaGateway.getLoans({ user_id: user, return_ts: 'NULL'}).length <= 10
+    //              && req.body.items.every(item => item.copies.some(copy => copy.available))
+    // Post:    MediaGateway.getLoans({ user_id: user, return_ts: 'NULL' })
+    //              .every((loan => req.body.items.includes(loan.media.id) || loan.return_ts < Date.now()) && !loan.copy.available)
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         if (!decoded.data.client_id) {
             res.status(403).send();
@@ -212,6 +217,9 @@ export function deleteItem(req, res) {
 }
 
 export function returnCopies(req, res, next) {
+    // Contract:
+    // Pre:     req.body.loans.every(loan => loan.user_id === clientID && loan.return_ts === undefined)
+    // Post:    MediaGateway.getLoans({user_id: clientID, return_ts: 'NULL'}).every(loan => !req.body.loans.includes(loan))
     validateToken(req.get('Authorization').split(' ')[1], res, decoded => {
         Catalog.returnCopies(req.body.loans, decoded.data.client_id, err => {
             if (err) {
