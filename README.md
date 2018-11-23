@@ -4,18 +4,18 @@
 
 ## Team Information
 
--   Lucas Turpin (40029907) - lucas_turpin@hotmail.com / Team leader
--   Mila Roisin (29575774) - mila.roisin@gmail.com
--   Riya Dutta (40028085) - riya.dutta1001@gmail.com
--   Patrick Vacca (40028886) - patrick.vacca04@gmail.com
--   Chirac Manoukian (40028500) - chiracmanoukian@hotmail.com
--   Panorea Kontis (40032422) - panorea.kontis@gmail.com
--   Duy-Khoi Le (40026393) - alvyn279@gmail.com
--   Joo Yeon Lee (25612950) - nitachaska@gmail.com
--   Michelle Choi (26307647) - michy.miche@gmail.com
--   Scott Bouchard (26251625) - scottbouchard09@gmail.com
+-   Lucas Turpin (40029907) @Lercerss - lucas_turpin@hotmail.com / Team leader
+-   Mila Roisin (29575774) @milaroisin - mila.roisin@gmail.com
+-   Riya Dutta (40028085) @riyaGit - riya.dutta1001@gmail.com
+-   Patrick Vacca (40028886) @pvacca97 - patrick.vacca04@gmail.com
+-   Chirac Manoukian (40028500) @chimano - chiracmanoukian@hotmail.com
+-   Panorea Kontis (40032422) @panoreak - panorea.kontis@gmail.com
+-   Duy-Khoi Le (40026393) @alvyn279 - alvyn279@gmail.com
+-   Joo Yeon Lee (25612950) @niiita - nitachaska@gmail.com
+-   Michelle Choi (26307647) @michecho - michy.miche@gmail.com
+-   Scott Bouchard (26251625) @sbouchard09 - scottbouchard09@gmail.com
 
-## Important Commands
+## Anansi Library Management System
 
 This web application uses the following technologies:
 
@@ -31,15 +31,21 @@ node --version
 mysql --version
 ```
 
-We need to install the necessary node packages for front-end and back-end specified in all `package.json`. Type the following command from root directory of the project AND from anansiUI/:
-
+Necessary dependencies must be installed for both parts of the application.
+For the back-end, execute:
+```shell
+cd anansiBE/
+npm install
 ```
+For the front-end, execute:
+```shell
+cd anansiUi/
 npm install
 ```
 
 ### Database Setup
 
-Create a config file called `.env` in anansiBE/ (located in the root directory of the project) with the following contents:
+Create a config file inside `anansiBE/` called `.env`with the following contents, replacing `<password>` with a password of your choice:
 
 ```dosini
 MYSQL_PASSWORD="<password>"
@@ -48,7 +54,7 @@ DATABASE_NAME="anansi_db"
 TEST_DATABASE="anansi_db_test"
 ```
 
-Run mySQL shell, and enter the following SQL statements:
+From the MySQL shell, and enter the following SQL statements, replacing `<password>` with the selected password above:
 
 ```SQL
 CREATE USER 'dbuser'@'localhost' IDENTIFIED BY '<password>';
@@ -60,28 +66,34 @@ To create the database and apply migrations, run the following commands:
 
 ```Shell
 #dev database
-npm run migrate db:create anansi_db -- -e creation 
+npm run migrate db:create anansi_db -- -e creation
 npm run migrate up
 
 #test database
-npm run migrate db:create anansi_db_test 
+npm run migrate db:create anansi_db_test
 npm run test_migrate up
 ```
 
-The first hardcoded administrator user is already included the migrations. The username/password credentials are set to **tester/test**
+The first hardcoded administrator user is already included the migrations.
 
-### Running the Server
+| username | password |
+|----------|----------|
+| tester   | test     |
 
-To start the web application, use the following command inside anansiBE/:
+### Running the Back-end Server
 
-```
-npm start
-```
-
-### Running Webpack Dev Server
-
-Inside anansiUI/, run the following command as a separate process from the Express server (on another terminal):
+To start the back-end server, use the following command from `anansiBE/`:
 
 ```
 npm start
 ```
+
+### Running the Front-end Server
+
+To start the front-end server, use the following command from `anansiUI/`:
+
+```
+npm start
+```
+The application will then be accessible at port `8080` exposed locally, i.e. `http://localhost:8080`.
+Note that both servers must be running as separate processes for the application to function.
