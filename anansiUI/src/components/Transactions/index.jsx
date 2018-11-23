@@ -72,7 +72,7 @@ export default class Transactions extends React.Component {
     setCustomFilter = (key, hard = false) => {
         let filterFunction;
         if (hard) {
-            filterFunction = (value, record) => record[key] === value.toLowerCase();
+            filterFunction = (value, record) => record[key].toLowerCase() === value.toLowerCase();
         } else {
             filterFunction = (value, record) =>
                 record[key].toLowerCase().includes(value.toLowerCase());
