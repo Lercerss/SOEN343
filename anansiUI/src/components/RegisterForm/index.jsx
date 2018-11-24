@@ -10,7 +10,16 @@ class RegisterForm extends React.Component {
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
                 console.log('Received values of form: ', values);
-                const { firstName, lastName, email, address, username, password, phoneNumber, isAdmin } = values;
+                const {
+                    firstName,
+                    lastName,
+                    email,
+                    address,
+                    username,
+                    password,
+                    phoneNumber,
+                    isAdmin
+                } = values;
 
                 createNewUser(
                     firstName,
@@ -22,34 +31,34 @@ class RegisterForm extends React.Component {
                     phoneNumber,
                     isAdmin
                 )
-                .then(response => {
-                    Modal.success({
-                        title: 'Your registration is complete!'
-                    });
-                    this.setState({
-                        submissionResult: response.status,
-                        message: response.data.message 
-                    });
-                    this.props.form.resetFields();
-                    const { onUserRegistered } = this.props;
-                    if (onUserRegistered) {
-                        onUserRegistered();
-                    }
-                })
-                .catch(error => {
-                    if (error && error.response.status !== 401) {
-                        Modal.error({
-                            title: 'Failed to create a new user',
-                            content: error.response
-                                ? error.response.data.message
-                                : 'Connection error'
+                    .then(response => {
+                        Modal.success({
+                            title: 'Your registration is complete!'
                         });
-                    }
-                    this.setState({
-                        submissionResult: error.response.status,
-                        message: error.response.data.message
+                        this.setState({
+                            submissionResult: response.status,
+                            message: response.data.message
+                        });
+                        this.props.form.resetFields();
+                        const { onUserRegistered } = this.props;
+                        if (onUserRegistered) {
+                            onUserRegistered();
+                        }
+                    })
+                    .catch(error => {
+                        if (error && error.response.status !== 401) {
+                            Modal.error({
+                                title: 'Failed to create a new user',
+                                content: error.response
+                                    ? error.response.data.message
+                                    : 'Connection error'
+                            });
+                        }
+                        this.setState({
+                            submissionResult: error.response.status,
+                            message: error.response.data.message
+                        });
                     });
-                });
             }
         });
     };
@@ -73,7 +82,7 @@ class RegisterForm extends React.Component {
                 xs: { span: 24 },
                 sm: {
                     span: 10,
-                    offset: 1,    
+                    offset: 1
                 }
             }
         };
@@ -111,7 +120,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input a correct username, it must be at least 4 characters long with no whitespaces!',
+                                    message:
+                                        'Please input a correct username, it must be at least 4 characters long with no whitespaces!',
                                     whitespace: true,
                                     min: 4,
                                     pattern: /^\S*$/
@@ -124,7 +134,8 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your password, it must be at least 4 characters long',
+                                    message:
+                                        'Please input your password, it must be at least 4 characters long',
                                     min: 4
                                 }
                             ]
@@ -135,8 +146,7 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your first name!',
-                                    pattern: /^(?! )(\w+-?\s?)+(?<! )$/
+                                    message: 'Please input your first name!'
                                 }
                             ]
                         })(<Input placeholder="Pat" />)}
@@ -147,8 +157,7 @@ class RegisterForm extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your last name!',
-                                    pattern: /^(?! )(\w+-?\s?)+(?<! )$/
+                                    message: 'Please input your last name!'
                                 }
                             ]
                         })(<Input placeholder="Ko" />)}
@@ -166,13 +175,12 @@ class RegisterForm extends React.Component {
                         })(<Input placeholder="pat.ko@internet.com" />)}
                     </FormItem>
 
-
                     <FormItem {...formItemLayout} label="Address">
                         {getFieldDecorator('address', {
                             rules: [
                                 {
                                     required: true,
-                                    message: 'Please input your adress!',
+                                    message: 'Please input your adress!'
                                 }
                             ]
                         })(<Input placeholder="221B Baker St." />)}
