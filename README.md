@@ -39,7 +39,7 @@ npm install
 ```
 For the front-end, execute:
 ```shell
-cd anansiUi/
+cd anansiUI/
 npm install
 ```
 
